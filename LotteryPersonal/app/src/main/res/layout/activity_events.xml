@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<!-- ASSUMPTIONS:
+    ******************************************
+
+    User Class:
+
+        Attributes
+        -device_id
+        -name: <Array of Strings: first name,last name>
+        -email: String(30) must have @ and .com or .ca
+        -waitlist: <Array of Arrays of (event_ids, registered=0)>
+        -registered <Array of Arrays of (event_ids, registered=1)>
+
+        Methods
+   ******************************************
+
+    Event Class:
+
+        Attributes
+        - event_id: String(30)
+        - hostID
+        - waitlisted: <Array of device_ids>
+        - invited: <Array of device_ids>
+        - registered: <Array of device_ids>
+        - date: DATE
+        - time: TIME
+
+
+
+        Methods
+
+
+   ******************************************
+
+ -->
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ListView
+        android:id="@+id/eventListView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    </ListView>
+
+    <Button
+        android:id="@+id/btnAccept"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Accept"
+        tools:layout_editor_absoluteX="2dp"
+        tools:layout_editor_absoluteY="70dp" />
+
+    <Button
+        android:id="@+id/btnDecline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Decline" />
+
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
