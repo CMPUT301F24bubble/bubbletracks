@@ -8,7 +8,7 @@ import java.util.List;
 public class OrganizerEntrantListActivity {
 
     //To be changed to waitlist class INCOMPLETE
-    List<Entrant> waitlist;
+    List<Entrant> waitList;
     List<Entrant> invitedList;
     List<Entrant> cancelledList;
     int maximumNumberOfEntrants;
@@ -17,6 +17,8 @@ public class OrganizerEntrantListActivity {
 
     //Called when an Entrant cancels or rejects invitation
     public void CancelledEntrant(Entrant entrant){
+        invitedList.remove(entrant);
+        waitList.remove(entrant);
         invitedList.add(organizerEditActivity.redrawEntrant());
         cancelledList.add(entrant);
         UpdateListDisplay();
