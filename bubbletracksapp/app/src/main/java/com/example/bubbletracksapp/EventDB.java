@@ -70,7 +70,7 @@ public class EventDB {
     }
 
     // Make it clear when it returns nothing INCOMPLETE
-    public Entrant getEvent(String ID)
+    public Event getEvent(String ID)
     {
         // WIP INCOMPLETE
         return null;
