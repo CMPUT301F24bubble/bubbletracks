@@ -1,6 +1,9 @@
 package com.example.bubbletracksapp;
 
 
+import java.util.Arrays;
+import java.util.List;
+
 public class Entrant {
     /**
      * This tracks the information for a given entrant.
@@ -15,6 +18,10 @@ public class Entrant {
 
     public String[] getName() {
         return name;
+    }
+
+    public List<String> getNameAsList() {
+        return Arrays.asList(name);
     }
 
     public void setName(String first, String last) {
@@ -37,5 +44,10 @@ public class Entrant {
     public void setPhone(String phone) {
         // should enforce a format for the phone number
         this.phone = phone;
+    }
+
+    // MUST BE CHANGED, should be the phoneID but for now the ID is the name INCOMPLETE
+    public String getID() {
+        return name[0]+name[1];
     }
 }
