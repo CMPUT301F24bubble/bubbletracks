@@ -38,7 +38,7 @@ public class EventDB {
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        Log.d("addEvent", "Entrant successfully added!");
+                        Log.d("addEvent", "Event successfully added!");
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
