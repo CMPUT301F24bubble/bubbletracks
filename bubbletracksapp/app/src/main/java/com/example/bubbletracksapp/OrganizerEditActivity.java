@@ -1,49 +1,43 @@
 package com.example.bubbletracksapp;
 
 import android.content.Intent;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.LayoutInflater;
+import android.os.Bundle;;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.EditText;
 
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import androidx.navigation.fragment.NavHostFragment;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.bubbletracksapp.databinding.OrganizerWaitlistSampleBinding;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
-public class OrganizerEditActivity extends Fragment {
+public class OrganizerEditActivity extends AppCompatActivity {
     // SHOUL BE ENTant INCOMPLETE
-    List<String> waitList;
-    List<String> invitedList;
-    List<String> rejectedList;
+    ArrayList<Entrant> waitList = new ArrayList<Entrant>();
+    ArrayList<Entrant> invitedList = new ArrayList<Entrant>();
+    ArrayList<Entrant> rejectedList = new ArrayList<Entrant>();
 
     private OrganizerWaitlistSampleBinding binding;
 
     @Override
-    public View onCreateView(
-            @NonNull LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState
-    ) {
-        binding = OrganizerWaitlistSampleBinding.inflate(inflater, container, false);
-        return binding.getRoot();
-    }
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        binding = OrganizerWaitlistSampleBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
-    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
         // INCOMPLETE
-//        ArrayList<String> test= getArguments().getStringArrayList("wait");
-//        waitList.addAll(test);
-//        invitedList.addAll(getArguments().getStringArrayList("invited"));
-//        rejectedList.addAll(getArguments().getStringArrayList("cancelled"));
-
+        Intent in =  getIntent();
+        if(in.getParcelableArrayListExtra("wait") != null) {
+            waitList.addAll(in.getParcelableArrayListExtra("wait"));
+        }
+        if(in.getParcelableArrayListExtra("invited") != null) {
+            invitedList.addAll(in.getParcelableArrayListExtra("invited"));
+        }
+        if(in.getParcelableArrayListExtra("cancelled") != null) {
+            rejectedList.addAll(in.getParcelableArrayListExtra("cancelled"));
+        }
 
         binding.drawEntrants.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -51,7 +45,7 @@ public class OrganizerEditActivity extends Fragment {
                 EditText nText = binding.numberToDraw;
                 String nStr = nText.getText().toString();
                 int n = Integer.parseInt(nStr);
-                invitedList = drawEntrants(waitList, n);
+                drawEntrants(n);
             }
         });
 
@@ -59,29 +53,28 @@ public class OrganizerEditActivity extends Fragment {
             @Override
             public void onClick(View view) {
 
-                Intent intent = new Intent(getContext(),OrganizerEditActivity.class);
+                Intent intent = new Intent(OrganizerEditActivity.this, OrganizerEntrantListActivity.class);
+                intent.putParcelableArrayListExtra("wait", waitList);
+                intent.putParcelableArrayListExtra("invited", invitedList);
+                intent.putParcelableArrayListExtra("cancelled", rejectedList);
                 startActivity(intent);
-
             }
         });
 
-
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        binding = null;
     }
 
 
     // should return error if n is bigger than the size of waitlist INCOMPLETE
-    public List<String> drawEntrants(List<String> waitlist, int n) {
-        Collections.shuffle(waitlist);
-        List<String> acceptedList = waitlist.subList(0, n);
-        rejectedList = waitlist.subList(n, waitlist.size());
+    // Assuming it is the fist time it is called INCOMEPLETE
+    public boolean drawEntrants(int n) {
+        Collections.shuffle(waitList);
+        invitedList.clear();
+        rejectedList.clear();
+        invitedList.addAll(waitList.subList(0, n));
+        rejectedList.addAll(waitList.subList(n, waitList.size()));
 
-        return acceptedList;
+
+        return true;
     }
 
     // should return error if the list is empty INCOMPLETE
@@ -94,12 +87,12 @@ public class OrganizerEditActivity extends Fragment {
     }
 
     // should return error if n is bigger than the size of list INCOMPLETE
-    public List<String> redrawEntrants(int n) {
+    public boolean redrawEntrants(int n) {
         Collections.shuffle(rejectedList);
-        List<String> chosenEntrants = rejectedList.subList(0, n);
-        rejectedList = rejectedList.subList(n, rejectedList.size());
+        invitedList = (ArrayList<Entrant>) rejectedList.subList(0, n);
+        rejectedList = (ArrayList<Entrant>) rejectedList.subList(n, rejectedList.size());
 
-        return chosenEntrants;
+        return true;
     }
 
 }
