@@ -3,4 +3,5 @@
     android:id="@+id/text11"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:text="text test" />
+    android:text="text test"
+    android:textSize="24sp" />

@@ -35,7 +35,7 @@
         <ListView
             android:id="@+id/waitlist_List"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             tools:layout_height="200dip" />
 
         <TextView
@@ -48,7 +48,7 @@
         <ListView
             android:id="@+id/invited_List"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             tools:layout_height="200dip" />
 
         <TextView
@@ -61,7 +61,7 @@
         <ListView
             android:id="@+id/rejected_List"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             tools:layout_height="200dip" />
 
     </LinearLayout>
