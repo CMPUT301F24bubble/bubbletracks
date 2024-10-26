@@ -24,6 +24,11 @@ public class Entrant {
         return Arrays.asList(name);
     }
 
+    public String getNameAsString() {
+        return name[0]+name[1];
+    }
+
+
     public void setName(String first, String last) {
         this.name = new String[]{first, last};
     }
