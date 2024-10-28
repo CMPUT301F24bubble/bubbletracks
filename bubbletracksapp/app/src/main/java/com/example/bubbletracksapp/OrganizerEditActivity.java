@@ -13,6 +13,11 @@ import com.example.bubbletracksapp.databinding.OrganizerWaitlistSampleBinding;
 import java.util.ArrayList;
 import java.util.Collections;
 
+/**
+ * Allows the organizer to sample N entrants from the waitlist.
+ * The Organizer needs to choose an N and then click on sample.
+ * @author Chester
+ */
 public class OrganizerEditActivity extends AppCompatActivity {
     // SHOUL BE ENTant INCOMPLETE
     ArrayList<Entrant> waitList = new ArrayList<Entrant>();
@@ -66,6 +71,12 @@ public class OrganizerEditActivity extends AppCompatActivity {
 
     // should return error if n is bigger than the size of waitlist INCOMPLETE
     // Assuming it is the fist time it is called INCOMEPLETE
+    /**
+     * Allows the organizer to draw n entrants from the waitlist.
+     * @param n The number of entrants to sample.
+     * @author Chester
+     * @return true if successfully sampled entrants
+     */
     public boolean drawEntrants(int n) {
         Collections.shuffle(waitList);
         invitedList.clear();
@@ -78,6 +89,12 @@ public class OrganizerEditActivity extends AppCompatActivity {
     }
 
     // should return error if the list is empty INCOMPLETE
+    /**
+     * Allows the organizer to redraw an entrant from the people that were rejected.
+     * It requires previous sampling of entrants.
+     * @author Chester
+     * @return The chosen entrant.
+     */
     public Entrant redrawEntrant() {
         Collections.shuffle(rejectedList);
         Entrant chosenEntrant = new Entrant();// rejectedList.get(0);INCOMPLETE

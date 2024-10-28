@@ -15,7 +15,12 @@ import com.example.bubbletracksapp.databinding.OrganizerWaitlistBinding;
 import java.util.ArrayList;
 
 /**
- * Organizer actions for entrants
+ * Organizer actions for entrants in waitlists. Allows the organizer to see who
+ * is in the waitlist. And after sampling it shows who is invited and who
+ * is not invited.
+ * For people that were invited but rejected the invitation, it allows the organizer to
+ * redraw them and replace them with someone from the waitlist.
+ * @author Chester
  */
 public class OrganizerEntrantListActivity extends AppCompatActivity {
 
@@ -140,6 +145,10 @@ public class OrganizerEntrantListActivity extends AppCompatActivity {
         UpdateListDisplay();
     }
 
+    /**
+     * Updates the list view displays.
+     * @author Chester
+     */
     private void UpdateListDisplay() {
         waitlistAdapter.notifyDataSetChanged();
         invitedAdapter.notifyDataSetChanged();
