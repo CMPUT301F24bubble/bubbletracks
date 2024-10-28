@@ -22,9 +22,10 @@ import java.util.Collections;
  */
 public class OrganizerEditActivity extends AppCompatActivity {
     // SHOUL BE ENTant INCOMPLETE
-    ArrayList<Entrant> waitList = new ArrayList<Entrant>();
-    ArrayList<Entrant> invitedList = new ArrayList<Entrant>();
-    ArrayList<Entrant> rejectedList = new ArrayList<Entrant>();
+    ArrayList<Entrant> waitList = new ArrayList<>();
+    ArrayList<Entrant> invitedList = new ArrayList<>();
+    ArrayList<Entrant> rejectedList = new ArrayList<>();
+    ArrayList<Entrant> cancelledList = new ArrayList<>();
 
     ArrayList<String> waitListArray = new ArrayList<>();
 
@@ -50,9 +51,13 @@ public class OrganizerEditActivity extends AppCompatActivity {
         if(in.getParcelableArrayListExtra("invited") != null) {
             invitedList.addAll(in.getParcelableArrayListExtra("invited"));
         }
-        if(in.getParcelableArrayListExtra("cancelled") != null) {
-            rejectedList.addAll(in.getParcelableArrayListExtra("cancelled"));
+        if(in.getParcelableArrayListExtra("rejected") != null) {
+            rejectedList.addAll(in.getParcelableArrayListExtra("rejected"));
         }
+        if(in.getParcelableArrayListExtra("cancelled") != null) {
+            cancelledList.addAll(in.getParcelableArrayListExtra("cancelled"));
+        }
+
 
         // TEMP FUNCTION TO ADD ENTANS, SHOULD BE CHANGED TO GET fom LAST INTENT INCOMPLETE
         if(in.getParcelableArrayListExtra("wait") == null) {
@@ -71,6 +76,14 @@ public class OrganizerEditActivity extends AppCompatActivity {
             en = new Entrant();
             en.setName("sam", " tata");
             waitList.add(en);
+
+            en = new Entrant();
+            en.setName("eaaaa", " tata");
+            cancelledList.add(en);
+            en = new Entrant();
+            en.setName("misete", " tata");
+            cancelledList.add(en);
+
         }
 
         for (int i = 0; i < waitList.size(); i++) {
@@ -123,35 +136,13 @@ public class OrganizerEditActivity extends AppCompatActivity {
         return true;
     }
 
-    // should return error if the list is empty INCOMPLETE
-    /**
-     * Allows the organizer to redraw an entrant from the people that were rejected.
-     * It requires previous sampling of entrants.
-     * @author Chester
-     * @return The chosen entrant.
-     */
-    public Entrant redrawEntrant() {
-        Collections.shuffle(rejectedList);
-        Entrant chosenEntrant = new Entrant();// rejectedList.get(0);INCOMPLETE
-        rejectedList.remove(0);
-
-        return chosenEntrant;
-    }
-
-    // should return error if n is bigger than the size of list INCOMPLETE
-    public boolean redrawEntrants(int n) {
-        Collections.shuffle(rejectedList);
-        invitedList = (ArrayList<Entrant>) rejectedList.subList(0, n);
-        rejectedList = (ArrayList<Entrant>) rejectedList.subList(n, rejectedList.size());
-
-        return true;
-    }
 
     private void startListActivity() {
         Intent intent = new Intent(OrganizerEditActivity.this, OrganizerEntrantListActivity.class);
         intent.putParcelableArrayListExtra("wait", waitList);
         intent.putParcelableArrayListExtra("invited", invitedList);
-        intent.putParcelableArrayListExtra("cancelled", rejectedList);
+        intent.putParcelableArrayListExtra("rejected", rejectedList);
+        intent.putParcelableArrayListExtra("cancelled", cancelledList);
         startActivity(intent);
     }
 
