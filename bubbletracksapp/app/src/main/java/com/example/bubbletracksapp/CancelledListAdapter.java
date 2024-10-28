@@ -46,11 +46,13 @@ public class CancelledListAdapter extends ArrayAdapter<Entrant>{
         entrantName.setText(entrant.getNameAsString());
 
         Button redrawEntrant = view.findViewById(R.id.right_button_view);
+        redrawEntrant.setText("Redraw");
 
         redrawEntrant.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 listener.redrawCancelledEntrant(entrant);
+                redrawEntrant.setEnabled(false);
             }
         });
 

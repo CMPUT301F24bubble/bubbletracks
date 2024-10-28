@@ -40,10 +40,10 @@ public class OrganizerEntrantListActivity extends AppCompatActivity implements C
     OrganizerEditActivity organizerEditActivity;
 
     ListView waitlistListView;
-    ArrayAdapter<String> waitlistAdapter;
+    EntrantListAdapter waitlistAdapter;
 
     ListView invitedListView;
-    ArrayAdapter<String> invitedAdapter;
+    InvitedListAdapter invitedAdapter;
 
     ListView cancelledListView;
     CancelledListAdapter cancelledAdapter;
@@ -76,24 +76,12 @@ public class OrganizerEntrantListActivity extends AppCompatActivity implements C
             cancelledList.addAll(in.getParcelableArrayListExtra("cancelled"));
         }
 
-
-
-
-
-        //This is a simple way of making the lists, should be changed to fit the aesthetic INCOMPLETE
-        for (int i = 0; i < waitList.size(); i++) {
-            waitListArray.add(waitList.get(i).getNameAsString());
-        }
-        for (int i = 0; i < invitedList.size(); i++) {
-            invitedListArray.add(invitedList.get(i).getNameAsString());
-        }
-
         waitlistListView = binding.waitlistList;
-        waitlistAdapter = new ArrayAdapter<String>(this.getApplicationContext(), R.layout.list_simple_view,  waitListArray);
+        waitlistAdapter = new EntrantListAdapter(this, waitList);
         waitlistListView.setAdapter(waitlistAdapter);
 
         invitedListView = binding.invitedList;
-        invitedAdapter = new ArrayAdapter<String>(this.getApplicationContext(), R.layout.list_simple_view,  invitedListArray);
+        invitedAdapter = new InvitedListAdapter(this, invitedList);
         invitedListView.setAdapter(invitedAdapter);
 
         cancelledListView = binding.rejectedList;
