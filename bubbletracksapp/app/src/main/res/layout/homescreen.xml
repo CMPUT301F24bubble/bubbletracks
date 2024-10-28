@@ -53,5 +53,23 @@
 
         </LinearLayout>
     </HorizontalScrollView>
+    <FrameLayout
+        android:id="@+id/content_holder"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toTopOf="@id/button_scroll_view"
+        app:layout_constraintTop_toBottomOf="@id/activity_title"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <TextView
+        android:id="@+id/activity_title"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        app:layout_constraintBottom_toTopOf="@id/content_holder"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:text="Activity Title"
+        android:textSize="50dp"/> <!--Always changing this depending on the activity-->
 
 </androidx.constraintlayout.widget.ConstraintLayout>
