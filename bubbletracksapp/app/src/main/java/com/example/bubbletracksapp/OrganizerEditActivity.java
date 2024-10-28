@@ -3,7 +3,9 @@ package com.example.bubbletracksapp;
 import android.content.Intent;
 import android.os.Bundle;;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ListView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,6 +26,12 @@ public class OrganizerEditActivity extends AppCompatActivity {
     ArrayList<Entrant> invitedList = new ArrayList<Entrant>();
     ArrayList<Entrant> rejectedList = new ArrayList<Entrant>();
 
+    ArrayList<String> waitListArray = new ArrayList<>();
+
+    ListView waitlistListView;
+    ArrayAdapter<String> waitlistAdapter;
+
+
     private OrganizerWaitlistSampleBinding binding;
 
     @Override
@@ -31,6 +39,8 @@ public class OrganizerEditActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = OrganizerWaitlistSampleBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+
 
         // INCOMPLETE
         Intent in =  getIntent();
@@ -44,6 +54,34 @@ public class OrganizerEditActivity extends AppCompatActivity {
             rejectedList.addAll(in.getParcelableArrayListExtra("cancelled"));
         }
 
+        // TEMP FUNCTION TO ADD ENTANS, SHOULD BE CHANGED TO GET fom LAST INTENT INCOMPLETE
+        if(in.getParcelableArrayListExtra("wait") == null) {
+            Entrant en = new Entrant();
+            en.setName("hola", " tata");
+            waitList.add(en);
+
+            en = new Entrant();
+            en.setName("ches", " tata");
+            waitList.add(en);
+
+            en = new Entrant();
+            en.setName("zoe", " tata");
+            waitList.add(en);
+
+            en = new Entrant();
+            en.setName("sam", " tata");
+            waitList.add(en);
+        }
+
+        for (int i = 0; i < waitList.size(); i++) {
+            waitListArray.add(waitList.get(i).getNameAsString());
+        }
+
+        waitlistListView = binding.waitlistSample;
+        waitlistAdapter = new ArrayAdapter<String>(this.getApplicationContext(), R.layout.list_simple_view,  waitListArray);
+        waitlistListView.setAdapter(waitlistAdapter);
+
+
         binding.drawEntrants.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -51,18 +89,16 @@ public class OrganizerEditActivity extends AppCompatActivity {
                 String nStr = nText.getText().toString();
                 int n = Integer.parseInt(nStr);
                 drawEntrants(n);
+                startListActivity();
+
             }
         });
 
-        binding.backToWaitlistButton.setOnClickListener(new View.OnClickListener() {
+
+        binding.backTo1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                Intent intent = new Intent(OrganizerEditActivity.this, OrganizerEntrantListActivity.class);
-                intent.putParcelableArrayListExtra("wait", waitList);
-                intent.putParcelableArrayListExtra("invited", invitedList);
-                intent.putParcelableArrayListExtra("cancelled", rejectedList);
-                startActivity(intent);
+                // Filled with going to the last activity. INCOMPLETE
             }
         });
 
@@ -83,7 +119,6 @@ public class OrganizerEditActivity extends AppCompatActivity {
         rejectedList.clear();
         invitedList.addAll(waitList.subList(0, n));
         rejectedList.addAll(waitList.subList(n, waitList.size()));
-
 
         return true;
     }
@@ -110,6 +145,14 @@ public class OrganizerEditActivity extends AppCompatActivity {
         rejectedList = (ArrayList<Entrant>) rejectedList.subList(n, rejectedList.size());
 
         return true;
+    }
+
+    private void startListActivity() {
+        Intent intent = new Intent(OrganizerEditActivity.this, OrganizerEntrantListActivity.class);
+        intent.putParcelableArrayListExtra("wait", waitList);
+        intent.putParcelableArrayListExtra("invited", invitedList);
+        intent.putParcelableArrayListExtra("cancelled", rejectedList);
+        startActivity(intent);
     }
 
 }

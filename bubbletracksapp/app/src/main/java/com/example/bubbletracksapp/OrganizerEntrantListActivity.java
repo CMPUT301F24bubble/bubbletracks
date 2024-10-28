@@ -67,33 +67,7 @@ public class OrganizerEntrantListActivity extends AppCompatActivity {
             rejectedList.addAll(in.getParcelableArrayListExtra("cancelled"));
         }
 
-        // TEMP FUNCTION TO ADD ENTANS, SHOULD BE CHANGED TO GET fom LAST INTENT INCOMPLETE
-        if(in.getParcelableArrayListExtra("wait") == null) {
-            Entrant en = new Entrant();
-            en.setName("hola", " tata");
-            waitList.add(en);
 
-            en = new Entrant();
-            en.setName("ches", " tata");
-            waitList.add(en);
-
-            en = new Entrant();
-            en.setName("zoe", " tata");
-            waitList.add(en);
-
-            en = new Entrant();
-            en.setName("sam", " tata");
-            waitList.add(en);
-
-            en = new Entrant();
-            en.setName("day", " tata");
-            invitedList.add(en);
-
-            en = new Entrant();
-            en.setName("lupe", " tata");
-            rejectedList.add(en);
-
-        }
 
 
 

@@ -26,9 +26,14 @@
             android:text="ChooseFromWaitlist" />
 
         <Button
-            android:id="@+id/back_to_waitlist_button"
+            android:id="@+id/back_to_1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Back" />
+
+        <ListView
+            android:id="@+id/waitlist_sample"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
