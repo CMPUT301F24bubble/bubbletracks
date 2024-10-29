@@ -1,20 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="16dp"
     android:background="@drawable/round_event"
     android:color="#B6C6DC"
-    >
-
+    android:orientation="vertical"
+    android:padding="16dp">
 
 
     <ImageView
         android:id="@+id/event_image"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
+        android:layout_height="200dp"
+        android:background="@drawable/round_event"
+        android:clipToOutline="true"
         android:scaleType="centerCrop"
         android:src="@drawable/images" />
 
@@ -28,72 +27,73 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="8dp"
+            android:layout_weight="1"
             android:background="#E0E0E0"
-            android:layout_weight="1">
+            android:orientation="vertical"
+            android:padding="8dp">
 
             <TextView
                 android:id="@+id/event_month"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Month"
+                android:textColor="#000000"
                 android:textSize="16sp"
-                android:textStyle="bold"
-                android:textColor="#000000" />
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/event_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="00"
+                android:textColor="#000000"
                 android:textSize="24sp"
-                android:textStyle="bold"
-                android:textColor="#000000" />
+                android:textStyle="bold" />
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_weight="2"
             android:orientation="vertical"
-            android:paddingStart="16dp"
-            android:layout_weight="2">
+            android:paddingStart="16dp">
 
             <TextView
                 android:id="@+id/event_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Time"
-                android:textSize="16sp"
-                android:textColor="#000000" />
+                android:textColor="#000000"
+                android:textSize="16sp" />
 
             <TextView
                 android:id="@+id/event_location"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Adress"
-                android:textSize="14sp"
-                android:textColor="#555555" />
+                android:textColor="#555555"
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/event_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="NatHacks"
+                android:textColor="#000000"
                 android:textSize="18sp"
-                android:textStyle="bold"
-                android:textColor="#000000" />
+                android:textStyle="bold" />
         </LinearLayout>
 
         <Button
             android:id="@+id/join_waitlist_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Join Waitlist"
+            android:layout_gravity="center"
             android:background="@drawable/round_event"
-            android:textColor="#FFFFFF"
             android:padding="12dp"
-            android:layout_gravity="center" />
+            android:text="Join Waitlist"
+            android:textColor="#FFFFFF"
+            android:backgroundTint="@color/home_blue"/>
     </LinearLayout>
 
 </LinearLayout>
