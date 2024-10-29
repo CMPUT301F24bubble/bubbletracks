@@ -1,6 +1,8 @@
 package com.example.bubbletracksapp;
 
 
+import android.util.Log;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -15,6 +17,22 @@ public class Entrant {
     private String[] name;
     private String email;
     private String phone;
+    private String deviceID;
+
+    public Entrant(String[] newName, String newEmail, String newPhone, String newDevice) {
+        this.name = newName;
+        this.email = newEmail;
+        this.phone = newPhone;
+        this.deviceID = newDevice;
+    }
+
+    public Entrant(){
+        Log.w("NewEntrant", "Entrant has empty strings for information.");
+        this.name = new String[]{"",""};
+        this.email = "";
+        this.phone = "";
+        this.deviceID = "";
+    }
 
     public String[] getName() {
         return name;
@@ -23,6 +41,8 @@ public class Entrant {
     public List<String> getNameAsList() {
         return Arrays.asList(name);
     }
+
+    public String getNameAsString() {return Arrays.toString(name); };
 
     public void setName(String first, String last) {
         this.name = new String[]{first, last};
