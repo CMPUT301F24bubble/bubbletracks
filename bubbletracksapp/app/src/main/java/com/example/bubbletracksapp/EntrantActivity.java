@@ -15,6 +15,9 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 
+/**
+ * This is a class for the entrants' activities with events
+ */
 public class EntrantActivity extends AppCompatActivity {
     Entrant entrant;
     Boolean inWaitlist = false;
@@ -32,10 +35,16 @@ public class EntrantActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * This modifies whether the entrant wants to join or leave the waitlist for an event
+     * @author Erza Tamon
+     * @param waitlistButton
+     *      adds/removes entrant from waitlist
+     */
     private void showAlertDialog(Button waitlistButton) {
-        if (!inWaitlist) {
-
-            AlertDialog joinDialog = new AlertDialog.Builder(EntrantActivity.this)
+        AlertDialog joinDialog;
+        if (!inWaitlist) { // Entrant wants to join waitlist
+            joinDialog = new AlertDialog.Builder(EntrantActivity.this)
                     .setTitle("Confirm Joining Waitlist")
                     .setMessage("Are you sure you want to join the waitlist for this event?")
                     .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
@@ -53,10 +62,9 @@ public class EntrantActivity extends AppCompatActivity {
                         }
                     })
                     .create();
-            joinDialog.show();
         }
-        else {
-            AlertDialog joinDialog = new AlertDialog.Builder(EntrantActivity.this)
+        else { // Entrant wants to leave waitlist
+            joinDialog = new AlertDialog.Builder(EntrantActivity.this)
                     .setTitle("Confirm Leaving Waitlist")
                     .setMessage("Are you sure you want to leave the waitlist for this event?")
                     .setPositiveButton("Leave", new DialogInterface.OnClickListener() {
@@ -74,66 +82,7 @@ public class EntrantActivity extends AppCompatActivity {
                         }
                     })
                     .create();
-            joinDialog.show();
         }
+        joinDialog.show();
     }
 }
-
-
-    /*    // Confirmation dialog
-        AlertDialog.Builder builder = getBuilder(waitlistButton);
-        waitlistButton.setOnClickListener(v -> {
-            AlertDialog dialog = builder.create();
-            dialog.show();
-            Toast.makeText(EntrantActivity.this, "Waitlist button clicked!", Toast.LENGTH_SHORT).show();
-        });
-
-    }
-    // Confirmation screen
-    private AlertDialog.Builder getBuilder(ExtendedFloatingActionButton waitlistButton) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        // Add the buttons.
-        if (!inWaitlist) {
-            builder.setMessage(R.string.join_confirmation);
-            builder.setPositiveButton(R.string.join, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int id) {
-                    // User confirms add to waitlist
-                    // waitList.add(entrant);
-                    // add entrant to waitlist database
-
-                    inWaitlist = true;
-                    waitlistButton.setText(R.string.leave_waitlist);
-                    // change colour as well
-                }
-            });
-            builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int id) {
-                    // User goes back to screen without being added to waitlist
-                }
-            });
-        }
-        else {
-            builder.setMessage(R.string.leave_confirmation);
-            builder.setPositiveButton(R.string.leave, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int id) {
-                    // User confirms remove from waitlist
-                    // waitList.remove(entrant);
-                    // remove entrant from waitlist database
-
-                    inWaitlist = false;
-                    waitlistButton.setText(R.string.join_waitlist);
-                    // change colour as well
-                }
-            });
-            builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int id) {
-                    // User goes back to screen without being added to waitlist
-                }
-            });
-        }
-        return builder;
-    }
-
-
-}
-*/
