@@ -15,9 +15,7 @@ import com.google.zxing.qrcode.QRCodeWriter;
  */
 public class QRGenerator {
 
-    public Bitmap generateQRCode(int id) throws WriterException {
-        String url = "https://www.bubbletracks.com/events/";
-        url += id;
+    public Bitmap generateQRCode(String url) throws WriterException {
         QRCodeWriter writer = new QRCodeWriter();
         BitMatrix bitMatrix = writer.encode(url, BarcodeFormat.QR_CODE, 512, 512);
         Bitmap bitmap = Bitmap.createBitmap(500, 500, Bitmap.Config.RGB_565);
