@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "191248639167",
+    "project_id": "bubbletracks-bubble",
+    "storage_bucket": "bubbletracks-bubble.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:191248639167:android:2211cfcc611862f60b520a",
+        "android_client_info": {
+          "package_name": "com.example.bubbletracksapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCe0TFh4IychAR1CjxqevDIgJfFJlolxmk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

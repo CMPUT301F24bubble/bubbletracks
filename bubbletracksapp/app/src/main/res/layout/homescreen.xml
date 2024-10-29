@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- Other content above buttons -->
+    <!-- Your Events, Tickets, Your Facility, Admin Access -->
+    <HorizontalScrollView
+        android:id="@+id/button_scroll_view"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:fillViewport="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:id="@+id/button_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/button_events"
+                style="@style/HomeButtons"
+                android:background="@color/home"
+                android:drawableTop="@drawable/events_icon"
+                android:text="Your Events"
+                android:textColorLink="#03A9F4" />
+
+            <Button
+                android:id="@+id/button_tickets"
+                style="@style/HomeButtons"
+                android:drawableTop="@drawable/ticketicon"
+                android:background="@color/home"
+                android:tint="@color/white"
+                android:text="Tickets" />
+
+            <Button
+                android:id="@+id/button_facility"
+                style="@style/HomeButtons"
+                android:drawableTop="@drawable/facility_icon"
+                android:background="@color/home"
+                android:text="Your Facility" />
+
+            <Button
+                android:id="@+id/button_admin"
+                style="@style/HomeButtons"
+                android:drawableTop="@drawable/baseline_key_24"
+                android:background="@color/home"
+                android:text="Admin Access" />
+
+        </LinearLayout>
+    </HorizontalScrollView>
+    <FrameLayout
+        android:id="@+id/content_holder"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toTopOf="@id/button_scroll_view"
+        app:layout_constraintTop_toBottomOf="@id/activity_title"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <TextView
+        android:id="@+id/activity_title"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        app:layout_constraintBottom_toTopOf="@id/content_holder"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:text="Activity Title"
+        android:textSize="50dp"/> <!--Always changing this depending on the activity-->
+
+</androidx.constraintlayout.widget.ConstraintLayout>
