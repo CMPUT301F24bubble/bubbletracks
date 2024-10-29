@@ -14,6 +14,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -106,12 +108,12 @@ public class EventDB {
 
         newEvent.setId(map.get("id").toString());
         newEvent.setName(map.get("name").toString());
-        newEvent.setDateTime(toLocalDateTime(map.get("dateTime")));
+        newEvent.setDateTime(toDate(map.get("dateTime")));
         newEvent.setDescription(map.get("description").toString());
         newEvent.setQRCode(map.get("QRCode").toString());
         Location location = toLocation(map.get("geolocation"));
-        newEvent.setRegistrationOpen(toLocalDateTime(map.get("registrationOpen")));
-        newEvent.setRegistrationClose(toLocalDateTime(map.get("registrationClose")));
+        newEvent.setRegistrationOpen(toDate(map.get("registrationOpen")));
+        newEvent.setRegistrationClose(toDate(map.get("registrationClose")));
         newEvent.setGeolocation(location);
         Image image = toImage(map.get("image"));
         newEvent.setImage(image);
@@ -122,7 +124,7 @@ public class EventDB {
         return newEvent;
     }
 
-    private LocalDateTime toLocalDateTime(Object dateTime){
+    private Date toDate(Object dateTime){
         //Need to figure out how to handle LocalDateTime
         return null;
     }

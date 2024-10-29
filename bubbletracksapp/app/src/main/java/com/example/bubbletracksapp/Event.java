@@ -3,19 +3,24 @@ package com.example.bubbletracksapp;
 import android.location.Location;
 import android.media.Image;
 
+import com.google.type.DateTime;
+
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.UUID;
 
 public class Event {
     private String id;
     private String name;
-    private LocalDateTime dateTime;
+    private Date dateTime;
     private String description;
     //QRCode should probably be another type of field INCOMPLETE
     private String QRCode;
     private Location geolocation;
-    private LocalDateTime registrationOpen;
-    private LocalDateTime registrationClose;
+    private Date registrationOpen;
+    private Date registrationClose;
     private Image image;
     private boolean needsGeolocation;
     private int maxCapacity;
@@ -33,9 +38,9 @@ public class Event {
 
     public void setName(String name) { this.name = name; }
 
-    public LocalDateTime getDateTime() { return dateTime; }
+    public Date getDateTime() { return dateTime; }
 
-    public void setDateTime(LocalDateTime dateTime) { this.dateTime = dateTime; }
+    public void setDateTime(Date dateTime) { this.dateTime = dateTime; }
 
     public String getDescription() { return description; }
 
@@ -43,15 +48,15 @@ public class Event {
 
     public Location getGeolocation() { return geolocation; }
 
-    public LocalDateTime getRegistrationOpen() { return registrationOpen; }
+    public Date getRegistrationOpen() { return registrationOpen; }
 
-    public void setRegistrationOpen(LocalDateTime registrationOpen) {
+    public void setRegistrationOpen(Date registrationOpen) {
         this.registrationOpen = registrationOpen;
     }
 
-    public LocalDateTime getRegistrationClose() { return registrationClose; }
+    public Date getRegistrationClose() { return registrationClose; }
 
-    public void setRegistrationClose(LocalDateTime registrationClose) {
+    public void setRegistrationClose(Date registrationClose) {
         this.registrationClose = registrationClose;
     }
 
