@@ -86,3 +86,5 @@
                 android:background="@drawable/round_event"
                 android:layout_marginStart="8dp" />
         </LinearLayout>
+    </LinearLayout>
+</ScrollView>
