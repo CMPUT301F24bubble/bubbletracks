@@ -61,6 +61,7 @@
 
         </LinearLayout>
     </HorizontalScrollView>
+    <!-- This is where each activity will go like "your Events" "Your Tickets" "admin Access" every screen will use this and just change the content -->
     <FrameLayout
         android:id="@+id/content_holder"
         android:layout_width="match_parent"
