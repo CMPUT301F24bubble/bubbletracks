@@ -96,7 +96,7 @@ public class EntrantDB {
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Log.w("deleteEntrant", "Error deleting entrant", e);
+                        Log.w("updateEntrant", "Error updating entrant", e);
                     }
                 });
     }
