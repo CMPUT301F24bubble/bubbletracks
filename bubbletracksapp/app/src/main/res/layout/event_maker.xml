@@ -42,7 +42,7 @@
             android:layout_height="wrap_content"
             android:text="Date and time" />
 
-        <Button
+        <TextView
             android:id="@+id/dateAndTime"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -55,7 +55,7 @@
             android:layout_height="wrap_content"
             android:text="Location" />
 
-        <Button
+        <TextView
             android:id="@+id/location"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
