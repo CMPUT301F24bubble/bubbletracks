@@ -23,6 +23,7 @@ public class EntrantEditActivity extends AppCompatActivity {
      */
 
     private ProfileManagementBinding binding;
+    EntrantDB db = new EntrantDB();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -56,6 +57,8 @@ public class EntrantEditActivity extends AppCompatActivity {
                 currentUser.setName(newFirst, newLast);
                 currentUser.setPhone(newPhone);
                 currentUser.setEmail(newEmail);
+
+                db.addEntrant(currentUser);
 
                 Log.d("New user info:", currentUser.getNameAsString());
 
