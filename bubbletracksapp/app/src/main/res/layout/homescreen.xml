@@ -24,7 +24,7 @@
             <Button
                 android:id="@+id/button_events"
                 style="@style/HomeButtons"
-                android:background="@color/home"
+                android:backgroundTint="@color/home"
                 android:drawableTop="@drawable/events_icon"
                 android:text="Your Events"
                 android:textColorLink="#03A9F4" />

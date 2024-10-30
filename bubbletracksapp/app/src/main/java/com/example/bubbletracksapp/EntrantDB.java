@@ -61,13 +61,13 @@ public class EntrantDB {
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        Log.d("deleteEntrant", "Entrant successfully deleted!");
+                        Log.d("deleteWaitEntrant", "Entrant successfully deleted!");
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Log.w("deleteEntrant", "Error deleting entrant", e);
+                        Log.w("deleteWaitEntrant", "Error deleting entrant", e);
                     }
                 });
     }
