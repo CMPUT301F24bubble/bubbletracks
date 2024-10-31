@@ -17,6 +17,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 public class EntrantDB {
 
@@ -72,37 +73,56 @@ public class EntrantDB {
                 });
     }
 
-    // Make it clear when it returns nothing INCOMPLETE
-//    public Entrant getEntrant(String ID)
-//    {
-//        final Entrant[] newEntrant = {new Entrant()};
-//
-////        DocumentReference entrantRef = getDocument(ID);
-//        DocumentReference entrantRef = db.collection("entrants").document(ID);
-//        entrantRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-//            @Override
-//            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-//                if (task.isSuccessful()) {
-//                    DocumentSnapshot document = task.getResult();
-//                    if (document.exists()) {
-//                        Map<String, Object> newEntrantMap = document.getData();
-//                        Log.d("TAGaa", newEntrantMap.toString());
-//                        newEntrant[0] = mapToEntrant(newEntrantMap);
-//                        Log.d("TAGa", "DocumentSnapshot data: " + document.getData());
-//                    } else {
-//                        Log.d("TAGa", "No such document");
-//                    }
-//                } else {
-//                    Log.d("TAGa", "get failed with ", task.getException());
-//                }
-//            }
-//        });
-//
-//        Log.d("wok", newEntrant[0].getID());
-//
-//        return newEntrant[0];
-//    }
+    public void updateEntrant(Entrant newEntrant)
+    {
+        //Maybe this should be in Entrant class INCOMPLETE
+        Map<String, Object> newEntrantMap = entrantToMap(newEntrant);
 
+        String docID = newEntrant.getID();
+
+        entrantsRef.document(docID)
+                .update(newEntrantMap)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d("updateEntrant", "Entrant successfully updated!");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w("updateEntrant", "Error updating entrant", e);
+                    }
+                });
+    }
+
+
+    public CompletableFuture<Entrant> getEntrant(String ID)
+    {
+        CompletableFuture<Entrant> returnCode = new CompletableFuture<>();
+        DocumentReference entrantRef = entrantsRef.document(ID);
+
+        entrantRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        Map<String, Object> newEntrantMap = document.getData();
+                        Entrant newEntrant = mapToEntrant(newEntrantMap);
+
+                        returnCode.complete(newEntrant);
+                        Log.d("EntrantDB", "DocumentSnapshot data: " + document.getData());
+                    } else {
+                        Log.d("EntrantDB", "No such document");
+                    }
+                } else {
+                    Log.d("EntrantDB", "get failed with ", task.getException());
+                }
+            }
+        });
+        return returnCode;
+    }
 
     // These two should be in Entrant
     //Update with required fields INCOMPLETE
@@ -117,7 +137,7 @@ public class EntrantDB {
     }
 
     //Update with required fields INCOMPLETE
-    private Entrant mapToEntrant(Map<String, Object> map) {
+    private static Entrant mapToEntrant(Map<String, Object> map) {
         Entrant newEntrant = new Entrant();
 
         ArrayList<String> name = (ArrayList<String>)map.get("name");
