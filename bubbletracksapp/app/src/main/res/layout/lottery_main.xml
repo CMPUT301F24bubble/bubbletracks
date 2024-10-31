@@ -81,8 +81,8 @@
 
             <Spinner
                 android:id="@+id/waitlistChooseCount"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:background="@drawable/round_event"
                 android:layout_marginStart="8dp" />
         </LinearLayout>
