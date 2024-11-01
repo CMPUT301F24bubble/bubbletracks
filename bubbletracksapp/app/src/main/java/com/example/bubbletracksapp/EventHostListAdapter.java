@@ -10,23 +10,25 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatButton;
+import androidx.appcompat.widget.AppCompatImageButton;
 
 import java.util.ArrayList;
 
 public class EventHostListAdapter extends ArrayAdapter<Event>{
-    interface EventHostI {
-        void viewWaitlist(Event event);
-        void editEvent(Event event);
-    }
-    private EventHostI listener;
+//    interface EventHostI {
+//        void viewWaitlist(Event event);
+//        void editEvent(Event event);
+//    }
+//    private EventHostI listener;
 
     public EventHostListAdapter(Context context, ArrayList<Event> events) {
         super(context, 0, events);
-        if (context instanceof EventHostI) {
-            listener = (EventHostI) context;
-        } else {
-            throw new RuntimeException(context + " must implement EventHostI");
-        }
+//        if (context instanceof EventHostI) {
+//            listener = (EventHostI) context;
+//        } else {
+//            throw new RuntimeException(context + " must implement EventHostI");
+//        }
     }
 
     @NonNull
@@ -47,8 +49,8 @@ public class EventHostListAdapter extends ArrayAdapter<Event>{
         TextView eventLocationText = view.findViewById(R.id.event_location);
         TextView eventTitleText = view.findViewById(R.id.event_title);
 
-        Button seePeopleButton = view.findViewById(R.id.see_people_button);
-        Button editEventButton = view.findViewById(R.id.edit_event_button);
+        AppCompatImageButton seePeopleButton = view.findViewById(R.id.see_people_button);
+        AppCompatImageButton editEventButton = view.findViewById(R.id.edit_event_button);
 
 
         eventMonthText.setText(event.getMonth());
@@ -60,18 +62,27 @@ public class EventHostListAdapter extends ArrayAdapter<Event>{
         seePeopleButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                listener.viewWaitlist(event);
+                viewWaitlist(event);
             }
         });
 
         editEventButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                listener.editEvent(event);
+                editEvent(event);
             }
         });
 
 
         return view;
     }
+
+    public void viewWaitlist(Event event) {
+
+    }
+
+    public void editEvent(Event event) {
+
+    }
+
 }
