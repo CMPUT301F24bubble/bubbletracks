@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="HomeButtons" parent="Widget.AppCompat.Button">
+        <item name="android:background">@color/home</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:layout_width">150dp</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+</resources>

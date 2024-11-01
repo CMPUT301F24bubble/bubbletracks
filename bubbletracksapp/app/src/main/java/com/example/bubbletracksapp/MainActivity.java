@@ -2,14 +2,10 @@ package com.example.bubbletracksapp;
 
 import static java.util.UUID.randomUUID;
 
-import android.content.Intent;
 import android.os.Bundle;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.util.Log;
@@ -20,8 +16,7 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
-import com.example.bubbletracksapp.databinding.ActivityMainBinding;
-import com.google.firebase.installations.FirebaseInstallations;
+import com.example.bubbletracksapp.databinding.HomescreenBinding;
 
 import android.view.Menu;
 import android.view.MenuItem;
@@ -31,7 +26,7 @@ import java.util.UUID;
 public class MainActivity extends AppCompatActivity {
 
     private AppBarConfiguration appBarConfiguration;
-    private ActivityMainBinding binding;
+    private HomescreenBinding binding;
     private Entrant currentUser;
     private String currentDeviceID;
 
@@ -39,25 +34,12 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        binding = HomescreenBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         currentDeviceID = getDeviceID();
         Log.d("DeviceID:",currentDeviceID);
 
-        setSupportActionBar(binding.toolbar);
-
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
-        appBarConfiguration = new AppBarConfiguration.Builder(navController.getGraph()).build();
-        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
-
-        binding.fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, EntrantEditActivity.class); //class where you are, then class where you wanan go
-                startActivity(intent);
-            }
-        });
     }
 
     @Override
@@ -81,14 +63,6 @@ public class MainActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
-
-    @Override
-    public boolean onSupportNavigateUp() {
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
-        return NavigationUI.navigateUp(navController, appBarConfiguration)
-                || super.onSupportNavigateUp();
-    }
-
     /**
      * This function is not implemented. It just returns a random string every time.
      * https://firebase.google.com/docs/projects/manage-installations#java_2
