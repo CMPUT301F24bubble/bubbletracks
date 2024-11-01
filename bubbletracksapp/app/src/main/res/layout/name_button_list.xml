@@ -12,17 +12,20 @@
             android:id="@+id/left_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_marginTop="3dp"
+            android:layout_weight="0.5"
             android:text="TextView"
             android:textAlignment="center"
             android:textSize="24sp" />
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/right_button_view"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Button"
-            android:textSize="24sp" />
+            android:layout_height="40dp"
+            android:layout_margin="0dp"
+            android:layout_weight="0.5"
+            android:background="@drawable/round_event"
+            android:backgroundTint="#34B140"
+            android:text="Redraw" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
