@@ -83,6 +83,30 @@ public class OrganizerEventHosting extends Fragment{
         e.setName("Nathacks");
         Calendar c = Calendar.getInstance();
         e.setDate(c);
+
+        Entrant en = new Entrant();
+        en.setName("hola", " tata");
+        e.addToWaitList(en);
+
+        en = new Entrant();
+        en.setName("ches", " tata");
+        e.addToWaitList(en);
+
+        en = new Entrant();
+        en.setName("zoe", " tata");
+        e.addToWaitList(en);
+
+        en = new Entrant();
+        en.setName("sam", " tata");
+        e.addToWaitList(en);
+
+        en = new Entrant();
+        en.setName("eaaaa", " tata");
+        e.addToCancelledList(en);
+        en = new Entrant();
+        en.setName("misete", " tata");
+        e.addToCancelledList(en);
+
         hostedEvents.add(e);
 
         e = new Event();
@@ -91,28 +115,33 @@ public class OrganizerEventHosting extends Fragment{
         e.setDate(c);
         hostedEvents.add(e);
 
+        en.setName("hola", " tata");
+        e.addToWaitList(en);
+
+        en = new Entrant();
+        en.setName("ches", " tata");
+        e.addToWaitList(en);
+
+        en = new Entrant();
+        en.setName("zoe", " tata");
+        e.addToWaitList(en);
+
+        en = new Entrant();
+        en.setName("sam", " tata");
+        e.addToWaitList(en);
+
+        en = new Entrant();
+        en.setName("eaaaa", " tata");
+        e.addToCancelledList(en);
+        en = new Entrant();
+        en.setName("misete", " tata");
+        e.addToCancelledList(en);
+
         Log.d("TAG", view.getContext().toString());
         eventListView = binding.reusableListView;
         eventListAdapter = new EventHostListAdapter(this.getContext(), hostedEvents);
         eventListView.setAdapter(eventListAdapter);
-        //        waitlistListView = binding.waitlistList;
-        //        waitlistAdapter = new EntrantListAdapter(this, waitList);
-        //        waitlistListView.setAdapter(waitlistAdapter);
-        //
-        //
 
-//        binding.reusableListView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Intent intent = new Intent(OrganizerEventHosting.this, OrganizerEditActivity.class);
-//                intent.putParcelableArrayListExtra("wait", waitList);
-//                intent.putParcelableArrayListExtra("invited", invitedList);
-//                intent.putParcelableArrayListExtra("rejected", rejectedList);
-//                intent.putParcelableArrayListExtra("cancelled", cancelledList);
-//
-//                startActivity(intent);
-//            }
-//        });
 
     }
 
