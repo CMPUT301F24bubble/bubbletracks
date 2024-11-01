@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Event Editor Title -->
+        <TextView
+            android:id="@+id/titleEventEditor"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="EVENT EDITOR"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            android:backgroundTint="#0000FF"
+            android:padding="8dp"
+            android:gravity="center"/>
+
+        <!-- Event Name -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Event name" />
+
+        <EditText
+            android:id="@+id/eventName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Brandi Carlile Concert"
+            android:editable="false"
+          />
+
+        <!-- Date and Time -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Date and time" />
+
+        <TextView
+            android:id="@+id/dateAndTime"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Friday, December 3"
+   />
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Location" />
+
+        <TextView
+            android:id="@+id/location"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="9660 Jasper Ave"
+    />
+
+        <!-- Optional Header -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Optional" />
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <ImageView
+                android:id="@+id/photoUploadIcon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/baseline_image_search_24"
+                android:backgroundTint="@color/search"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Add photo header" />
+        </LinearLayout>
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Maximum Entrants:" />
+
+        <EditText
+            android:id="@+id/maximumEntrants"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="999"
+            android:inputType="number" />
+
+        <!-- Delete and Update Buttons -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center">
+
+            <Button
+                android:id="@+id/deleteButton"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="DELETE"
+                android:backgroundTint="#FF0000"/>
+
+            <Button
+                android:id="@+id/updateButton"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="UPDATE"
+                android:backgroundTint="#00FF00"/>
+        </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>

@@ -39,20 +39,34 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:layout_marginTop="16dp">
-
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/darker_gray"
+                android:layout_marginVertical="8dp" />
             <Button
                 android:id="@+id/button_agree"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:backgroundTint="#00C853"
-                android:text="Continue" />
+                android:background="@android:color/transparent"
+                android:text="Continue"
+                android:textSize="25dp"
+                android:textColor="#00C853" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/darker_gray"
+                android:layout_marginVertical="8dp" />
 
             <Button
                 android:id="@+id/button_cancel"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:backgroundTint="#BD0000"
-                android:text="Cancel" />
+                android:background="@android:color/transparent"
+                android:text="Cancel"
+                android:textSize="25dp"
+                android:textColor="#BD0000" />
         </LinearLayout>
     </LinearLayout>
 </androidx.cardview.widget.CardView>

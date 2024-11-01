@@ -2,10 +2,12 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Other content above buttons -->
     <!-- Your Events, Tickets, Your Facility, Admin Access -->
+    <!-- Why aren't the buttons changing color? Insufficient color contrast ratio? -->
     <HorizontalScrollView
         android:id="@+id/button_scroll_view"
         android:layout_width="match_parent"
@@ -24,7 +26,7 @@
             <Button
                 android:id="@+id/button_events"
                 style="@style/HomeButtons"
-                android:backgroundTint="@color/home"
+                android:background="@color/home"
                 android:drawableTop="@drawable/events_icon"
                 android:text="Your Events"
                 android:textColorLink="#03A9F4" />
@@ -32,27 +34,33 @@
             <Button
                 android:id="@+id/button_tickets"
                 style="@style/HomeButtons"
-                android:drawableTop="@drawable/ticketicon"
-                android:background="@color/home"
-                android:tint="@color/white"
-                android:text="Tickets" />
 
-            <Button
+                android:drawableTop="@drawable/ticketicon"
+                android:text="Tickets"
+                android:backgroundTint="@color/home_blue"
+                android:tint="@color/white" />
+
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/button_facility"
                 style="@style/HomeButtons"
-                android:drawableTop="@drawable/facility_icon"
-                android:background="@color/home"
-                android:text="Your Facility" />
+                android:backgroundTint="@color/home_blue"
 
-            <Button
+                android:drawableTop="@drawable/facility_icon"
+                android:text="Your Facility"
+                 />
+
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/button_admin"
                 style="@style/HomeButtons"
                 android:drawableTop="@drawable/baseline_key_24"
-                android:background="@color/home"
-                android:text="Admin Access" />
+
+                android:text="Admin Access"
+                android:backgroundTint="@color/home_blue"
+                />
 
         </LinearLayout>
     </HorizontalScrollView>
+    <!-- This is where each activity will go like "your Events" "Your Tickets" "admin Access" every screen will use this and just change the content -->
     <FrameLayout
         android:id="@+id/content_holder"
         android:layout_width="match_parent"
