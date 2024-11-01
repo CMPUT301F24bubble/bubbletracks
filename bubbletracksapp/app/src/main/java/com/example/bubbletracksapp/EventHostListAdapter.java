@@ -1,6 +1,7 @@
 package com.example.bubbletracksapp;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -78,6 +79,15 @@ public class EventHostListAdapter extends ArrayAdapter<Event>{
     }
 
     public void viewWaitlist(Event event) {
+        Context context = EventHostListAdapter.this.getContext();
+
+        Intent intent = new Intent(EventHostListAdapter.this.getContext(), OrganizerEditActivity.class);
+        intent.putParcelableArrayListExtra("wait", event.getWaitList());
+        intent.putParcelableArrayListExtra("invited", event.getInvitedList());
+        intent.putParcelableArrayListExtra("rejected", event.getRejectedList());
+        intent.putParcelableArrayListExtra("cancelled", event.getCancelledList());
+
+        context.startActivity(intent);
 
     }
 
