@@ -12,10 +12,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -88,12 +85,12 @@ public class EventDB {
 
         newMap.put("id", event.getId());
         newMap.put("name", event.getName());
-        newMap.put("dateTime", event.getDateTime());
+        newMap.put("dateTime", event.getDateTime().getTime());
         newMap.put("description", event.getDescription());
         newMap.put("QRCode", event.getQRCode());
         newMap.put("geolocation", event.getGeolocation());
-        newMap.put("registrationOpen", event.getRegistrationOpen());
-        newMap.put("registrationClose", event.getRegistrationClose());
+        newMap.put("registrationOpen", event.getRegistrationOpen().getTime());
+        newMap.put("registrationClose", event.getRegistrationClose().getTime());
         newMap.put("image", event.getImage());
         newMap.put("needsGeolocation", event.isNeedsGeolocation());
         newMap.put("maxCapacity", event.getMaxCapacity());
@@ -108,15 +105,14 @@ public class EventDB {
 
         newEvent.setId(map.get("id").toString());
         newEvent.setName(map.get("name").toString());
-        newEvent.setDateTime(toDate(map.get("dateTime")));
+        newEvent.setDateTime(toCalendar(map.get("dateTime")));
         newEvent.setDescription(map.get("description").toString());
         newEvent.setQRCode(map.get("QRCode").toString());
         Location location = toLocation(map.get("geolocation"));
-        newEvent.setRegistrationOpen(toDate(map.get("registrationOpen")));
-        newEvent.setRegistrationClose(toDate(map.get("registrationClose")));
+        newEvent.setRegistrationOpen(toCalendar(map.get("registrationOpen")));
+        newEvent.setRegistrationClose(toCalendar(map.get("registrationClose")));
         newEvent.setGeolocation(location);
-        Image image = toImage(map.get("image"));
-        newEvent.setImage(image);
+        newEvent.setImage(map.get("image").toString());
         newEvent.setNeedsGeolocation((Boolean) map.get("needsGeolocation"));
         newEvent.setMaxCapacity(Integer.parseInt(map.get("maxCapacity").toString()));
         newEvent.setPrice(Integer.parseInt(map.get("price").toString()));
@@ -124,7 +120,7 @@ public class EventDB {
         return newEvent;
     }
 
-    private Date toDate(Object dateTime){
+    private Calendar toCalendar(Object dateTime){
         //Need to figure out how to handle LocalDateTime
         return null;
     }

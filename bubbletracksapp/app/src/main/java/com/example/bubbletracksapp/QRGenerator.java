@@ -1,7 +1,6 @@
 package com.example.bubbletracksapp;
 
 import android.graphics.Bitmap;
-import android.widget.ImageView;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
