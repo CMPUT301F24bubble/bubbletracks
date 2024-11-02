@@ -19,9 +19,11 @@ import java.util.ArrayList;
  * This is a class for the entrants' activities with events
  */
 public class EntrantActivity extends AppCompatActivity {
-    Entrant entrant;
+    Event event = new Event();
     Boolean inWaitlist = false;
-    ArrayList<Entrant> waitList;
+    Entrant entrant = new Entrant();
+    private final ArrayList<Entrant> entrantArrayList = event.getWaitList();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,7 +33,7 @@ public class EntrantActivity extends AppCompatActivity {
         Button waitlistButton = findViewById(R.id.join_waitlist_button);
         // Change button text depending if the entrant has joined the waitlist or not
         waitlistButton.setOnClickListener(view -> {
-            showAlertDialog(waitlistButton);
+            showAlertDialog(waitlistButton, entrantArrayList);
         });
     }
 
@@ -39,9 +41,9 @@ public class EntrantActivity extends AppCompatActivity {
      * This modifies whether the entrant wants to join or leave the waitlist for an event
      * @author Erza Tamon
      * @param waitlistButton
-     *      adds/removes entrant from waitlist
+     *      adds/removes entrant from waitlist upon user click
      */
-    private void showAlertDialog(Button waitlistButton) {
+    private void showAlertDialog(Button waitlistButton, ArrayList<Entrant> entrantArrayList) {
         AlertDialog joinDialog;
         if (!inWaitlist) { // Entrant wants to join waitlist
             joinDialog = new AlertDialog.Builder(EntrantActivity.this)
@@ -50,6 +52,7 @@ public class EntrantActivity extends AppCompatActivity {
                     .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
+                            event.addToWaitList(entrant);
                             waitlistButton.setText(R.string.leave_waitlist);
                             inWaitlist = true;
                             dialogInterface.dismiss();
@@ -70,6 +73,7 @@ public class EntrantActivity extends AppCompatActivity {
                     .setPositiveButton("Leave", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
+                            event.deleteFromWaitList(entrant);
                             waitlistButton.setText(R.string.join_waitlist);
                             inWaitlist = false;
                             dialogInterface.dismiss();

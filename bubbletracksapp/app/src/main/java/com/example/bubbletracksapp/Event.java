@@ -3,7 +3,6 @@ package com.example.bubbletracksapp;
 import android.location.Location;
 import android.media.Image;
 
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Formatter;
@@ -114,8 +113,9 @@ public class Event {
         return waitList;
     }
 
-    public void setWaitList(ArrayList<Entrant> waitList) {
+    public ArrayList<Entrant> setWaitList(ArrayList<Entrant> waitList) {
         this.waitList = waitList;
+        return waitList;
     }
 
     public void addToWaitList(Entrant entrant) {
