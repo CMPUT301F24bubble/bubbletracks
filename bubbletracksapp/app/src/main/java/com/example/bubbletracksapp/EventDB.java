@@ -94,7 +94,8 @@ public class EventDB {
         newMap.put("image", event.getImage());
         newMap.put("needsGeolocation", event.isNeedsGeolocation());
         newMap.put("maxCapacity", event.getMaxCapacity());
-        newMap.put("Price", event.getPrice());
+        newMap.put("price", event.getPrice());
+        newMap.put("waitListLimit", event.getWaitListLimit());
 
         return newMap;
     }
@@ -116,6 +117,7 @@ public class EventDB {
         newEvent.setNeedsGeolocation((Boolean) map.get("needsGeolocation"));
         newEvent.setMaxCapacity(Integer.parseInt(map.get("maxCapacity").toString()));
         newEvent.setPrice(Integer.parseInt(map.get("price").toString()));
+        newEvent.setWaitListLimit(Integer.parseInt(map.get("waitListLimit").toString()));
 
         return newEvent;
     }

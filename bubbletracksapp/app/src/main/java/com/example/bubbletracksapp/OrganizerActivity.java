@@ -9,6 +9,7 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -28,11 +29,12 @@ import java.util.Locale;
 public class OrganizerActivity extends AppCompatActivity {
 
     // declare all views necessary
-    private EditText nameText, descriptionText, maxCapacityText, priceText;
+    private EditText nameText, descriptionText, maxCapacityText, priceText, waitListLimitText;
     private Button dateTimeButton, registrationOpenButton, registrationCloseButton,
             uploadPhotoButton, createButton;
     private TextView dateTimeText, registrationOpenText, registrationCloseText;
     private ImageView posterImage;
+    private CheckBox requireGeolocationCheckBox;
 
     // declare calendar variables necessary
     private Calendar dateTime, registrationOpen, registrationClose;
@@ -49,18 +51,20 @@ public class OrganizerActivity extends AppCompatActivity {
 
         // find all the views using their ids
         nameText = findViewById(R.id.textName);
-        descriptionText = findViewById(R.id.textDescription);
-        maxCapacityText = findViewById(R.id.textMaxCapacity);
-        priceText = findViewById(R.id.textPrice);
-        createButton = findViewById(R.id.buttonCreate);
         dateTimeButton = findViewById(R.id.buttonDateTime);
         dateTimeText = findViewById(R.id.textDateTime);
+        descriptionText = findViewById(R.id.textDescription);
         registrationOpenButton = findViewById(R.id.buttonRegistrationOpen);
         registrationOpenText = findViewById(R.id.textRegistrationOpen);
         registrationCloseButton = findViewById(R.id.buttonRegistrationClose);
         registrationCloseText = findViewById(R.id.textRegistrationClose);
+        maxCapacityText = findViewById(R.id.textMaxCapacity);
+        priceText = findViewById(R.id.textPrice);
+        waitListLimitText = findViewById(R.id.textWaitListLimit);
+        requireGeolocationCheckBox = findViewById(R.id.checkBoxRequireGeolocation);
         uploadPhotoButton = findViewById(R.id.buttonUploadPhoto);
         posterImage = findViewById(R.id.imagePoster);
+        createButton = findViewById(R.id.buttonCreate);
 
         // initialize the activity result launcher
         uploadImageLauncher = registerForActivityResult(new ActivityResultContracts.GetContent(), uri -> {
@@ -242,6 +246,7 @@ public class OrganizerActivity extends AppCompatActivity {
         String registrationCloseString = registrationCloseText.getText().toString().trim();
         String maxCapacity = maxCapacityText.getText().toString().trim();
         String price = priceText.getText().toString().trim();
+        String waitListLimit = waitListLimitText.getText().toString().trim();
 
         // make sure the required fields are filled
         if (name.isEmpty() || maxCapacity.isEmpty() || dateTimeString.equals("Not selected")
@@ -259,6 +264,8 @@ public class OrganizerActivity extends AppCompatActivity {
             event.setRegistrationClose(registrationClose);
             event.setMaxCapacity(Integer.parseInt(maxCapacity));
             event.setPrice(Integer.parseInt(price));
+            event.setWaitListLimit(Integer.parseInt(waitListLimit));
+            event.setNeedsGeolocation(requireGeolocationCheckBox.isChecked());
             event.setQRCode("https://www.bubbletracks.com/events/" + event.getId());
 
             // store the event

@@ -17,7 +17,8 @@ public class Event {
     private String image;
     private boolean needsGeolocation;
     private int maxCapacity;
-    private int Price;
+    private int price;
+    private int WaitListLimit;
 
     public Event(){
         this.id = UUID.randomUUID().toString();
@@ -73,7 +74,11 @@ public class Event {
 
     public void setMaxCapacity(int maxCapacity) { this.maxCapacity = maxCapacity; }
 
-    public int getPrice() { return Price; }
+    public int getPrice() { return price; }
 
-    public void setPrice(int price) { Price = price; }
+    public void setPrice(int price) { this.price = price; }
+
+    public int getWaitListLimit() { return WaitListLimit;}
+
+    public void setWaitListLimit(int waitListLimit) { WaitListLimit = waitListLimit; }
 }
