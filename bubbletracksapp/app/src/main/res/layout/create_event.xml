@@ -121,6 +121,36 @@
             android:inputType="number"
             android:layout_marginTop="16dp" />
 
+        <!--edit text to optionally limit the number of entrants allowed in the waiting list-->
+        <EditText
+            android:id="@+id/textWaitListLimit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Wait List Size Limit (optional)"
+            android:inputType="number"
+            android:layout_marginTop="16dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="16dp">
+
+            <!--check box to indicate if the entrant's geolocation is required-->
+            <CheckBox
+                android:id="@+id/checkBoxRequireGeolocation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <!--text view to indicate the usage of the check box-->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Require entrant's geolocation"
+                android:paddingStart="8dp"
+                android:gravity="center_vertical" />
+        </LinearLayout>
+
         <!--button that allows the user to upload an image from device-->
         <Button
             android:id="@+id/buttonUploadPhoto"
