@@ -1,5 +1,7 @@
 package com.example.bubbletracksapp;
 
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.os.Bundle;
 
 import com.example.bubbletracksapp.databinding.HomescreenBinding;
@@ -30,6 +32,14 @@ public class MainActivity extends AppCompatActivity {
 
         binding = HomescreenBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        if (savedInstanceState == null) {
+            getSupportFragmentManager().beginTransaction()
+                    .setReorderingAllowed(true)
+                    .add(R.id.content_holder, OrganizerEventHosting.class, null)
+                    .commit();
+        }
+
 
     }
 

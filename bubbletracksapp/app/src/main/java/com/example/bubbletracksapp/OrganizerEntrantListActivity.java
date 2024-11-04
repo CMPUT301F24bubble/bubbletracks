@@ -4,13 +4,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.bubbletracksapp.databinding.OrganizerWaitlistBinding;
+import com.example.bubbletracksapp.databinding.LotteryMainExtendBinding;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -25,7 +24,7 @@ import java.util.Collections;
  */
 public class OrganizerEntrantListActivity extends AppCompatActivity implements CancelledListAdapter.CancelledEntrantI {
 
-    private OrganizerWaitlistBinding binding;
+    private LotteryMainExtendBinding binding;
 
     //To be changed to waitlist class INCOMPLETE
     // waitList contains all the entrants that joined the waitlist
@@ -58,7 +57,7 @@ public class OrganizerEntrantListActivity extends AppCompatActivity implements C
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        binding = OrganizerWaitlistBinding.inflate(getLayoutInflater());
+        binding = LotteryMainExtendBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         // INCOMPLETE
@@ -76,20 +75,20 @@ public class OrganizerEntrantListActivity extends AppCompatActivity implements C
             cancelledList.addAll(in.getParcelableArrayListExtra("cancelled"));
         }
 
-        waitlistListView = binding.waitlistList;
+        waitlistListView = binding.waitlistView;
         waitlistAdapter = new EntrantListAdapter(this, waitList);
         waitlistListView.setAdapter(waitlistAdapter);
 
-        invitedListView = binding.invitedList;
+        invitedListView = binding.invitedListView;
         invitedAdapter = new InvitedListAdapter(this, invitedList);
         invitedListView.setAdapter(invitedAdapter);
 
-        cancelledListView = binding.rejectedList;
+        cancelledListView = binding.cancelledListView;
         cancelledAdapter = new CancelledListAdapter(this, cancelledList);
         cancelledListView.setAdapter(cancelledAdapter);
         Log.d("TAG", "onViewCreated: ");
 
-        binding.toSampleButton.setOnClickListener(new View.OnClickListener() {
+        binding.backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(OrganizerEntrantListActivity.this, OrganizerEditActivity.class);

@@ -4,16 +4,17 @@ import android.content.Intent;
 import android.os.Bundle;;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Spinner;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.bubbletracksapp.databinding.OrganizerWaitlistSampleBinding;
+import com.example.bubbletracksapp.databinding.LotteryMainBinding;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 /**
  * Allows the organizer to sample N entrants from the waitlist.
@@ -33,12 +34,12 @@ public class OrganizerEditActivity extends AppCompatActivity {
     ArrayAdapter<String> waitlistAdapter;
 
 
-    private OrganizerWaitlistSampleBinding binding;
+    private LotteryMainBinding binding;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = OrganizerWaitlistSampleBinding.inflate(getLayoutInflater());
+        binding = LotteryMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
 
@@ -59,56 +60,37 @@ public class OrganizerEditActivity extends AppCompatActivity {
         }
 
 
-        // TEMP FUNCTION TO ADD ENTANS, SHOULD BE CHANGED TO GET fom LAST INTENT INCOMPLETE
-        if(in.getParcelableArrayListExtra("wait") == null) {
-            Entrant en = new Entrant();
-            en.setName("hola", " tata");
-            waitList.add(en);
-
-            en = new Entrant();
-            en.setName("ches", " tata");
-            waitList.add(en);
-
-            en = new Entrant();
-            en.setName("zoe", " tata");
-            waitList.add(en);
-
-            en = new Entrant();
-            en.setName("sam", " tata");
-            waitList.add(en);
-
-            en = new Entrant();
-            en.setName("eaaaa", " tata");
-            cancelledList.add(en);
-            en = new Entrant();
-            en.setName("misete", " tata");
-            cancelledList.add(en);
-
-        }
-
         for (int i = 0; i < waitList.size(); i++) {
             waitListArray.add(waitList.get(i).getNameAsString());
         }
 
-        waitlistListView = binding.waitlistSample;
+        waitlistListView = binding.reusableListView;
         waitlistAdapter = new ArrayAdapter<String>(this.getApplicationContext(), R.layout.list_simple_view,  waitListArray);
         waitlistListView.setAdapter(waitlistAdapter);
 
 
-        binding.drawEntrants.setOnClickListener(new View.OnClickListener() {
+        Spinner nSpinner = binding.waitlistChooseCount;
+        List<String> spinList = new ArrayList<String>();
+        for (int i=1; i<=waitList.size(); i++){
+            spinList.add(String.valueOf(i));
+        }
+        ArrayAdapter<String> spinAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, spinList);
+        spinAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        nSpinner.setAdapter(spinAdapter);
+
+        binding.chooseFromWaitlistButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                EditText nText = binding.numberToDraw;
-                String nStr = nText.getText().toString();
+                Spinner nSpin = binding.waitlistChooseCount;
+                String nStr = nSpin.getSelectedItem().toString();
                 int n = Integer.parseInt(nStr);
                 drawEntrants(n);
                 startListActivity();
-
             }
         });
 
 
-        binding.backTo1.setOnClickListener(new View.OnClickListener() {
+        binding.backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // Filled with going to the last activity. INCOMPLETE
