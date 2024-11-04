@@ -26,41 +26,41 @@
             <Button
                 android:id="@+id/button_events"
                 style="@style/HomeButtons"
-                android:background="@color/home_blue"
+                android:background="@color/home"
                 android:drawableTop="@drawable/events_icon"
                 android:text="Your Events"
-                android:backgroundTint="@color/home_blue" />
+                android:textColorLink="#03A9F4" />
 
             <Button
-
                 android:id="@+id/button_tickets"
                 style="@style/HomeButtons"
+
                 android:drawableTop="@drawable/ticketicon"
-                android:background="@color/home_blue"
-                android:tint="@color/white"
                 android:text="Tickets"
                 android:backgroundTint="@color/home_blue"
-                />
+                android:tint="@color/white" />
 
-            <Button
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/button_facility"
                 style="@style/HomeButtons"
-                android:drawableTop="@drawable/facility_icon"
-                android:background="@color/home_blue"
-                android:text="Your Facility"
-                android:backgroundTint="@color/home_blue" />
+                android:backgroundTint="@color/home_blue"
 
-            <Button
+                android:drawableTop="@drawable/facility_icon"
+                android:text="Your Facility"
+                 />
+
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/button_admin"
                 style="@style/HomeButtons"
                 android:drawableTop="@drawable/baseline_key_24"
-                android:background="@color/home_blue"
+
                 android:text="Admin Access"
                 android:backgroundTint="@color/home_blue"
                 />
 
         </LinearLayout>
     </HorizontalScrollView>
+    <!-- This is where each activity will go like "your Events" "Your Tickets" "admin Access" every screen will use this and just change the content -->
     <FrameLayout
         android:id="@+id/content_holder"
         android:layout_width="match_parent"

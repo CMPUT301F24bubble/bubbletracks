@@ -44,4 +44,6 @@
         vestibulum. Fusce dictum libero quis erat maximus, vitae volutpat diam dignissim.
     </string>
     <string name="search_hint">Search\n</string>
+    <string name="join_waitlist">Join Waitlist</string>
+    <string name="leave_waitlist">Leave Waitlist</string>
 </resources>

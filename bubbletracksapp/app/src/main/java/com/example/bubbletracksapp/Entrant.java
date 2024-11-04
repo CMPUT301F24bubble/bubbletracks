@@ -1,6 +1,8 @@
 package com.example.bubbletracksapp;
 
 
+import android.util.Log;
+
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -20,14 +22,21 @@ public class Entrant implements Parcelable {
     private String[] name;
     private String email;
     private String phone;
+    private String deviceID;
 
-    public Entrant() {
+    public Entrant(String[] newName, String newEmail, String newPhone, String newDevice) {
+        this.name = newName;
+        this.email = newEmail;
+        this.phone = newPhone;
+        this.deviceID = newDevice;
     }
 
-    public Entrant(String[] name, String email, String phone) {
-        this.name = name;
-        this.email = email;
-        this.phone = phone;
+    public Entrant(){
+        Log.w("NewEntrant", "Entrant has empty strings for information.");
+        this.name = new String[]{"",""};
+        this.email = "";
+        this.phone = "";
+        this.deviceID = "";
     }
 
     protected Entrant(Parcel in) {
@@ -58,10 +67,7 @@ public class Entrant implements Parcelable {
         return Arrays.asList(name);
     }
 
-    public String getNameAsString() {
-        return name[0]+name[1];
-    }
-
+    public String getNameAsString() {return String.format("%s %s",name[0],name[1]); };
 
     public void setName(String first, String last) {
         this.name = new String[]{first, last};
