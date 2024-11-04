@@ -296,6 +296,7 @@ public class OrganizerActivity extends AppCompatActivity {
     }
 
     protected void createEvent(){
+        // input validation is not complete, all fields need to be filled otherwise there will be errors
 
         // extract all the text views
         String name = nameText.getText().toString().trim();
@@ -306,7 +307,6 @@ public class OrganizerActivity extends AppCompatActivity {
         String price = priceText.getText().toString().trim();
         String waitListLimit = waitListLimitText.getText().toString().trim();
 
-        // make sure the required fields are filled
         if (name.isEmpty() || maxCapacity.isEmpty() || dateTimeString.equals("Not selected")
         || registrationCloseString.equals("Not selected")) {
         Toast.makeText(OrganizerActivity.this, "Name, Date & Time, Max Capacity and " +

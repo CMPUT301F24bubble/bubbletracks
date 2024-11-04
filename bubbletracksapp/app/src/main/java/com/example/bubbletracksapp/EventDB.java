@@ -1,7 +1,5 @@
 package com.example.bubbletracksapp;
 
-
-import android.location.Location;
 import android.media.Image;
 import android.util.Log;
 
