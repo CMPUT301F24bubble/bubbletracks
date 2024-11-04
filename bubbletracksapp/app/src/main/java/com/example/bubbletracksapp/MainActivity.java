@@ -1,5 +1,7 @@
 package com.example.bubbletracksapp;
 
+import static java.util.UUID.randomUUID;
+
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
@@ -9,6 +11,7 @@ import com.google.android.material.snackbar.Snackbar;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.util.Log;
 import android.view.View;
 
 import androidx.navigation.NavController;
@@ -21,10 +24,14 @@ import com.example.bubbletracksapp.databinding.HomescreenBinding;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import java.util.UUID;
+
 public class MainActivity extends AppCompatActivity {
 
     private AppBarConfiguration appBarConfiguration;
     private HomescreenBinding binding;
+    private Entrant currentUser;
+    private String currentDeviceID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,13 +40,8 @@ public class MainActivity extends AppCompatActivity {
         binding = HomescreenBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction()
-                    .setReorderingAllowed(true)
-                    .add(R.id.content_holder, OrganizerEventHosting.class, null)
-                    .commit();
-        }
-
+        currentDeviceID = getDeviceID();
+        Log.d("DeviceID:",currentDeviceID);
 
     }
 
@@ -63,5 +65,13 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+    /**
+     * This function is not implemented. It just returns a random string every time.
+     * https://firebase.google.com/docs/projects/manage-installations#java_2
+     **/
+    public String getDeviceID() {
+        return randomUUID().toString();
+        //private final Result get(FirebaseInstallations.getInstance().getId());
     }
 }
