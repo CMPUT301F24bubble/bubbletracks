@@ -56,7 +56,7 @@
         <activity android:name=".OrganizerEditActivity"/>
         <activity android:name=".EntrantEditActivity"/>
         <activity
-            android:name=".Notification"
+            android:name=".OrganizerNotificationActivity"
             android:exported="true"
             android:theme="@style/Theme.Bubbletracksapp">
             <intent-filter>
