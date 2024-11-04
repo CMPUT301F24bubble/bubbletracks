@@ -1,6 +1,9 @@
 package com.example.bubbletracksapp;
 
 import android.location.Location;
+
+import com.google.android.libraries.places.api.model.Place;
+
 import java.util.Calendar;
 import java.util.UUID;
 
@@ -11,7 +14,7 @@ public class Event {
     private String description;
     //QRCode should probably be another type of field INCOMPLETE
     private String QRCode;
-    private Location geolocation;
+    private Place geolocation;
     private Calendar registrationOpen;
     private Calendar registrationClose;
     private String image;
@@ -40,7 +43,11 @@ public class Event {
 
     public void setDescription(String description) { this.description = description; }
 
-    public Location getGeolocation() { return geolocation; }
+    public Place getGeolocation() { return geolocation; }
+
+    public void setGeolocation(Place geoLocation) {
+        this.geolocation = geoLocation;
+    }
 
     public Calendar getRegistrationOpen() { return registrationOpen; }
 
@@ -52,10 +59,6 @@ public class Event {
 
     public void setRegistrationClose(Calendar registrationClose) {
         this.registrationClose = registrationClose;
-    }
-
-    public void setGeolocation(Location geolocation) {
-        this.geolocation = geolocation;
     }
 
     public String getImage() { return image; }

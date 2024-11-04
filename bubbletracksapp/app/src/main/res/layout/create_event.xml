@@ -76,7 +76,7 @@
             android:id="@+id/buttonRegistrationOpen"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Select Registration Date"
+            android:text="Select Registration Open Date"
             android:layout_marginTop="16dp" />
 
         <!--text view to show registration open date-->
@@ -92,7 +92,7 @@
             android:id="@+id/buttonRegistrationClose"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Select Close Date"
+            android:text="Select Registration Close Date"
             android:layout_marginTop="16dp" />
 
         <!--text view to show registration close date-->

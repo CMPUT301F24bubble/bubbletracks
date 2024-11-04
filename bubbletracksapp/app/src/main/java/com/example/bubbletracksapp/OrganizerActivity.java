@@ -4,6 +4,7 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
@@ -14,16 +15,24 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.widget.Autocomplete;
+import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.google.zxing.WriterException;
-
 import java.text.SimpleDateFormat;
-
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Locale;
 
 public class OrganizerActivity extends AppCompatActivity {
@@ -31,20 +40,34 @@ public class OrganizerActivity extends AppCompatActivity {
     // declare all views necessary
     private EditText nameText, descriptionText, maxCapacityText, priceText, waitListLimitText;
     private Button dateTimeButton, registrationOpenButton, registrationCloseButton,
-            uploadPhotoButton, createButton;
-    private TextView dateTimeText, registrationOpenText, registrationCloseText;
+            uploadPhotoButton, createButton, locationButton;
+    private TextView dateTimeText, registrationOpenText, registrationCloseText, locationText;
     private ImageView posterImage;
     private CheckBox requireGeolocationCheckBox;
 
-    // declare calendar variables necessary
+    // declare calendar variables
     private Calendar dateTime, registrationOpen, registrationClose;
 
     // Declares an ActivityResultLauncher that will handle the result of an image upload action
     private ActivityResultLauncher<String> uploadImageLauncher;
 
+    // Declares an ActivityResultLauncher that will handle the result of a location selecting action
+    private ActivityResultLauncher<Intent> autocompleteLauncher;
+
+    // fields to extract from the selected Location
+    List<Place.Field> fields = Arrays.asList(Place.Field.ID, Place.Field.ADDRESS);
+
+    // declare uri variable
+    private Uri posterUri;
+
+    // declare place variable
+    private Place location;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Places.initialize(getApplicationContext(), "AIzaSyBOt38qDT81Qj6jR0cmNHVGs3hPPw0XrZA");
 
         // set the layout to the create event page
         setContentView(R.layout.create_event);
@@ -65,19 +88,39 @@ public class OrganizerActivity extends AppCompatActivity {
         uploadPhotoButton = findViewById(R.id.buttonUploadPhoto);
         posterImage = findViewById(R.id.imagePoster);
         createButton = findViewById(R.id.buttonCreate);
+        locationText = findViewById(R.id.textLocation);
+        locationButton = findViewById(R.id.buttonLocation);
 
-        // initialize the activity result launcher
+        // initialize the activity result launcher for the image picker
         uploadImageLauncher = registerForActivityResult(new ActivityResultContracts.GetContent(), uri -> {
             if (uri != null) {
                 posterImage.setImageURI(uri);
+                posterUri = uri;
             }
         });
+
+        // initialize the activity result launcher for the location search
+        autocompleteLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+                if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                    location = Autocomplete.getPlaceFromIntent(result.getData());
+                    locationText.setText(location.getAddress());
+                }
+            }
+        );
 
         // handler for button for selecting the date and time
         dateTimeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 selectDateTime();
+            }
+        });
+
+        // handler for button for selecting location
+        locationButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                selectLocation();
             }
         });
 
@@ -114,6 +157,8 @@ public class OrganizerActivity extends AppCompatActivity {
         });
     }
 
+
+    // selects the date and time
     protected void selectDateTime(){
 
         final Calendar calendar = Calendar.getInstance();
@@ -162,6 +207,16 @@ public class OrganizerActivity extends AppCompatActivity {
 
     }
 
+    // selects the location
+    protected void selectLocation(){
+
+        // launch activity result launcher
+        Intent intent = new Autocomplete.IntentBuilder(AutocompleteActivityMode.OVERLAY, fields)
+                .build(OrganizerActivity.this);
+        autocompleteLauncher.launch(intent);
+    }
+
+    // selects registration open date
     protected void selectRegistrationOpen(){
 
         final Calendar calendar = Calendar.getInstance();
@@ -196,6 +251,7 @@ public class OrganizerActivity extends AppCompatActivity {
 
     }
 
+    // selects registration close date
     protected void selectRegistrationClose(){
 
         final Calendar calendar = Calendar.getInstance();
@@ -230,8 +286,10 @@ public class OrganizerActivity extends AppCompatActivity {
 
     }
 
+    // uploads image
     protected void uploadImage(){
 
+        // launch activity result launcher
         Intent intent = new Intent(MediaStore.ACTION_PICK_IMAGES);
         uploadImageLauncher.launch("image/*");
         posterImage.setVisibility(View.VISIBLE);
@@ -251,13 +309,14 @@ public class OrganizerActivity extends AppCompatActivity {
         // make sure the required fields are filled
         if (name.isEmpty() || maxCapacity.isEmpty() || dateTimeString.equals("Not selected")
         || registrationCloseString.equals("Not selected")) {
-            Toast.makeText(OrganizerActivity.this, "Name, Date & Time, Max Capacity and " +
-            "registration close date are required fields", Toast.LENGTH_LONG).show();
+        Toast.makeText(OrganizerActivity.this, "Name, Date & Time, Max Capacity and " +
+        "registration close date are required fields", Toast.LENGTH_LONG).show();
         } else {
 
             // create a new event class and store all the fields
             Event event = new Event();
             event.setName(name);
+            event.setGeolocation(location);
             event.setDateTime(dateTime);
             event.setDescription(description);
             event.setRegistrationOpen(registrationOpen);
@@ -268,20 +327,60 @@ public class OrganizerActivity extends AppCompatActivity {
             event.setNeedsGeolocation(requireGeolocationCheckBox.isChecked());
             event.setQRCode("https://www.bubbletracks.com/events/" + event.getId());
 
-            // store the event
-            EventDB eventDB = new EventDB();
-            eventDB.addEvent(event);
+            // make a firebase storage instance and a filename
+            String filename = "posters/" + System.currentTimeMillis() + ".jpg";
+            StorageReference storageReference = FirebaseStorage.getInstance().getReference(filename);
 
-            // change to a new layout to show the generated QR code
-            setContentView(R.layout.qr_code);
-            ImageView qrCode = findViewById(R.id.imageViewQRCode);
-            QRGenerator qrGenerator = new QRGenerator();
-            try{
-                Bitmap qrBitmap = qrGenerator.generateQRCode(event.getQRCode());
-                qrCode.setImageBitmap(qrBitmap);
-            } catch (WriterException exception){
-                Log.e("OrganizerActivity", "Qr code generation failed", exception);
-            }
+            // store the image in firebase storage
+            storageReference.putFile(posterUri)
+                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
+                            // get the download url of the image
+                            storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+
+                                @Override
+                                public void onSuccess(Uri uri) {
+
+                                    // store the download string in the event class
+                                    String downloadUrl = uri.toString();
+                                    event.setImage(downloadUrl);
+
+                                    // store the event
+                                    EventDB eventDB = new EventDB();
+                                    eventDB.addEvent(event);
+
+                                    // change to a new layout to show the generated QR code
+                                    setContentView(R.layout.qr_code);
+                                    ImageView qrCode = findViewById(R.id.imageViewQRCode);
+                                    QRGenerator qrGenerator = new QRGenerator();
+                                    try{
+                                        Bitmap qrBitmap = qrGenerator.generateQRCode(event.getQRCode());
+                                        qrCode.setImageBitmap(qrBitmap);
+                                    } catch (WriterException exception){
+                                        Log.e("OrganizerActivity", "Qr code generation failed", exception);
+                                    }
+
+                                }
+
+                            // handle errors
+                            }).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Toast.makeText(getApplicationContext(), "Failed to get download URL: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        }
+
+                    // handle errors
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(OrganizerActivity.this, "Upload failed: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                        }
+                    });
         }
     }
 

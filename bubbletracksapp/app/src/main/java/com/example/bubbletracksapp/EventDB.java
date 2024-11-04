@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.libraries.places.api.model.Place;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -88,7 +89,7 @@ public class EventDB {
         newMap.put("dateTime", event.getDateTime().getTime());
         newMap.put("description", event.getDescription());
         newMap.put("QRCode", event.getQRCode());
-        newMap.put("geolocation", event.getGeolocation());
+        newMap.put("geolocation", event.getGeolocation().getAddress());
         newMap.put("registrationOpen", event.getRegistrationOpen().getTime());
         newMap.put("registrationClose", event.getRegistrationClose().getTime());
         newMap.put("image", event.getImage());
@@ -109,7 +110,7 @@ public class EventDB {
         newEvent.setDateTime(toCalendar(map.get("dateTime")));
         newEvent.setDescription(map.get("description").toString());
         newEvent.setQRCode(map.get("QRCode").toString());
-        Location location = toLocation(map.get("geolocation"));
+        Place location = toLocation(map.get("geolocation"));
         newEvent.setRegistrationOpen(toCalendar(map.get("registrationOpen")));
         newEvent.setRegistrationClose(toCalendar(map.get("registrationClose")));
         newEvent.setGeolocation(location);
@@ -127,7 +128,7 @@ public class EventDB {
         return null;
     }
 
-    private Location toLocation(Object geolocation) {
+    private Place toLocation(Object geolocation) {
         //Need to figure out how to handle location
         return null;
     }
