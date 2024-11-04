@@ -35,6 +35,18 @@
             </intent-filter>
         </activity>
 
+
+        <activity
+            android:name=".EntrantActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Bubbletracksapp">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
         <activity android:name=".OrganizerEntrantListActivity"/>
         <activity android:name=".OrganizerEditActivity"/>
 
