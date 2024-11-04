@@ -22,7 +22,8 @@ import java.util.Collections;
  * redraw them and replace them with someone from the waitlist.
  * @author Chester
  */
-public class OrganizerEntrantListActivity extends AppCompatActivity implements CancelledListAdapter.CancelledEntrantI {
+public class OrganizerEntrantListActivity extends AppCompatActivity
+        implements CancelledListAdapter.CancelledEntrantI, InvitedListAdapter.InvitedEntrantI {
 
     private LotteryMainExtendBinding binding;
 
@@ -46,12 +47,6 @@ public class OrganizerEntrantListActivity extends AppCompatActivity implements C
 
     ListView cancelledListView;
     CancelledListAdapter cancelledAdapter;
-
-
-    ArrayList<String> waitListArray = new ArrayList<>();
-    ArrayList<String> invitedListArray = new ArrayList<>();
-    ArrayList<String> cancelledListArray = new ArrayList<>();
-
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -86,7 +81,6 @@ public class OrganizerEntrantListActivity extends AppCompatActivity implements C
         cancelledListView = binding.cancelledListView;
         cancelledAdapter = new CancelledListAdapter(this, cancelledList);
         cancelledListView.setAdapter(cancelledAdapter);
-        Log.d("TAG", "onViewCreated: ");
 
         binding.backButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -100,6 +94,7 @@ public class OrganizerEntrantListActivity extends AppCompatActivity implements C
                 startActivity(intent);
             }
         });
+
     }
 
 
@@ -118,14 +113,21 @@ public class OrganizerEntrantListActivity extends AppCompatActivity implements C
         return chosenEntrant;
     }
 
-    //Called when an Entrant cancels or rejects invitation and og clicks on it
-    public void cancelledEntrant(Entrant entrant){
-        invitedList.remove(entrant);
+    //Called when an Entrant cancels or rejects invitation and organize clicks on it
+    public void cancelEntrant(Entrant entrant) {
         waitList.remove(entrant);
+        invitedList.remove(entrant);
         rejectedList.remove(entrant);
         cancelledList.add(entrant);
         UpdateListDisplay();
     }
+
+    @Override
+    public boolean hasEntrantAccepted(Entrant entrant) {
+        // Should check if entant accepted invitation
+        return false;
+    }
+
 
     // should return error if the list is empty INCOMPLETE
     /**
