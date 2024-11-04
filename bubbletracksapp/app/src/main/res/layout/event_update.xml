@@ -77,10 +77,10 @@
 
             <ImageView
                 android:id="@+id/photoUploadIcon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
                 android:src="@drawable/baseline_image_search_24"
-                android:backgroundTint="@color/search"/>
+                android:backgroundTint="@color/black"/>
 
             <TextView
                 android:layout_width="wrap_content"
