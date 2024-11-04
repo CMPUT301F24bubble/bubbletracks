@@ -2,8 +2,11 @@ package com.example.bubbletracksapp;
 
 import static java.util.UUID.randomUUID;
 
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.os.Bundle;
 
+import com.example.bubbletracksapp.databinding.HomescreenBinding;
 import com.google.android.material.snackbar.Snackbar;
 
 import androidx.appcompat.app.AppCompatActivity;
