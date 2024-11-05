@@ -67,18 +67,5 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-
     </application>
-        <activity
-            android:name=".EntrantEditActivity"
-            android:exported="true"
-            android:theme="@style/Theme.Bubbletracksapp">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-
 </manifest>
