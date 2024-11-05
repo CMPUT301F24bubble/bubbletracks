@@ -58,9 +58,9 @@ public class EntrantEditActivity extends AppCompatActivity {
                 currentUser.setPhone(newPhone);
                 currentUser.setEmail(newEmail);
 
-                db.addEntrant(currentUser);
+                db.updateEntrant(currentUser);
 
-                Log.d("New user info:", currentUser.getNameAsString());
+                Log.d("New user name:", currentUser.getNameAsString());
 
             }
         });
