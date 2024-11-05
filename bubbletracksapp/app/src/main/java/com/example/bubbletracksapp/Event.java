@@ -93,7 +93,7 @@ public class Event {
     }
 
     public String getMonth(Date date) {
-        SimpleDateFormat formatter = new SimpleDateFormat("MM", Locale.getDefault());
+        SimpleDateFormat formatter = new SimpleDateFormat("MMM", Locale.getDefault());
         return formatter.format(date);
     }
 
