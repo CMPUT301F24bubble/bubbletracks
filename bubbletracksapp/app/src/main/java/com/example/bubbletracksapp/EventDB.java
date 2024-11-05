@@ -10,12 +10,13 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.Calendar;
-import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -78,7 +79,7 @@ public class EventDB {
         //Maybe this should be in Entrant class INCOMPLETE
         Map<String, Object> newEventMap = eventToMap(newEvent);
 
-        String docID = newEvent.getID();
+        String docID = newEvent.getId();
 
         eventsRef.document(docID)
                 .update(newEventMap)
@@ -133,17 +134,17 @@ public class EventDB {
 
         newMap.put("id", event.getId());
         newMap.put("name", event.getName());
-        newMap.put("dateTime", event.getDateTime().getTime());
+        newMap.put("dateTime", event.getDateTime());
         newMap.put("description", event.getDescription());
-        newMap.put("QRCode", event.getQRCode());
-        newMap.put("geolocation", event.getGeolocation().getAddress());
-        newMap.put("registrationOpen", event.getRegistrationOpen().getTime());
-        newMap.put("registrationClose", event.getRegistrationClose().getTime());
-        newMap.put("image", event.getImage());
-        newMap.put("needsGeolocation", event.isNeedsGeolocation());
+        newMap.put("geolocation", event.getGeolocation());
+        newMap.put("registrationOpen", event.getRegistrationOpen());
+        newMap.put("registrationClose", event.getRegistrationClose());
         newMap.put("maxCapacity", event.getMaxCapacity());
         newMap.put("price", event.getPrice());
         newMap.put("waitListLimit", event.getWaitListLimit());
+        newMap.put("needsGeolocation", event.getNeedsGeolocation());
+        newMap.put("image", event.getImage());
+        newMap.put("QRCode", event.getQRCode());
 
         return newMap;
     }
@@ -154,35 +155,24 @@ public class EventDB {
 
         newEvent.setId(map.get("id").toString());
         newEvent.setName(map.get("name").toString());
-        newEvent.setDateTime(toCalendar(map.get("dateTime")));
+        newEvent.setDateTime(toDate(map.get("dateTime")));
         newEvent.setDescription(map.get("description").toString());
-        newEvent.setQRCode(map.get("QRCode").toString());
-        Place location = toLocation(map.get("geolocation"));
-        newEvent.setRegistrationOpen(toCalendar(map.get("registrationOpen")));
-        newEvent.setRegistrationClose(toCalendar(map.get("registrationClose")));
-        newEvent.setGeolocation(location);
-        newEvent.setImage(map.get("image").toString());
-        newEvent.setNeedsGeolocation((Boolean) map.get("needsGeolocation"));
+        newEvent.setGeolocation(map.get("geolocation").toString());
+        newEvent.setRegistrationOpen(toDate(map.get("registrationOpen")));
+        newEvent.setRegistrationClose(toDate(map.get("registrationClose")));
         newEvent.setMaxCapacity(Integer.parseInt(map.get("maxCapacity").toString()));
         newEvent.setPrice(Integer.parseInt(map.get("price").toString()));
         newEvent.setWaitListLimit(Integer.parseInt(map.get("waitListLimit").toString()));
+        newEvent.setNeedsGeolocation((Boolean) map.get("needsGeolocation"));
+        newEvent.setImage(map.get("image").toString());
+        newEvent.setQRCode(map.get("QRCode").toString());
 
         return newEvent;
     }
 
-    private Calendar toCalendar(Object dateTime){
-        //Need to figure out how to handle LocalDateTime
-        return null;
-    }
-
-    private Place toLocation(Object geolocation) {
-        //Need to figure out how to handle location
-        return null;
-    }
-
-    private Image toImage(Object image) {
-        //Need to figure out how to handle image
-        return null;
+    private Date toDate(Object dateTime){
+        Timestamp timestamp = (Timestamp) dateTime;
+        return timestamp.toDate();
     }
 
 }

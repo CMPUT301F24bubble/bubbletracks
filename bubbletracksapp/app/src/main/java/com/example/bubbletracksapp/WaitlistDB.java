@@ -47,7 +47,7 @@ public class WaitlistDB extends Entrant{
     }
     public void deleteWaitEntrant(Event event)
     {
-        String docID = event.getID();
+        String docID = event.getId();
 
         waitlistRef.document(docID)
                 .delete()

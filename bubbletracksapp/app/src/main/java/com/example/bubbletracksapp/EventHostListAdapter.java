@@ -54,10 +54,10 @@ public class EventHostListAdapter extends ArrayAdapter<Event>{
         AppCompatImageButton editEventButton = view.findViewById(R.id.edit_event_button);
 
 
-        eventMonthText.setText(event.getMonth());
-        eventDateText.setText(event.getDay());
-        eventTimeText.setText(event.getTime());
-        eventLocationText.setText(event.getLocation());
+        eventMonthText.setText(event.getMonth(event.getDateTime()));
+        eventDateText.setText(event.getDay(event.getDateTime()));
+        eventTimeText.setText(event.getTime(event.getDateTime()));
+        eventLocationText.setText(event.getGeolocation());
         eventTitleText.setText(event.getName());
 
         seePeopleButton.setOnClickListener(new View.OnClickListener() {

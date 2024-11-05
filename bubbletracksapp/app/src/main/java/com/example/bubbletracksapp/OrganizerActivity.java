@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -32,6 +33,7 @@ import com.google.zxing.WriterException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -39,14 +41,14 @@ public class OrganizerActivity extends AppCompatActivity {
 
     // declare all views necessary
     private EditText nameText, descriptionText, maxCapacityText, priceText, waitListLimitText;
-    private Button dateTimeButton, registrationOpenButton, registrationCloseButton,
-            uploadPhotoButton, createButton, locationButton;
+    private ImageButton dateTimeButton, registrationOpenButton, registrationCloseButton, locationButton;
+    private Button uploadPhotoButton, createButton;
     private TextView dateTimeText, registrationOpenText, registrationCloseText, locationText;
     private ImageView posterImage;
     private CheckBox requireGeolocationCheckBox;
 
     // declare calendar variables
-    private Calendar dateTime, registrationOpen, registrationClose;
+    private Date dateTime, registrationOpen, registrationClose;
 
     // Declares an ActivityResultLauncher that will handle the result of an image upload action
     private ActivityResultLauncher<String> uploadImageLauncher;
@@ -61,7 +63,7 @@ public class OrganizerActivity extends AppCompatActivity {
     private Uri posterUri;
 
     // declare place variable
-    private Place location;
+    private String location;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,8 +104,8 @@ public class OrganizerActivity extends AppCompatActivity {
         // initialize the activity result launcher for the location search
         autocompleteLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
                 if (result.getResultCode() == RESULT_OK && result.getData() != null) {
-                    location = Autocomplete.getPlaceFromIntent(result.getData());
-                    locationText.setText(location.getAddress());
+                    location = Autocomplete.getPlaceFromIntent(result.getData()).getAddress();
+                    locationText.setText(location);
                 }
             }
         );
@@ -189,7 +191,7 @@ public class OrganizerActivity extends AppCompatActivity {
                                 calendar.set(Calendar.SECOND, 0);
 
                                 // store the selected time
-                                dateTime = calendar;
+                                dateTime = calendar.getTime();
 
                                 // format the selected date
                                 SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
@@ -238,7 +240,7 @@ public class OrganizerActivity extends AppCompatActivity {
                     calendar.set(Calendar.SECOND, 0);
 
                     // set the selected date
-                    registrationOpen = calendar;
+                    registrationOpen = calendar.getTime();
 
                     // store the selected date
                     SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
@@ -273,7 +275,7 @@ public class OrganizerActivity extends AppCompatActivity {
                     calendar.set(Calendar.SECOND, 59);
 
                     // set the selected date
-                    registrationClose = calendar;
+                    registrationClose = calendar.getTime();
 
                     // store the selected date
                     SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
@@ -292,7 +294,7 @@ public class OrganizerActivity extends AppCompatActivity {
         // launch activity result launcher
         Intent intent = new Intent(MediaStore.ACTION_PICK_IMAGES);
         uploadImageLauncher.launch("image/*");
-        posterImage.setVisibility(View.VISIBLE);
+        posterImage.setImageTintList(null);
     }
 
     protected void createEvent(){

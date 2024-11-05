@@ -64,7 +64,7 @@
                 android:orientation="horizontal"
                 android:layout_marginTop="16dp">
 
-                    <!--button to open a dialogue to select date and time-->
+                    <!--button to open a dialogue to select dateTime and time-->
             <ImageButton
                 android:id="@+id/buttonDateTime"
                 android:layout_width="50dp"
@@ -73,7 +73,7 @@
                 android:src="@drawable/baseline_calendar_month_24"
                 app:tint="@color/black" />
 
-            <!--text view to show the selected date and time-->
+            <!--text view to show the selected dateTime and time-->
             <TextView
                 android:id="@+id/textDateTime"
                 android:layout_width="0dp"
@@ -88,20 +88,20 @@
 
         </LinearLayout>
 
-<!--        &lt;!&ndash;edit text to enter the description&ndash;&gt;-->
-<!--        &lt;!&ndash;Do we need this? &ndash;&gt;-->
-<!--        <TextView-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:text="Event Description"/>-->
-<!--        <EditText-->
-<!--            android:id="@+id/textDescription"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:hint="Event Description"-->
-<!--            android:inputType="textMultiLine"-->
-<!--            android:minLines="3"-->
-<!--            android:layout_marginTop="16dp" />-->
+        <!--edit text to enter the description-->
+        <!--Do we need this? -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Event Description"/>
+        <EditText
+            android:id="@+id/textDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Event Description"
+            android:inputType="textMultiLine"
+            android:minLines="3"
+            android:layout_marginTop="16dp" />
 
         <!--button to open a dialogue to select the location-->
         <TextView
@@ -137,7 +137,7 @@
             android:backgroundTint="#EEEEEE"
             android:layout_marginTop="8dp" />
 
-        <!--button to open a dialogue to select registration open date-->
+        <!--button to open a dialogue to select registration open dateTime-->
         </LinearLayout>
         <TextView
             android:layout_width="match_parent"
@@ -157,7 +157,7 @@
                 android:backgroundTint="@color/white"
                 app:tint = "@color/black"/>
 
-        <!--text view to show registration open date-->
+        <!--text view to show registration open dateTime-->
         <TextView
             android:id="@+id/textRegistrationOpen"
             android:layout_width="match_parent"
@@ -168,7 +168,7 @@
             android:layout_marginTop="8dp" />
         </LinearLayout>
 
-        <!--button to open a dialogue to select registration close date-->
+        <!--button to open a dialogue to select registration close dateTime-->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -188,7 +188,7 @@
             android:backgroundTint="@color/white"
             app:tint = "@color/black"/>
 
-        <!--text view to show registration close date-->
+        <!--text view to show registration close dateTime-->
             <TextView
                 android:id="@+id/textRegistrationClose"
                 android:layout_width="match_parent"
