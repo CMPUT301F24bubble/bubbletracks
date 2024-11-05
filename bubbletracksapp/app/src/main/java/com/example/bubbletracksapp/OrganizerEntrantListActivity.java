@@ -27,6 +27,7 @@ public class OrganizerEntrantListActivity extends AppCompatActivity
 
     private LotteryMainExtendBinding binding;
 
+    Event event;
     //To be changed to waitlist class INCOMPLETE
     // waitList contains all the entrants that joined the waitlist
     // invitedList contains all the entrants that are invited to the event
@@ -57,23 +58,18 @@ public class OrganizerEntrantListActivity extends AppCompatActivity
         binding = LotteryMainExtendBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        // INCOMPLETE
         Intent in =  getIntent();
-        if(in.getParcelableArrayListExtra("wait") != null) {
-            waitList.addAll(in.getParcelableArrayListExtra("wait"));
+        try {
+            event = in.getParcelableExtra("event");
+        } catch (Exception e) {
+            Log.d("OrganizerEntrantListActivity", "event extra was not passed correctly");
+            throw new RuntimeException(e);
         }
-        if(in.getParcelableArrayListExtra("invited") != null) {
-            invitedList.addAll(in.getParcelableArrayListExtra("invited"));
-        }
-        if(in.getParcelableArrayListExtra("rejected") != null) {
-            rejectedList.addAll(in.getParcelableArrayListExtra("rejected"));
-        }
-        if(in.getParcelableArrayListExtra("enrolled") != null) {
-            enrolledList.addAll(in.getParcelableArrayListExtra("enrolled"));
-        }
-        if(in.getParcelableArrayListExtra("cancelled") != null) {
-            cancelledList.addAll(in.getParcelableArrayListExtra("cancelled"));
-        }
+        waitList = event.getWaitList();
+        invitedList = event.getInvitedList();
+        rejectedList = event.getRejectedList();
+        cancelledList = event.getCancelledList();
+        enrolledList = event.getEnrolledList();
 
         waitlistListView = binding.waitlistView;
         waitlistAdapter = new EntrantListAdapter(this, waitList);
@@ -90,12 +86,13 @@ public class OrganizerEntrantListActivity extends AppCompatActivity
         binding.backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                event.setWaitList(waitList);
+                event.setInvitedList(invitedList);
+                event.setRejectedList(rejectedList);
+                event.setCancelledList(cancelledList);
+                event.setEnrolledList(enrolledList);
                 Intent intent = new Intent(OrganizerEntrantListActivity.this, OrganizerEditActivity.class);
-                intent.putParcelableArrayListExtra("wait", waitList);
-                intent.putParcelableArrayListExtra("invited", invitedList);
-                intent.putParcelableArrayListExtra("rejected", rejectedList);
-                intent.putParcelableArrayListExtra("cancelled", cancelledList);
-                intent.putParcelableArrayListExtra("enrolled", enrolledList);
+                intent.putExtra("event", event);
 
                 startActivity(intent);
             }

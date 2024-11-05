@@ -2,6 +2,7 @@ package com.example.bubbletracksapp;
 
 import android.content.Intent;
 import android.os.Bundle;;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -23,6 +24,7 @@ import java.util.List;
  */
 public class OrganizerEditActivity extends AppCompatActivity {
     // SHOUL BE ENTant INCOMPLETE
+    Event event;
     ArrayList<Entrant> waitList = new ArrayList<>();
     ArrayList<Entrant> invitedList = new ArrayList<>();
     ArrayList<Entrant> rejectedList = new ArrayList<>();
@@ -47,21 +49,17 @@ public class OrganizerEditActivity extends AppCompatActivity {
 
         // INCOMPLETE
         Intent in =  getIntent();
-        if(in.getParcelableArrayListExtra("wait") != null) {
-            waitList.addAll(in.getParcelableArrayListExtra("wait"));
+        try {
+            event = in.getParcelableExtra("event");
+        } catch (Exception e) {
+            Log.d("OrganizerEditActivity", "event extra was not passed correctly");
+            throw new RuntimeException(e);
         }
-        if(in.getParcelableArrayListExtra("invited") != null) {
-            invitedList.addAll(in.getParcelableArrayListExtra("invited"));
-        }
-        if(in.getParcelableArrayListExtra("rejected") != null) {
-            rejectedList.addAll(in.getParcelableArrayListExtra("rejected"));
-        }
-        if(in.getParcelableArrayListExtra("cancelled") != null) {
-            cancelledList.addAll(in.getParcelableArrayListExtra("cancelled"));
-        }
-        if(in.getParcelableArrayListExtra("enrolled") != null) {
-            enrolledList.addAll(in.getParcelableArrayListExtra("enrolled"));
-        }
+        waitList = event.getWaitList();
+        invitedList = event.getInvitedList();
+        rejectedList = event.getRejectedList();
+        cancelledList = event.getCancelledList();
+        enrolledList = event.getEnrolledList();
 
 
         for (int i = 0; i < waitList.size(); i++) {
@@ -125,12 +123,13 @@ public class OrganizerEditActivity extends AppCompatActivity {
 
 
     private void startListActivity() {
+        event.setWaitList(waitList);
+        event.setInvitedList(invitedList);
+        event.setRejectedList(rejectedList);
+        event.setCancelledList(cancelledList);
+        event.setEnrolledList(enrolledList);
         Intent intent = new Intent(OrganizerEditActivity.this, OrganizerEntrantListActivity.class);
-        intent.putParcelableArrayListExtra("wait", waitList);
-        intent.putParcelableArrayListExtra("invited", invitedList);
-        intent.putParcelableArrayListExtra("rejected", rejectedList);
-        intent.putParcelableArrayListExtra("cancelled", cancelledList);
-        intent.putParcelableArrayListExtra("enrolled", enrolledList);
+        intent.putExtra("event", event);
         startActivity(intent);
     }
 
