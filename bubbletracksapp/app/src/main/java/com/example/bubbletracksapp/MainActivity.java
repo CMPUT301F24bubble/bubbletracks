@@ -32,7 +32,7 @@ import java.util.UUID;
 public class MainActivity extends AppCompatActivity {
 
     private AppBarConfiguration appBarConfiguration;
-    private ProfileManagementBinding binding;
+    private HomescreenBinding binding;
     private Entrant currentUser;
     private String currentDeviceID;
 
@@ -40,14 +40,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        binding = ProfileManagementBinding.inflate(getLayoutInflater());
+        binding = HomescreenBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         currentDeviceID = getDeviceID();
         Log.d("DeviceID:",currentDeviceID);
-
-        Intent intent = new Intent(MainActivity.this, EntrantEditActivity.class); //class where you are, then class where you wanan go
-        startActivity(intent);
 
     }
 
