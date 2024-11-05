@@ -2,12 +2,15 @@ package com.example.bubbletracksapp;
 
 import android.location.Location;
 import android.media.Image;
+import android.os.Parcel;
+import android.os.Parcelable;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Formatter;
 
-public class Event {
+public class Event implements Parcelable {
     private String name;
     private String description;
     private Calendar date;
@@ -22,6 +25,70 @@ public class Event {
     private ArrayList<Entrant> rejectedList = new ArrayList<>();
     private ArrayList<Entrant> enrolledList = new ArrayList<>();
 
+
+    public Event(){
+        Log.w("NewEvent", "Event has empty strings for information.");
+    }
+
+    public Event(String name, String description, Calendar date, String QRCode, Location geolocation, Image image, boolean needsGeolocation, ArrayList<Entrant> waitList, ArrayList<Entrant> invitedList, ArrayList<Entrant> cancelledList, ArrayList<Entrant> rejectedList, ArrayList<Entrant> enrolledList) {
+        this.name = name;
+        this.description = description;
+        this.date = date;
+        this.QRCode = QRCode;
+        this.geolocation = geolocation;
+        this.image = image;
+        this.needsGeolocation = needsGeolocation;
+        this.waitList = waitList;
+        this.invitedList = invitedList;
+        this.cancelledList = cancelledList;
+        this.rejectedList = rejectedList;
+        this.enrolledList = enrolledList;
+    }
+
+
+    protected Event(Parcel in) {
+        name = in.readString();
+        description = in.readString();
+        QRCode = in.readString();
+        geolocation = in.readParcelable(Location.class.getClassLoader());
+        needsGeolocation = in.readByte() != 0;
+        waitList = in.createTypedArrayList(Entrant.CREATOR);
+        invitedList = in.createTypedArrayList(Entrant.CREATOR);
+        cancelledList = in.createTypedArrayList(Entrant.CREATOR);
+        rejectedList = in.createTypedArrayList(Entrant.CREATOR);
+        enrolledList = in.createTypedArrayList(Entrant.CREATOR);
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(name);
+        dest.writeString(description);
+        dest.writeString(QRCode);
+        dest.writeParcelable(geolocation, flags);
+        dest.writeByte((byte) (needsGeolocation ? 1 : 0));
+        dest.writeTypedList(waitList);
+        dest.writeTypedList(invitedList);
+        dest.writeTypedList(cancelledList);
+        dest.writeTypedList(rejectedList);
+        dest.writeTypedList(enrolledList);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<Event> CREATOR = new Creator<Event>() {
+        @Override
+        public Event createFromParcel(Parcel in) {
+            return new Event(in);
+        }
+
+        @Override
+        public Event[] newArray(int size) {
+            return new Event[size];
+        }
+    };
 
     public String getName() {
         return name;
@@ -127,6 +194,10 @@ public class Event {
         this.waitList.remove(entrant);
     }
 
+    public void clearWaitList() {
+        this.waitList.clear();
+    }
+
     public ArrayList<Entrant> getInvitedList() {
         return invitedList;
     }
@@ -141,6 +212,10 @@ public class Event {
 
     public void deleteFromInvitedList(Entrant entrant) {
         this.invitedList.remove(entrant);
+    }
+
+    public void clearInvitedList() {
+        this.invitedList.clear();
     }
 
     public ArrayList<Entrant> getCancelledList() {
@@ -159,6 +234,10 @@ public class Event {
         this.cancelledList.remove(entrant);
     }
 
+    public void clearCancelledList() {
+        this.cancelledList.clear();
+    }
+
     public ArrayList<Entrant> getRejectedList() {
         return rejectedList;
     }
@@ -172,6 +251,10 @@ public class Event {
 
     public void deleteFromRejectedList(Entrant entrant) {
         this.rejectedList.remove(entrant);
+    }
+
+    public void clearRejectedList() {
+        this.rejectedList.clear();
     }
 
     public ArrayList<Entrant> getEnrolledList() {
@@ -188,6 +271,10 @@ public class Event {
 
     public void deleteFromEnrolledList(Entrant entrant) {
         this.enrolledList.remove(entrant);
+    }
+
+    public void clearEnrolledList() {
+        this.enrolledList.clear();
     }
 
     public boolean isInEnrolledList(Entrant entrant){
