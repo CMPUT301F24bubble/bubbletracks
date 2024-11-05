@@ -5,15 +5,20 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.libraries.places.api.model.Place;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-
 import java.util.Calendar;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 public class EventDB {
 
@@ -68,11 +73,55 @@ public class EventDB {
                 });
     }
 
-    // Make it clear when it returns nothing INCOMPLETE
-    public Event getEvent(String ID)
+    public void updateEvent(Event newEvent)
     {
-        // WIP INCOMPLETE
-        return null;
+        //Maybe this should be in Entrant class INCOMPLETE
+        Map<String, Object> newEventMap = eventToMap(newEvent);
+
+        String docID = newEvent.getID();
+
+        eventsRef.document(docID)
+                .update(newEventMap)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d("updateEvent", "Event successfully updated!");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w("updateEvent", "Error updating event", e);
+                    }
+                });
+    }
+
+
+    public CompletableFuture<Event> getEvent(String ID)
+    {
+        CompletableFuture<Event> returnCode = new CompletableFuture<>();
+        DocumentReference eventRef = eventsRef.document(ID);
+
+        eventRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        Map<String, Object> newEventMap = document.getData();
+                        Event newEvent = mapToEvent(newEventMap);
+
+                        returnCode.complete(newEvent);
+                        Log.d("EventDB", "DocumentSnapshot data: " + document.getData());
+                    } else {
+                        Log.d("EventDB", "No such document");
+                    }
+                } else {
+                    Log.d("EventDB", "get failed with ", task.getException());
+                }
+            }
+        });
+        return returnCode;
     }
 
 

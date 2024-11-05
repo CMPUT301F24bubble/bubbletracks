@@ -1,22 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Still wip -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/round_event"
-    android:color="#B6C6DC"
     android:orientation="vertical"
     android:padding="16dp">
 
-
-    <ImageView
-        android:id="@+id/event_image"
+    <View
         android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:background="@drawable/round_event"
-        android:clipToOutline="true"
-        android:scaleType="centerCrop"
-        android:src="@drawable/images" />
-
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"
+        android:layout_marginVertical="8dp" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -25,7 +20,7 @@
         android:paddingTop="16dp">
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="24dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="#E0E0E0"
@@ -84,16 +79,59 @@
                 android:textStyle="bold" />
         </LinearLayout>
 
-        <Button
-            android:id="@+id/join_waitlist_button"
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="85dp"
+            android:paddingEnd="16dp"
+            android:orientation="vertical">
+
+
+            <ImageButton
+                android:id="@+id/edit_event_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/white"
+                android:src="@drawable/baseline_edit_calendar_24"
+                app:tint="@color/black" />
+
+            <ImageButton
+                android:id="@+id/see_people_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/baseline_groups_24"
+                app:tint="@color/black"
+                android:backgroundTint="@color/white"/>
+        </LinearLayout>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <!-- words -->
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:background="@drawable/round_event"
-            android:padding="12dp"
-            android:text="Join Waitlist"
-            android:textColor="#FFFFFF"
-            android:backgroundTint="@color/home_blue"/>
-    </LinearLayout>
+            android:orientation="vertical">
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Event QR Code"
+                android:textStyle="bold"/>
+            <TextView
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:text="Entrants must scan this QR code to join your event"/>
+
+        </LinearLayout>
+
+        <ImageView
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            android:backgroundTint="@color/white"
+            android:paddingEnd="16dp"
+            android:src="@drawable/qr_ex"
+            />
+
+    </LinearLayout>
 </LinearLayout>

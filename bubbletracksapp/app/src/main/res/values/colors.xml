@@ -2,6 +2,7 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="home">#2196F3</color>
+    <color name="home_blue">#2196F3</color>
+    <color name="home">#F0F321</color>
     <color name="search">#99ACEC</color>
 </resources>
