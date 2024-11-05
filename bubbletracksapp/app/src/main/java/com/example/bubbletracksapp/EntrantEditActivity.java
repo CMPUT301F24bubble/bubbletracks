@@ -88,10 +88,17 @@ public class EntrantEditActivity extends AppCompatActivity {
                 String newPhone = entrantPhoneInput.getText().toString();
                 boolean notificationPermission = entrantNotificationInput.isChecked();
 
-                //checkNotificationPermission(notificationPermission, currentUser);
-
                 currentUser.setPhone(newPhone);
                 currentUser.setEmail(newEmail);
+
+                if (!notificationPermission){
+                    currentUser.setNotification(false);
+                    Log.d("Notification check", "User opted out of notifications");
+                }
+                else {
+                    checkNotificationPermission(currentUser);
+
+                }
 
                 db.addEntrant(currentUser);
 
@@ -106,7 +113,7 @@ public class EntrantEditActivity extends AppCompatActivity {
             // Check if the notification permission is granted
             if (checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
                 currentUser.setNotification(true);
-                Log.d("Notification check","Notif permission done");
+                Log.d("Notification check","Notification permission done");
             } else {
                 requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS);
             }
