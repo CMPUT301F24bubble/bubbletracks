@@ -1,6 +1,8 @@
 package com.example.bubbletracksapp;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -62,7 +64,25 @@ public class InvitedListAdapter extends ArrayAdapter<Entrant> {
         cancelEntrant.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                listener.cancelEntrant(entrant);
+                AlertDialog joinDialog;
+                joinDialog = new AlertDialog.Builder(getContext())
+                        .setTitle("Confirm Cancelling Entrant")
+                        .setMessage(String.format("Are you sure you want to cancel %s from this event?", entrant.getNameAsString()))
+                        .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                listener.cancelEntrant(entrant);
+                                dialogInterface.dismiss();
+                            }
+                        })
+                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                dialogInterface.dismiss();
+                            }
+                        })
+                        .create();
+                joinDialog.show();
             }
         });
         return view;
