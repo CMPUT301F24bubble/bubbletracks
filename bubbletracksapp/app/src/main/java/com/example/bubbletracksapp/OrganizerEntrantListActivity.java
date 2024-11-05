@@ -129,7 +129,6 @@ public class OrganizerEntrantListActivity extends AppCompatActivity
     @Override
     public boolean hasEntrantAccepted(Entrant entrant) {
         // Should check if entant accepted invitation
-        Log.d("TAG", enrolledList.toString());
         return enrolledList.contains(entrant);
     }
 
