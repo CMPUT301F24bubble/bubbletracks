@@ -1,5 +1,7 @@
 package com.example.bubbletracksapp;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -35,12 +37,15 @@ public class EntrantEditActivity extends AppCompatActivity {
         EditText entrantNameInput = binding.entrantNameInput;
         EditText entrantEmailInput = binding.entrantEmailInput;
         EditText entrantPhoneInput = binding.entrantPhoneInput;
-
         TextView deviceIDNote = binding.deviceIDNote;
 
+        SharedPreferences localID = getSharedPreferences("LocalID", Context.MODE_PRIVATE);
+        String ID = localID.getString("ID", "Device ID not found");
+
+        // Must update to actually get the current user lol
         Entrant currentUser = new Entrant(new String[]{"name1", "name2"},"a@mail","123","xxx");
 
-        deviceIDNote.setText(currentUser.getID());
+        deviceIDNote.setText(ID);
         entrantNameInput.setText(currentUser.getNameAsString());
         entrantEmailInput.setText(currentUser.getEmail());
         entrantPhoneInput.setText(currentUser.getPhone());
