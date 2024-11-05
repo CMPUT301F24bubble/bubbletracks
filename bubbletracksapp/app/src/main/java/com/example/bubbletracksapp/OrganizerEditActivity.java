@@ -27,6 +27,7 @@ public class OrganizerEditActivity extends AppCompatActivity {
     ArrayList<Entrant> invitedList = new ArrayList<>();
     ArrayList<Entrant> rejectedList = new ArrayList<>();
     ArrayList<Entrant> cancelledList = new ArrayList<>();
+    ArrayList<Entrant> enrolledList = new ArrayList<>();
 
     ArrayList<String> waitListArray = new ArrayList<>();
 
@@ -57,6 +58,9 @@ public class OrganizerEditActivity extends AppCompatActivity {
         }
         if(in.getParcelableArrayListExtra("cancelled") != null) {
             cancelledList.addAll(in.getParcelableArrayListExtra("cancelled"));
+        }
+        if(in.getParcelableArrayListExtra("enrolled") != null) {
+            enrolledList.addAll(in.getParcelableArrayListExtra("enrolled"));
         }
 
 
@@ -112,6 +116,7 @@ public class OrganizerEditActivity extends AppCompatActivity {
         Collections.shuffle(waitList);
         invitedList.clear();
         rejectedList.clear();
+        enrolledList.clear();
         invitedList.addAll(waitList.subList(0, n));
         rejectedList.addAll(waitList.subList(n, waitList.size()));
 
@@ -125,6 +130,7 @@ public class OrganizerEditActivity extends AppCompatActivity {
         intent.putParcelableArrayListExtra("invited", invitedList);
         intent.putParcelableArrayListExtra("rejected", rejectedList);
         intent.putParcelableArrayListExtra("cancelled", cancelledList);
+        intent.putParcelableArrayListExtra("enrolled", enrolledList);
         startActivity(intent);
     }
 

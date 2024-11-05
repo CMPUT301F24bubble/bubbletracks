@@ -20,6 +20,7 @@ public class Event {
     private ArrayList<Entrant> invitedList = new ArrayList<>();
     private ArrayList<Entrant> cancelledList = new ArrayList<>();
     private ArrayList<Entrant> rejectedList = new ArrayList<>();
+    private ArrayList<Entrant> enrolledList = new ArrayList<>();
 
 
     public String getName() {
@@ -172,4 +173,25 @@ public class Event {
     public void deleteFromRejectedList(Entrant entrant) {
         this.rejectedList.remove(entrant);
     }
+
+    public ArrayList<Entrant> getEnrolledList() {
+        return enrolledList;
+    }
+
+    public void setEnrolledList(ArrayList<Entrant> enrolledList) {
+        this.enrolledList = enrolledList;
+    }
+
+    public void addToEnrolledList(Entrant entrant) {
+        this.enrolledList.add(entrant);
+    }
+
+    public void deleteFromEnrolledList(Entrant entrant) {
+        this.enrolledList.remove(entrant);
+    }
+
+    public boolean isInEnrolledList(Entrant entrant){
+        return this.enrolledList.contains(entrant);
+    }
+
 }

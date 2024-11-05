@@ -32,10 +32,12 @@ public class OrganizerEntrantListActivity extends AppCompatActivity
     // invitedList contains all the entrants that are invited to the event
     // cancelledList contains all the entrants that were invited but rejected the invitation
     // rejectedList contains all the entrants that are not being invited to the event
+    // enrolledList contains all the entrants that were invited and accepted the invitation
     ArrayList<Entrant> waitList= new ArrayList<>();
     ArrayList<Entrant> invitedList= new ArrayList<>();
     ArrayList<Entrant> cancelledList = new ArrayList<>();
     ArrayList<Entrant> rejectedList = new ArrayList<>();
+    ArrayList<Entrant> enrolledList = new ArrayList<>();
     int maximumNumberOfEntrants;
     OrganizerEditActivity organizerEditActivity;
 
@@ -66,6 +68,9 @@ public class OrganizerEntrantListActivity extends AppCompatActivity
         if(in.getParcelableArrayListExtra("rejected") != null) {
             rejectedList.addAll(in.getParcelableArrayListExtra("rejected"));
         }
+        if(in.getParcelableArrayListExtra("enrolled") != null) {
+            enrolledList.addAll(in.getParcelableArrayListExtra("enrolled"));
+        }
         if(in.getParcelableArrayListExtra("cancelled") != null) {
             cancelledList.addAll(in.getParcelableArrayListExtra("cancelled"));
         }
@@ -90,6 +95,7 @@ public class OrganizerEntrantListActivity extends AppCompatActivity
                 intent.putParcelableArrayListExtra("invited", invitedList);
                 intent.putParcelableArrayListExtra("rejected", rejectedList);
                 intent.putParcelableArrayListExtra("cancelled", cancelledList);
+                intent.putParcelableArrayListExtra("enrolled", enrolledList);
 
                 startActivity(intent);
             }
@@ -118,6 +124,7 @@ public class OrganizerEntrantListActivity extends AppCompatActivity
         waitList.remove(entrant);
         invitedList.remove(entrant);
         rejectedList.remove(entrant);
+        enrolledList.remove(entrant);
         cancelledList.add(entrant);
         UpdateListDisplay();
     }
@@ -125,7 +132,8 @@ public class OrganizerEntrantListActivity extends AppCompatActivity
     @Override
     public boolean hasEntrantAccepted(Entrant entrant) {
         // Should check if entant accepted invitation
-        return false;
+        Log.d("TAG", enrolledList.toString());
+        return enrolledList.contains(entrant);
     }
 
 
