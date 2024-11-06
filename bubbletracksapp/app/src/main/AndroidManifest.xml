@@ -4,6 +4,8 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-feature android:name="android.hardware.camera" />
     <uses-feature android:name="android.hardware.camera.autofocus" />
+
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -14,6 +16,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Bubbletracksapp"
         tools:targetApi="31">
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyBOt38qDT81Qj6jR0cmNHVGs3hPPw0XrZA" />
+
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -49,7 +56,17 @@
 
         <activity android:name=".OrganizerEntrantListActivity"/>
         <activity android:name=".OrganizerEditActivity"/>
-        <activity android:name=".EntrantEditActivity"/>
+        <activity
+            android:name=".EntrantEditActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Bubbletracksapp">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".OrganizerActivity" />
     </application>
 
 </manifest>

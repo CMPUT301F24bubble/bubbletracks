@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 public class Entrant implements Parcelable {
     /**
@@ -23,12 +24,14 @@ public class Entrant implements Parcelable {
     private String email;
     private String phone;
     private String deviceID;
+    private Boolean notification;
 
-    public Entrant(String[] newName, String newEmail, String newPhone, String newDevice) {
+    public Entrant(String[] newName, String newEmail, String newPhone, String newDevice, Boolean notificationPermission) {
         this.name = newName;
         this.email = newEmail;
         this.phone = newPhone;
         this.deviceID = newDevice;
+        this.notification = notificationPermission;
     }
 
     public Entrant(){
@@ -37,6 +40,7 @@ public class Entrant implements Parcelable {
         this.email = "";
         this.phone = "";
         this.deviceID = "";
+        this.notification = false;
     }
 
     protected Entrant(Parcel in) {
@@ -96,6 +100,12 @@ public class Entrant implements Parcelable {
         return name[0]+name[1];
     }
 
+    public Boolean getNotification() { return notification;}
+
+    public void setNotification(Boolean notification) {
+        this.notification = notification;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -106,5 +116,19 @@ public class Entrant implements Parcelable {
         parcel.writeStringArray(name);
         parcel.writeString(email);
         parcel.writeString(phone);
+    }
+
+    // Will need to be updated after changing the fields. May be easy to just use the device ID.
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Entrant entrant = (Entrant) o;
+        return Objects.deepEquals(name, entrant.name) && Objects.equals(email, entrant.email) && Objects.equals(phone, entrant.phone) && Objects.equals(deviceID, entrant.deviceID);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(Arrays.hashCode(name), email, phone, deviceID);
     }
 }

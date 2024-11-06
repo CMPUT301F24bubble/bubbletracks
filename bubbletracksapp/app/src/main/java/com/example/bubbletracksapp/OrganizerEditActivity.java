@@ -2,6 +2,7 @@ package com.example.bubbletracksapp;
 
 import android.content.Intent;
 import android.os.Bundle;;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -22,16 +23,15 @@ import java.util.List;
  * @author Chester
  */
 public class OrganizerEditActivity extends AppCompatActivity {
-    // SHOUL BE ENTant INCOMPLETE
+    Event event;
     ArrayList<Entrant> waitList = new ArrayList<>();
     ArrayList<Entrant> invitedList = new ArrayList<>();
     ArrayList<Entrant> rejectedList = new ArrayList<>();
     ArrayList<Entrant> cancelledList = new ArrayList<>();
-
-    ArrayList<String> waitListArray = new ArrayList<>();
+    ArrayList<Entrant> enrolledList = new ArrayList<>();
 
     ListView waitlistListView;
-    ArrayAdapter<String> waitlistAdapter;
+    EntrantListAdapter waitlistAdapter;
 
 
     private LotteryMainBinding binding;
@@ -42,30 +42,26 @@ public class OrganizerEditActivity extends AppCompatActivity {
         binding = LotteryMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-
-
-        // INCOMPLETE
         Intent in =  getIntent();
-        if(in.getParcelableArrayListExtra("wait") != null) {
-            waitList.addAll(in.getParcelableArrayListExtra("wait"));
+        try {
+            event = in.getParcelableExtra("event");
+        } catch (Exception e) {
+            Log.d("OrganizerEditActivity", "event extra was not passed correctly");
+            throw new RuntimeException(e);
         }
-        if(in.getParcelableArrayListExtra("invited") != null) {
-            invitedList.addAll(in.getParcelableArrayListExtra("invited"));
-        }
-        if(in.getParcelableArrayListExtra("rejected") != null) {
-            rejectedList.addAll(in.getParcelableArrayListExtra("rejected"));
-        }
-        if(in.getParcelableArrayListExtra("cancelled") != null) {
-            cancelledList.addAll(in.getParcelableArrayListExtra("cancelled"));
-        }
+        waitList = event.getWaitList();
+        invitedList = event.getInvitedList();
+        rejectedList = event.getRejectedList();
+        cancelledList = event.getCancelledList();
+        enrolledList = event.getEnrolledList();
 
-
-        for (int i = 0; i < waitList.size(); i++) {
-            waitListArray.add(waitList.get(i).getNameAsString());
+        if(invitedList.size() > 0)
+        {
+            // Go to homescreen
         }
 
         waitlistListView = binding.reusableListView;
-        waitlistAdapter = new ArrayAdapter<String>(this.getApplicationContext(), R.layout.list_simple_view,  waitListArray);
+        waitlistAdapter = new EntrantListAdapter(this, waitList);
         waitlistListView.setAdapter(waitlistAdapter);
 
 
@@ -101,7 +97,7 @@ public class OrganizerEditActivity extends AppCompatActivity {
 
 
     // should return error if n is bigger than the size of waitlist INCOMPLETE
-    // Assuming it is the fist time it is called INCOMEPLETE
+    // Assuming it is the fist time it is called INCOMPLETE
     /**
      * Allows the organizer to draw n entrants from the waitlist.
      * @param n The number of entrants to sample.
@@ -112,6 +108,7 @@ public class OrganizerEditActivity extends AppCompatActivity {
         Collections.shuffle(waitList);
         invitedList.clear();
         rejectedList.clear();
+        enrolledList.clear();
         invitedList.addAll(waitList.subList(0, n));
         rejectedList.addAll(waitList.subList(n, waitList.size()));
 
@@ -120,11 +117,13 @@ public class OrganizerEditActivity extends AppCompatActivity {
 
 
     private void startListActivity() {
+        event.setWaitList(waitList);
+        event.setInvitedList(invitedList);
+        event.setRejectedList(rejectedList);
+        event.setCancelledList(cancelledList);
+        event.setEnrolledList(enrolledList);
         Intent intent = new Intent(OrganizerEditActivity.this, OrganizerEntrantListActivity.class);
-        intent.putParcelableArrayListExtra("wait", waitList);
-        intent.putParcelableArrayListExtra("invited", invitedList);
-        intent.putParcelableArrayListExtra("rejected", rejectedList);
-        intent.putParcelableArrayListExtra("cancelled", cancelledList);
+        intent.putExtra("event", event);
         startActivity(intent);
     }
 
