@@ -6,19 +6,28 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+import java.util.UUID;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Formatter;
 
-public class Event implements Parcelable {
+public class Event implements Parcelable{
+    private String id;
     private String name;
+    private Date dateTime;
     private String description;
-    private Calendar date;
-    //QRCode should probably be another type of field INCOMPLETE
-    private String QRCode;
-    private Location geolocation;
-    private Image image;
+    private String geolocation;
+    private Date registrationOpen;
+    private Date registrationClose;
+    private int maxCapacity;
+    private int price;
+    private int WaitListLimit;
     private boolean needsGeolocation;
+    private String image;
+    private String QRCode;
     private ArrayList<Entrant> waitList = new ArrayList<>();
     private ArrayList<Entrant> invitedList = new ArrayList<>();
     private ArrayList<Entrant> cancelledList = new ArrayList<>();
@@ -27,17 +36,23 @@ public class Event implements Parcelable {
 
 
     public Event(){
-        Log.w("NewEvent", "Event has empty strings for information.");
+        this.id = UUID.randomUUID().toString();
     }
 
-    public Event(String name, String description, Calendar date, String QRCode, Location geolocation, Image image, boolean needsGeolocation, ArrayList<Entrant> waitList, ArrayList<Entrant> invitedList, ArrayList<Entrant> cancelledList, ArrayList<Entrant> rejectedList, ArrayList<Entrant> enrolledList) {
+    public Event(String id, String name, Date dateTime, String description, String geolocation, Date registrationOpen, Date registrationClose, int maxCapacity, int price, int waitListLimit, boolean needsGeolocation, String image, String QRCode, ArrayList<Entrant> waitList, ArrayList<Entrant> invitedList, ArrayList<Entrant> cancelledList, ArrayList<Entrant> rejectedList, ArrayList<Entrant> enrolledList) {
+        this.id = id;
         this.name = name;
+        this.dateTime = dateTime;
         this.description = description;
-        this.date = date;
-        this.QRCode = QRCode;
         this.geolocation = geolocation;
-        this.image = image;
+        this.registrationOpen = registrationOpen;
+        this.registrationClose = registrationClose;
+        this.maxCapacity = maxCapacity;
+        this.price = price;
+        WaitListLimit = waitListLimit;
         this.needsGeolocation = needsGeolocation;
+        this.image = image;
+        this.QRCode = QRCode;
         this.waitList = waitList;
         this.invitedList = invitedList;
         this.cancelledList = cancelledList;
@@ -47,11 +62,16 @@ public class Event implements Parcelable {
 
 
     protected Event(Parcel in) {
+        id = in.readString();
         name = in.readString();
         description = in.readString();
-        QRCode = in.readString();
-        geolocation = in.readParcelable(Location.class.getClassLoader());
+        geolocation = in.readString();
+        maxCapacity = in.readInt();
+        price = in.readInt();
+        WaitListLimit = in.readInt();
         needsGeolocation = in.readByte() != 0;
+        image = in.readString();
+        QRCode = in.readString();
         waitList = in.createTypedArrayList(Entrant.CREATOR);
         invitedList = in.createTypedArrayList(Entrant.CREATOR);
         cancelledList = in.createTypedArrayList(Entrant.CREATOR);
@@ -61,11 +81,16 @@ public class Event implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(id);
         dest.writeString(name);
         dest.writeString(description);
-        dest.writeString(QRCode);
-        dest.writeParcelable(geolocation, flags);
+        dest.writeString(geolocation);
+        dest.writeInt(maxCapacity);
+        dest.writeInt(price);
+        dest.writeInt(WaitListLimit);
         dest.writeByte((byte) (needsGeolocation ? 1 : 0));
+        dest.writeString(image);
+        dest.writeString(QRCode);
         dest.writeTypedList(waitList);
         dest.writeTypedList(invitedList);
         dest.writeTypedList(cancelledList);
@@ -90,91 +115,82 @@ public class Event implements Parcelable {
         }
     };
 
-    public String getName() {
-        return name;
+    public String getId() { return id; }
+
+    public void setId(String id) {this.id = id;}
+
+    public String getName() { return name; }
+
+    public void setName(String name) { this.name = name; }
+
+    public Date getDateTime() { return dateTime; }
+
+    public void setDateTime(Date dateTime) { this.dateTime = dateTime; }
+
+    public String getDescription() { return description; }
+
+    public void setDescription(String description) { this.description = description; }
+
+    public String getGeolocation() { return geolocation; }
+
+    public void setGeolocation(String geoLocation) {
+        this.geolocation = geoLocation;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public Date getRegistrationOpen() { return registrationOpen; }
+
+    public void setRegistrationOpen(Date registrationOpen) {
+        this.registrationOpen = registrationOpen;
     }
 
-    public String getDescription() {
-        return description;
+    public Date getRegistrationClose() { return registrationClose; }
+
+    public void setRegistrationClose(Date registrationClose) {
+        this.registrationClose = registrationClose;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public int getMaxCapacity() { return maxCapacity; }
+
+    public void setMaxCapacity(int maxCapacity) { this.maxCapacity = maxCapacity; }
+
+    public int getPrice() { return price; }
+
+    public void setPrice(int price) { this.price = price; }
+
+    public int getWaitListLimit() { return WaitListLimit;}
+
+    public void setWaitListLimit(int waitListLimit) { WaitListLimit = waitListLimit; }
+
+    public boolean getNeedsGeolocation() { return needsGeolocation; }
+
+    public void setNeedsGeolocation(boolean needsGeolocation) { this.needsGeolocation = needsGeolocation; }
+
+    public String getImage() { return image; }
+
+    public void setImage(String image) { this.image = image; }
+
+    public String getQRCode() { return QRCode; }
+
+    public void setQRCode(String QRCode) { this.QRCode = QRCode; }
+
+    public String getYear(Date date){
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy", Locale.getDefault());
+        return formatter.format(date);
     }
 
-    public Location getGeolocation() {
-        return geolocation;
+    public String getMonth(Date date) {
+        SimpleDateFormat formatter = new SimpleDateFormat("MMM", Locale.getDefault());
+        return formatter.format(date);
     }
 
-    public void setGeolocation(Location geolocation) {
-        this.geolocation = geolocation;
+    public String getDay(Date date) {
+        SimpleDateFormat formatter = new SimpleDateFormat("dd", Locale.getDefault());
+        return formatter.format(date);
     }
 
-    public Image getImage() {
-        return image;
-    }
-
-    public void setImage(Image image) {
-        this.image = image;
-    }
-
-    public boolean isNeedsGeolocation() {
-        return needsGeolocation;
-    }
-
-    public void setNeedsGeolocation(boolean needsGeolocation) {
-        this.needsGeolocation = needsGeolocation;
-    }
-
-    public String getQRCode() {
-        return QRCode;
-    }
-
-    public void setQRCode(String QRCode) {
-        this.QRCode = QRCode;
-    }
-
-    public String getID() {
-        return QRCode;
-    }
-
-    public Calendar getDate() {
-        return date;
-    }
-
-    public void setDate(Calendar date) {
-        this.date = date;
-    }
-
-    public String getMonth() {
-        Formatter format = new Formatter();
-        format.format("%tb", date);
-        return format.toString();
-
-    }
-
-    public String getDay() {
-        Formatter format = new Formatter();
-        format.format("%tm", date);
-        return format.toString();
-
-    }
-
-    public String getTime() {
-        Formatter format = new Formatter();
-        format.format("%tl:%tM", date, date);
-        return format.toString();
-
-    }
-
-    //Should return a specific address
-    public String getLocation() {
-        return "Ualberta 10001";
-
+    public String getTime(Date date) {
+        SimpleDateFormat formatter = new SimpleDateFormat("HH:mm", Locale.getDefault());
+        return formatter.format(date);
     }
 
     public ArrayList<Entrant> getWaitList() {

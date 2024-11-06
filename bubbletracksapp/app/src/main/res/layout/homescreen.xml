@@ -11,7 +11,7 @@
     <HorizontalScrollView
         android:id="@+id/button_scroll_view"
         android:layout_width="match_parent"
-        android:layout_height="80dp"
+        android:layout_height="60dp"
         android:fillViewport="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -23,18 +23,19 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-            <Button
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/button_events"
                 style="@style/HomeButtons"
-                android:background="@color/home"
+                android:background="@color/home_blue"
                 android:drawableTop="@drawable/events_icon"
                 android:text="Your Events"
+                android:layout_height="60dp"
                 android:textColorLink="#03A9F4" />
 
-            <Button
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/button_tickets"
                 style="@style/HomeButtons"
-
+                android:layout_height="60dp"
                 android:drawableTop="@drawable/ticketicon"
                 android:text="Tickets"
                 android:backgroundTint="@color/home_blue"
@@ -44,7 +45,7 @@
                 android:id="@+id/button_facility"
                 style="@style/HomeButtons"
                 android:backgroundTint="@color/home_blue"
-
+                android:layout_height="60dp"
                 android:drawableTop="@drawable/facility_icon"
                 android:text="Your Facility"
                  />
@@ -53,7 +54,7 @@
                 android:id="@+id/button_admin"
                 style="@style/HomeButtons"
                 android:drawableTop="@drawable/baseline_key_24"
-
+                android:layout_height="60dp"
                 android:text="Admin Access"
                 android:backgroundTint="@color/home_blue"
                 />
@@ -74,7 +75,8 @@
     <TextView
         android:id="@+id/activity_title"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
         app:layout_constraintBottom_toTopOf="@id/content_holder"
         app:layout_constraintEnd_toEndOf="parent"
         android:text="Activity Title"

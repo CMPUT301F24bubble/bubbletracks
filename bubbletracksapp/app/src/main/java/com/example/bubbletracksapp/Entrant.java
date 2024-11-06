@@ -24,12 +24,14 @@ public class Entrant implements Parcelable {
     private String email;
     private String phone;
     private String deviceID;
+    private Boolean notification;
 
-    public Entrant(String[] newName, String newEmail, String newPhone, String newDevice) {
+    public Entrant(String[] newName, String newEmail, String newPhone, String newDevice, Boolean notificationPermission) {
         this.name = newName;
         this.email = newEmail;
         this.phone = newPhone;
         this.deviceID = newDevice;
+        this.notification = notificationPermission;
     }
 
     public Entrant(){
@@ -38,6 +40,7 @@ public class Entrant implements Parcelable {
         this.email = "";
         this.phone = "";
         this.deviceID = "";
+        this.notification = false;
     }
 
     protected Entrant(Parcel in) {
@@ -95,6 +98,12 @@ public class Entrant implements Parcelable {
     // MUST BE CHANGED, should be the phoneID but for now the ID is the name INCOMPLETE
     public String getID() {
         return name[0]+name[1];
+    }
+
+    public Boolean getNotification() { return notification;}
+
+    public void setNotification(Boolean notification) {
+        this.notification = notification;
     }
 
     @Override
