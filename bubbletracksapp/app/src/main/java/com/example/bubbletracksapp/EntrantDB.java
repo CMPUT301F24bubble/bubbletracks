@@ -132,6 +132,7 @@ public class EntrantDB {
         newEntrant.put("name", entrant.getNameAsList());
         newEntrant.put("email", entrant.getEmail());
         newEntrant.put("phone", entrant.getPhone());
+        newEntrant.put("notification", entrant.getNotification());
 
         return newEntrant;
     }
@@ -145,6 +146,7 @@ public class EntrantDB {
         newEntrant.setName(name.get(0), name.get(1));
         newEntrant.setEmail(map.get("email").toString());
         newEntrant.setPhone(map.get("phone").toString());
+        newEntrant.setNotification((Boolean) map.get("notification"));
 
         return newEntrant;
     }
