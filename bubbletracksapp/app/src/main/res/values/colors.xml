@@ -5,4 +5,6 @@
     <color name="home_blue">#2196F3</color>
     <color name="home">#F0F321</color>
     <color name="search">#99ACEC</color>
+    <color name="positive">#FF018104</color>
+    <color name="neutral">#9DA7AC</color>
 </resources>

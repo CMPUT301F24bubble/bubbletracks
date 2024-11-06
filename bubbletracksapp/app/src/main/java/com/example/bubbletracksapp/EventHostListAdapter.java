@@ -82,10 +82,7 @@ public class EventHostListAdapter extends ArrayAdapter<Event>{
         Context context = EventHostListAdapter.this.getContext();
 
         Intent intent = new Intent(EventHostListAdapter.this.getContext(), OrganizerEditActivity.class);
-        intent.putParcelableArrayListExtra("wait", event.getWaitList());
-        intent.putParcelableArrayListExtra("invited", event.getInvitedList());
-        intent.putParcelableArrayListExtra("rejected", event.getRejectedList());
-        intent.putParcelableArrayListExtra("cancelled", event.getCancelledList());
+        intent.putExtra("event", event);
 
         context.startActivity(intent);
 
