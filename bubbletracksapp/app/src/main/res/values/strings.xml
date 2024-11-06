@@ -47,4 +47,6 @@
     <string name="search_hint">Search\n</string>
     <string name="join_waitlist">Join Waitlist</string>
     <string name="leave_waitlist">Leave Waitlist</string>
+    <string name="enrolledEntrantState">Enrolled</string>
+    <string name="notEnrolledEntrantState">Waiting</string>
 </resources>

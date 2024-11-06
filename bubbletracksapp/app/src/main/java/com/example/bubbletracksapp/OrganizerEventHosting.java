@@ -89,6 +89,7 @@ public class OrganizerEventHosting extends Fragment{
         en = new Entrant();
         en.setName("ches", " tata");
         e.addToWaitList(en);
+        e.addToEnrolledList(en);
 
         en = new Entrant();
         en.setName("zoe", " tata");
