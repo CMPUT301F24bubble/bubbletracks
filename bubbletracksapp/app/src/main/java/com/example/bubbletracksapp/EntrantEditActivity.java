@@ -27,11 +27,11 @@ import android.widget.Toast;
 
 public class EntrantEditActivity extends AppCompatActivity {
     /**
-     * This class allows entrant to update their profile information.
+     * This class allows an entrant to update their profile information.
      * INCOMPLETE:
      * There is currently no data validation.
      * There is no way to set the profile picture.
-     * There is no true current user; data is not entered into the database.
+     * There is no true current user.
      */
     private ActivityResultLauncher<String> requestPermissionLauncher;
     private ProfileManagementBinding binding;
@@ -60,8 +60,7 @@ public class EntrantEditActivity extends AppCompatActivity {
                     }
                 }
         );
-
-
+        
         EditText entrantNameInput = binding.entrantNameInput;
         EditText entrantEmailInput = binding.entrantEmailInput;
         EditText entrantPhoneInput = binding.entrantPhoneInput;

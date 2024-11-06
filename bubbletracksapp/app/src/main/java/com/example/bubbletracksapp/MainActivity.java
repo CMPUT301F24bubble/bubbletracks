@@ -22,8 +22,6 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
-import com.example.bubbletracksapp.databinding.ProfileManagementBinding;
-
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -45,7 +43,6 @@ public class MainActivity extends AppCompatActivity {
 
         currentDeviceID = getDeviceID();
         Log.d("DeviceID:",currentDeviceID);
-
     }
 
     @Override
