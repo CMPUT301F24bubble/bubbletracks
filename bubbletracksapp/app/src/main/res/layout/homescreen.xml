@@ -80,6 +80,9 @@
         app:layout_constraintBottom_toTopOf="@id/content_holder"
         app:layout_constraintEnd_toEndOf="parent"
         android:text="Activity Title"
-        android:textSize="50dp"/> <!--Always changing this depending on the activity-->
+        android:textSize="50dp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:textColor="@color/home_blue"/> <!--Always changing this depending on the activity-->
 
 </androidx.constraintlayout.widget.ConstraintLayout>
