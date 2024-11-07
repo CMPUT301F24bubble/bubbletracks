@@ -38,17 +38,27 @@ package com.example.bubbletracksapp;
 //}
 
 
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.bubbletracksapp.databinding.ListsBinding;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -57,7 +67,12 @@ import java.util.Date;
 public class OrganizerEventHosting extends Fragment{
     private ListsBinding binding;
 
+    EventDB eventDB = new EventDB();
     ArrayList<Event> hostedEvents = new ArrayList<>();
+
+    Context context;
+    public Entrant currentUser;
+
 
     ListView eventListView;
     EventHostListAdapter eventListAdapter;
@@ -76,72 +91,22 @@ public class OrganizerEventHosting extends Fragment{
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        Event e = new Event();
-        e.setName("Nathacks");
-        Calendar c = Calendar.getInstance();
-        Date date = c.getTime();
-        e.setDateTime(date);
+        context = getContext();
+        MainActivity mainActivity = (MainActivity)getActivity();
+        currentUser = mainActivity.currentUser;
 
-        Entrant en = new Entrant();
-        en.setName("hola", " tata");
-        e.addToWaitList(en);
-
-        en = new Entrant();
-        en.setName("ches", " tata");
-        e.addToWaitList(en);
-        e.addToEnrolledList(en);
-
-        en = new Entrant();
-        en.setName("zoe", " tata");
-        e.addToWaitList(en);
-
-        en = new Entrant();
-        en.setName("sam", " tata");
-        e.addToWaitList(en);
-
-        en = new Entrant();
-        en.setName("eaaaa", " tata");
-        e.addToCancelledList(en);
-        en = new Entrant();
-        en.setName("misete", " tata");
-        e.addToCancelledList(en);
-
-        hostedEvents.add(e);
-
-        e = new Event();
-        e.setName("eaaaa");
-        c = Calendar.getInstance();
-        date = c.getTime();
-        e.setDateTime(date);
-        hostedEvents.add(e);
-
-        en.setName("hola", " tata");
-        e.addToWaitList(en);
-
-        en = new Entrant();
-        en.setName("ches", " tata");
-        e.addToWaitList(en);
-
-        en = new Entrant();
-        en.setName("zoe", " tata");
-        e.addToWaitList(en);
-
-        en = new Entrant();
-        en.setName("sam", " tata");
-        e.addToWaitList(en);
-
-        en = new Entrant();
-        en.setName("eaaaa", " tata");
-        e.addToCancelledList(en);
-        en = new Entrant();
-        en.setName("misete", " tata");
-        e.addToCancelledList(en);
-
-        Log.d("TAG", view.getContext().toString());
         eventListView = binding.reusableListView;
-        eventListAdapter = new EventHostListAdapter(this.getContext(), hostedEvents);
-        eventListView.setAdapter(eventListAdapter);
 
+        eventDB.getEventList(currentUser.getEventsOrganized()).thenAccept(events -> {
+            if(events != null){
+                hostedEvents = events;
+                eventListAdapter = new EventHostListAdapter(this.getContext(), events);
+                eventListView.setAdapter(eventListAdapter);
+
+            } else {
+                Toast.makeText(context, "No hosted events", Toast.LENGTH_LONG).show();
+            }
+        });
 
     }
 

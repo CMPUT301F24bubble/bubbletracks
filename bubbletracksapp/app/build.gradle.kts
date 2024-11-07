@@ -49,5 +49,6 @@ dependencies {
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
     implementation(libs.google.firebase.storage)
-    implementation("com.google.android.libraries.places:places:3.1.0")
+    implementation(libs.places)
+    implementation(libs.picasso)
 }

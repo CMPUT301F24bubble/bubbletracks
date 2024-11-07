@@ -8,8 +8,13 @@ import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 
+import com.google.firebase.firestore.DocumentSnapshot;
+
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 public class Entrant implements Parcelable {
@@ -25,13 +30,15 @@ public class Entrant implements Parcelable {
     private String phone;
     private String deviceID;
     private Boolean notification;
+    private ArrayList<String> eventsOrganized = new ArrayList<>();
 
-    public Entrant(String[] newName, String newEmail, String newPhone, String newDevice, Boolean notificationPermission) {
+    public Entrant(String[] newName, String newEmail, String newPhone, String newDevice, Boolean notificationPermission, ArrayList<String> eventsOrganized) {
         this.name = newName;
         this.email = newEmail;
         this.phone = newPhone;
         this.deviceID = newDevice;
         this.notification = notificationPermission;
+        this.eventsOrganized = eventsOrganized;
     }
 
     public Entrant(){
@@ -41,12 +48,28 @@ public class Entrant implements Parcelable {
         this.phone = "";
         this.deviceID = "";
         this.notification = false;
+        this.eventsOrganized = new ArrayList<>();
+    }
+
+    public Entrant(DocumentSnapshot document) {
+        ArrayList<String> name = (ArrayList<String>)document.getData().get("name");
+
+        this.name = new String[]{name.get(0), name.get(1)};
+        this.email = document.getString("email");
+        this.phone = document.getString("phone");
+        this.deviceID = document.getString("ID");
+        this.notification = document.getBoolean("notification");
+        this.eventsOrganized = (ArrayList<String>)document.getData().get("events");
     }
 
     protected Entrant(Parcel in) {
         name = in.createStringArray();
         email = in.readString();
         phone = in.readString();
+        deviceID = in.readString();
+        byte tmpNotification = in.readByte();
+        notification = tmpNotification == 0 ? null : tmpNotification == 1;
+        eventsOrganized = in.createStringArrayList();
     }
 
     public static final Creator<Entrant> CREATOR = new Creator<Entrant>() {
@@ -61,7 +84,18 @@ public class Entrant implements Parcelable {
         }
     };
 
+    public Map<String, Object> toMap() {
+        Map<String, Object> map = new HashMap<>();
 
+        map.put("name", getNameAsList());
+        map.put("email", email);
+        map.put("phone", phone);
+        map.put("notification", notification);
+        map.put("ID", deviceID);
+        map.put("events", eventsOrganized);
+
+        return map;
+    }
 
     public String[] getName() {
         return name;
@@ -95,10 +129,6 @@ public class Entrant implements Parcelable {
         this.phone = phone;
     }
 
-    // MUST BE CHANGED, should be the phoneID but for now the ID is the name INCOMPLETE
-    public String getID() {
-        return name[0]+name[1];
-    }
 
     public Boolean getNotification() { return notification;}
 
@@ -130,5 +160,21 @@ public class Entrant implements Parcelable {
     @Override
     public int hashCode() {
         return Objects.hash(Arrays.hashCode(name), email, phone, deviceID);
+    }
+
+    public String getID() {
+        return deviceID;
+    }
+
+    public void setID(String deviceID) {
+        this.deviceID = deviceID;
+    }
+
+    public ArrayList<String> getEventsOrganized() {
+        return eventsOrganized;
+    }
+
+    public void setEventsOrganized(ArrayList<String> eventsOrganized) {
+        this.eventsOrganized = eventsOrganized;
     }
 }
