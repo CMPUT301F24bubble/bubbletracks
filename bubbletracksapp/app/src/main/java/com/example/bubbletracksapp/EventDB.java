@@ -4,6 +4,7 @@ import android.media.Image;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -15,6 +16,11 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -125,6 +131,41 @@ public class EventDB {
         return returnCode;
     }
 
+    public CompletableFuture<ArrayList<Event>> getEventList(ArrayList<String> IDs)
+    {
+        CompletableFuture<ArrayList<Event>> returnCode = new CompletableFuture<>();
+        ArrayList<Event> events = new ArrayList<>();
+
+        Query query = eventsRef.whereIn("id", IDs);
+
+        query.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot querySnapshot) {
+                if (querySnapshot.isEmpty()) {
+                    Log.d("getEventList", "No documents found: " + IDs.toString());
+                    returnCode.complete(null);
+                    return;
+                }
+                // Go through each document and get the Event information.
+                for (QueryDocumentSnapshot document : querySnapshot) {
+                    Map<String, Object> newEventMap = document.getData();
+                    Event newEvent = mapToEvent(newEventMap);
+
+                    events.add(newEvent);
+                }
+                returnCode.complete(events);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                // Error if it does not work
+                Log.d("Database error", "Error getting all events", e);
+            }
+        });
+        return returnCode;
+
+    }
+
 
 
     // These two should be in Event
@@ -145,6 +186,11 @@ public class EventDB {
         newMap.put("needsGeolocation", event.getNeedsGeolocation());
         newMap.put("image", event.getImage());
         newMap.put("QRCode", event.getQRCode());
+        newMap.put("wait", event.getWaitList());
+        newMap.put("invited", event.getInvitedList());
+        newMap.put("cancelled", event.getCancelledList());
+        newMap.put("rejected", event.getRejectedList());
+        newMap.put("enrolled", event.getEnrolledList());
 
         return newMap;
     }
@@ -166,6 +212,11 @@ public class EventDB {
         newEvent.setNeedsGeolocation((Boolean) map.get("needsGeolocation"));
         newEvent.setImage(map.get("image").toString());
         newEvent.setQRCode(map.get("QRCode").toString());
+        newEvent.setWaitList((ArrayList<String>) map.get("wait"));
+        newEvent.setInvitedList((ArrayList<String>) map.get("invited"));
+        newEvent.setCancelledList((ArrayList<String>) map.get("cancelled"));
+        newEvent.setRejectedList((ArrayList<String>) map.get("rejected"));
+        newEvent.setEnrolledList((ArrayList<String>) map.get("enrolled"));
 
         return newEvent;
     }

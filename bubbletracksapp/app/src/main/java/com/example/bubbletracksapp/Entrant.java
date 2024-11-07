@@ -43,6 +43,7 @@ public class Entrant implements Parcelable {
         this.notification = false;
     }
 
+
     protected Entrant(Parcel in) {
         name = in.createStringArray();
         email = in.readString();
