@@ -8,9 +8,13 @@ import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 
+import com.google.firebase.firestore.DocumentSnapshot;
+
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 public class Entrant implements Parcelable {
@@ -44,8 +48,19 @@ public class Entrant implements Parcelable {
         this.phone = "";
         this.deviceID = "";
         this.notification = false;
+        this.eventsOrganized = new ArrayList<>();
     }
 
+    public Entrant(DocumentSnapshot document) {
+        ArrayList<String> name = (ArrayList<String>)document.getData().get("name");
+
+        this.name = new String[]{name.get(0), name.get(1)};
+        this.email = document.getString("email");
+        this.phone = document.getString("phone");
+        this.deviceID = document.getString("ID");
+        this.notification = document.getBoolean("notification");
+        this.eventsOrganized = (ArrayList<String>)document.getData().get("events");
+    }
 
     protected Entrant(Parcel in) {
         name = in.createStringArray();
@@ -68,6 +83,19 @@ public class Entrant implements Parcelable {
             return new Entrant[size];
         }
     };
+
+    public Map<String, Object> toMap() {
+        Map<String, Object> map = new HashMap<>();
+
+        map.put("name", getNameAsList());
+        map.put("email", email);
+        map.put("phone", phone);
+        map.put("notification", notification);
+        map.put("ID", deviceID);
+        map.put("events", eventsOrganized);
+
+        return map;
+    }
 
     public String[] getName() {
         return name;

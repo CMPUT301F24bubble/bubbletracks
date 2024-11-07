@@ -35,11 +35,10 @@ public class EntrantDB {
     public void addEntrant(Entrant entrant)
     {
         //Maybe this should be in Entrant class INCOMPLETE
-        Map<String, Object> newEntrant = entrantToMap(entrant);
+        Map<String, Object> newEntrant = entrant.toMap();
 
         String docID = entrant.getID();
-
-
+        
         entrantsRef.document(docID)
                 .set(newEntrant)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -79,7 +78,7 @@ public class EntrantDB {
     public void updateEntrant(Entrant newEntrant)
     {
         //Maybe this should be in Entrant class INCOMPLETE
-        Map<String, Object> newEntrantMap = entrantToMap(newEntrant);
+        Map<String, Object> newEntrantMap = newEntrant.toMap();
 
         String docID = newEntrant.getID();
 
@@ -111,8 +110,7 @@ public class EntrantDB {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
-                        Map<String, Object> newEntrantMap = document.getData();
-                        Entrant newEntrant = mapToEntrant(newEntrantMap);
+                        Entrant newEntrant = new Entrant(document);
 
                         returnCode.complete(newEntrant);
                         Log.d("EntrantDB", "DocumentSnapshot data: " + document.getData());
@@ -144,8 +142,7 @@ public class EntrantDB {
                 }
                 // Go through each document and get the Event information.
                 for (QueryDocumentSnapshot document : querySnapshot) {
-                    Map<String, Object> newEntrantMap = document.getData();
-                    Entrant newEntrant = mapToEntrant(newEntrantMap);
+                    Entrant newEntrant = new Entrant(document);
 
                     entrants.add(newEntrant);
                 }
@@ -161,38 +158,5 @@ public class EntrantDB {
         return returnCode;
 
     }
-
-
-    // These two should be in Entrant
-    //Update with required fields INCOMPLETE
-    private Map<String, Object> entrantToMap(Entrant entrant) {
-        Map<String, Object> newEntrant = new HashMap<>();
-
-        newEntrant.put("name", entrant.getNameAsList());
-        newEntrant.put("email", entrant.getEmail());
-        newEntrant.put("phone", entrant.getPhone());
-        newEntrant.put("notification", entrant.getNotification());
-        newEntrant.put("ID", entrant.getID());
-        newEntrant.put("events", entrant.getEventsOrganized());
-
-        return newEntrant;
-    }
-
-    //Update with required fields INCOMPLETE
-    private static Entrant mapToEntrant(Map<String, Object> map) {
-        Entrant newEntrant = new Entrant();
-
-        ArrayList<String> name = (ArrayList<String>)map.get("name");
-
-        newEntrant.setName(name.get(0), name.get(1));
-        newEntrant.setEmail(map.get("email").toString());
-        newEntrant.setPhone(map.get("phone").toString());
-        newEntrant.setNotification((Boolean) map.get("notification"));
-        newEntrant.setID(map.get("ID").toString());
-        newEntrant.setEventsOrganized((ArrayList<String>) map.get("events"));
-
-        return newEntrant;
-    }
-
 
 }
