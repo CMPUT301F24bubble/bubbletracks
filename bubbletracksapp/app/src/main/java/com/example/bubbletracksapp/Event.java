@@ -3,6 +3,8 @@ package com.example.bubbletracksapp;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.firebase.firestore.DocumentSnapshot;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -32,6 +34,22 @@ public class Event implements Parcelable{
 
     public Event(){
         this.id = UUID.randomUUID().toString();
+    }
+
+    public Event(DocumentSnapshot document) {
+        this.id = document.getString("id");
+        this.name = document.getString("name");
+        this.dateTime = document.getTimestamp("dateTime").toDate();
+        this.description = document.getString("description");
+        this.geolocation=  document.getString("geolocation");
+        this.registrationOpen = document.getTimestamp("registrationOpen").toDate();
+        this.registrationClose = document.getTimestamp("registrationClose").toDate();
+        this.maxCapacity = document.getLong("maxCapacity").intValue();
+        this.price = document.getLong("price").intValue();
+        this.WaitListLimit =  document.getLong("waitListLimit").intValue();
+        this.needsGeolocation = document.getBoolean("needsGeolocation");
+        this.image = document.getString("image");
+        this.QRCode = document.getString("QRCode");
     }
 
     public Event(String id, String name, Date dateTime, String description, String geolocation, Date registrationOpen, Date registrationClose, int maxCapacity, int price, int waitListLimit, boolean needsGeolocation, String image, String QRCode, ArrayList<String> waitList, ArrayList<String> invitedList, ArrayList<String> cancelledList, ArrayList<String> rejectedList, ArrayList<String> enrolledList) {
@@ -223,7 +241,6 @@ public class Event implements Parcelable{
     public void setInvitedListWithEvents(ArrayList<Entrant> invitedList) {
         this.invitedList = entrantListToStringList(invitedList);
     }
-
 
     public void addToInvitedList(String entrant) {
         this.invitedList.add(entrant);

@@ -115,8 +115,8 @@ public class EventDB {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
-                        Map<String, Object> newEventMap = document.getData();
-                        Event newEvent = mapToEvent(newEventMap);
+
+                        Event newEvent = new Event(document);
 
                         returnCode.complete(newEvent);
                         Log.d("EventDB", "DocumentSnapshot data: " + document.getData());
@@ -196,7 +196,7 @@ public class EventDB {
     }
 
     //Update with required fields INCOMPLETE
-    private Event mapToEvent(Map<String, Object> map) {
+    /*private Event mapToEvent(Map<String, Object> map) {
         Event newEvent = new Event();
 
         newEvent.setId(map.get("id").toString());
@@ -219,7 +219,7 @@ public class EventDB {
         newEvent.setEnrolledList((ArrayList<String>) map.get("enrolled"));
 
         return newEvent;
-    }
+    }*/
 
     private Date toDate(Object dateTime){
         Timestamp timestamp = (Timestamp) dateTime;
