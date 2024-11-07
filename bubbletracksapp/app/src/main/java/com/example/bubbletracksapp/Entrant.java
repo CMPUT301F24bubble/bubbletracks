@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 public class Entrant implements Parcelable {
     /**
@@ -115,5 +116,19 @@ public class Entrant implements Parcelable {
         parcel.writeStringArray(name);
         parcel.writeString(email);
         parcel.writeString(phone);
+    }
+
+    // Will need to be updated after changing the fields. May be easy to just use the device ID.
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Entrant entrant = (Entrant) o;
+        return Objects.deepEquals(name, entrant.name) && Objects.equals(email, entrant.email) && Objects.equals(phone, entrant.phone) && Objects.equals(deviceID, entrant.deviceID);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(Arrays.hashCode(name), email, phone, deviceID);
     }
 }

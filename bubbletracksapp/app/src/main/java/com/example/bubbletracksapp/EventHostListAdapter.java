@@ -54,10 +54,10 @@ public class EventHostListAdapter extends ArrayAdapter<Event>{
         AppCompatImageButton editEventButton = view.findViewById(R.id.edit_event_button);
 
 
-        eventMonthText.setText(event.getMonth());
-        eventDateText.setText(event.getDay());
-        eventTimeText.setText(event.getTime());
-        eventLocationText.setText(event.getLocation());
+        eventMonthText.setText(event.getMonth(event.getDateTime()));
+        eventDateText.setText(event.getDay(event.getDateTime()));
+        eventTimeText.setText(event.getTime(event.getDateTime()));
+        eventLocationText.setText(event.getGeolocation());
         eventTitleText.setText(event.getName());
 
         seePeopleButton.setOnClickListener(new View.OnClickListener() {
@@ -82,10 +82,7 @@ public class EventHostListAdapter extends ArrayAdapter<Event>{
         Context context = EventHostListAdapter.this.getContext();
 
         Intent intent = new Intent(EventHostListAdapter.this.getContext(), OrganizerEditActivity.class);
-        intent.putParcelableArrayListExtra("wait", event.getWaitList());
-        intent.putParcelableArrayListExtra("invited", event.getInvitedList());
-        intent.putParcelableArrayListExtra("rejected", event.getRejectedList());
-        intent.putParcelableArrayListExtra("cancelled", event.getCancelledList());
+        intent.putExtra("event", event);
 
         context.startActivity(intent);
 

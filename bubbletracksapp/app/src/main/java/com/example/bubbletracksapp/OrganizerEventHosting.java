@@ -38,7 +38,6 @@ package com.example.bubbletracksapp;
 //}
 
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -47,15 +46,13 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.fragment.NavHostFragment;
 
-import com.example.bubbletracksapp.databinding.FragmentFirstBinding;
 import com.example.bubbletracksapp.databinding.ListsBinding;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 
 public class OrganizerEventHosting extends Fragment{
     private ListsBinding binding;
@@ -82,7 +79,8 @@ public class OrganizerEventHosting extends Fragment{
         Event e = new Event();
         e.setName("Nathacks");
         Calendar c = Calendar.getInstance();
-        e.setDate(c);
+        Date date = c.getTime();
+        e.setDateTime(date);
 
         Entrant en = new Entrant();
         en.setName("hola", " tata");
@@ -91,6 +89,7 @@ public class OrganizerEventHosting extends Fragment{
         en = new Entrant();
         en.setName("ches", " tata");
         e.addToWaitList(en);
+        e.addToEnrolledList(en);
 
         en = new Entrant();
         en.setName("zoe", " tata");
@@ -112,7 +111,8 @@ public class OrganizerEventHosting extends Fragment{
         e = new Event();
         e.setName("eaaaa");
         c = Calendar.getInstance();
-        e.setDate(c);
+        date = c.getTime();
+        e.setDateTime(date);
         hostedEvents.add(e);
 
         en.setName("hola", " tata");
