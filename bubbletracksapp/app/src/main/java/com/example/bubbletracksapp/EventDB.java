@@ -40,12 +40,12 @@ public class EventDB {
     public void addEvent(Event event)
     {
         //Maybe this should be in Entrant class INCOMPLETE
-        Map<String, Object> newEntrant = eventToMap(event);
+        Map<String, Object> newEvent = event.toMap();
 
         String docID = event.getId();
 
         eventsRef.document(docID)
-                .set(newEntrant)
+                .set(newEvent)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
@@ -83,7 +83,7 @@ public class EventDB {
     public void updateEvent(Event newEvent)
     {
         //Maybe this should be in Entrant class INCOMPLETE
-        Map<String, Object> newEventMap = eventToMap(newEvent);
+        Map<String, Object> newEventMap = newEvent.toMap();
 
         String docID = newEvent.getId();
 
@@ -148,8 +148,7 @@ public class EventDB {
                 }
                 // Go through each document and get the Event information.
                 for (QueryDocumentSnapshot document : querySnapshot) {
-                    Map<String, Object> newEventMap = document.getData();
-                    Event newEvent = mapToEvent(newEventMap);
+                    Event newEvent = new Event(document);
 
                     events.add(newEvent);
                 }
@@ -165,65 +164,4 @@ public class EventDB {
         return returnCode;
 
     }
-
-
-
-    // These two should be in Event
-    //Update with required fields INCOMPLETE
-    private Map<String, Object> eventToMap(Event event) {
-        Map<String, Object> newMap = new HashMap<>();
-
-        newMap.put("id", event.getId());
-        newMap.put("name", event.getName());
-        newMap.put("dateTime", event.getDateTime());
-        newMap.put("description", event.getDescription());
-        newMap.put("geolocation", event.getGeolocation());
-        newMap.put("registrationOpen", event.getRegistrationOpen());
-        newMap.put("registrationClose", event.getRegistrationClose());
-        newMap.put("maxCapacity", event.getMaxCapacity());
-        newMap.put("price", event.getPrice());
-        newMap.put("waitListLimit", event.getWaitListLimit());
-        newMap.put("needsGeolocation", event.getNeedsGeolocation());
-        newMap.put("image", event.getImage());
-        newMap.put("QRCode", event.getQRCode());
-        newMap.put("wait", event.getWaitList());
-        newMap.put("invited", event.getInvitedList());
-        newMap.put("cancelled", event.getCancelledList());
-        newMap.put("rejected", event.getRejectedList());
-        newMap.put("enrolled", event.getEnrolledList());
-
-        return newMap;
-    }
-
-    //Update with required fields INCOMPLETE
-    /*private Event mapToEvent(Map<String, Object> map) {
-        Event newEvent = new Event();
-
-        newEvent.setId(map.get("id").toString());
-        newEvent.setName(map.get("name").toString());
-        newEvent.setDateTime(toDate(map.get("dateTime")));
-        newEvent.setDescription(map.get("description").toString());
-        newEvent.setGeolocation(map.get("geolocation").toString());
-        newEvent.setRegistrationOpen(toDate(map.get("registrationOpen")));
-        newEvent.setRegistrationClose(toDate(map.get("registrationClose")));
-        newEvent.setMaxCapacity(Integer.parseInt(map.get("maxCapacity").toString()));
-        newEvent.setPrice(Integer.parseInt(map.get("price").toString()));
-        newEvent.setWaitListLimit(Integer.parseInt(map.get("waitListLimit").toString()));
-        newEvent.setNeedsGeolocation((Boolean) map.get("needsGeolocation"));
-        newEvent.setImage(map.get("image").toString());
-        newEvent.setQRCode(map.get("QRCode").toString());
-        newEvent.setWaitList((ArrayList<String>) map.get("wait"));
-        newEvent.setInvitedList((ArrayList<String>) map.get("invited"));
-        newEvent.setCancelledList((ArrayList<String>) map.get("cancelled"));
-        newEvent.setRejectedList((ArrayList<String>) map.get("rejected"));
-        newEvent.setEnrolledList((ArrayList<String>) map.get("enrolled"));
-
-        return newEvent;
-    }*/
-
-    private Date toDate(Object dateTime){
-        Timestamp timestamp = (Timestamp) dateTime;
-        return timestamp.toDate();
-    }
-
 }

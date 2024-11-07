@@ -7,7 +7,9 @@ import com.google.firebase.firestore.DocumentSnapshot;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 import java.util.UUID;
 import java.util.ArrayList;
 
@@ -50,6 +52,11 @@ public class Event implements Parcelable{
         this.needsGeolocation = document.getBoolean("needsGeolocation");
         this.image = document.getString("image");
         this.QRCode = document.getString("QRCode");
+        this.waitList = (ArrayList<String>)document.getData().get("wait");
+        this.invitedList = (ArrayList<String>)document.getData().get("invited");
+        this.cancelledList = (ArrayList<String>)document.getData().get("cancelled");
+        this.rejectedList = (ArrayList<String>)document.getData().get("rejected");
+        this.enrolledList = (ArrayList<String>)document.getData().get("enrolled");
     }
 
     public Event(String id, String name, Date dateTime, String description, String geolocation, Date registrationOpen, Date registrationClose, int maxCapacity, int price, int waitListLimit, boolean needsGeolocation, String image, String QRCode, ArrayList<String> waitList, ArrayList<String> invitedList, ArrayList<String> cancelledList, ArrayList<String> rejectedList, ArrayList<String> enrolledList) {
@@ -127,6 +134,32 @@ public class Event implements Parcelable{
             return new Event[size];
         }
     };
+
+    public Map<String, Object> toMap() {
+        Map<String, Object> newMap = new HashMap<>();
+
+        newMap.put("id", id);
+        newMap.put("name", name);
+        newMap.put("dateTime", dateTime);
+        newMap.put("description", description);
+        newMap.put("geolocation", geolocation);
+        newMap.put("registrationOpen", registrationOpen);
+        newMap.put("registrationClose", registrationClose);
+        newMap.put("maxCapacity", maxCapacity);
+        newMap.put("price", price);
+        newMap.put("waitListLimit", WaitListLimit);
+        newMap.put("needsGeolocation", needsGeolocation);
+        newMap.put("image", image);
+        newMap.put("QRCode", QRCode);
+        newMap.put("wait", waitList);
+        newMap.put("invited", invitedList);
+        newMap.put("cancelled", cancelledList);
+        newMap.put("rejected", rejectedList);
+        newMap.put("enrolled", enrolledList);
+
+        return newMap;
+    }
+
 
     public String getId() { return id; }
 
