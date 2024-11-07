@@ -51,6 +51,7 @@
                 android:textStyle="bold" />
         </LinearLayout>
 
+
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -83,17 +84,69 @@
                 android:textSize="18sp"
                 android:textStyle="bold" />
         </LinearLayout>
+    </LinearLayout>
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/join_waitlist_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@drawable/round_event"
+        android:padding="12dp"
+        android:layout_marginTop="16dp"
+        android:text="Join Waitlist"
+        android:textColor="#FFFFFF"
+        android:backgroundTint="@color/home_blue"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Event Details"
+        android:textStyle="bold"
+        android:textColor="@color/black"
+        android:layout_marginTop="30dp"
+        android:layout_marginBottom="10dp"/>
+    <TextView
+        android:id="@+id/event_description"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:text="Insert Description here"/>
 
-        <Button
-            android:id="@+id/join_waitlist_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:background="@drawable/round_event"
-            android:padding="12dp"
-            android:text="Join Waitlist"
-            android:textColor="#FFFFFF"
-            android:backgroundTint="@color/home_blue"/>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        >
+        <TextView
+            android:id="@+id/event_capacity"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="Insert Max Capacity"
+            android:backgroundTint="@color/home_blue"
+            android:background="@drawable/image_border"
+            android:padding="8dp"
+            android:layout_margin="5dp"
+        />
+        <TextView
+            android:id="@+id/event_price"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="Insert Price"
+            android:backgroundTint="@color/home_blue"
+            android:background="@drawable/image_border"
+            android:padding="8dp"
+            android:layout_margin="5dp"
+            />
+        <TextView
+            android:id="@+id/event_requires_geo"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:backgroundTint="@color/home_blue"
+            android:background="@drawable/image_border"
+            android:text="Requires Geolocation: ?"
+            android:padding="8dp"
+            android:layout_margin="5dp"
+            />
+
     </LinearLayout>
 
 </LinearLayout>
