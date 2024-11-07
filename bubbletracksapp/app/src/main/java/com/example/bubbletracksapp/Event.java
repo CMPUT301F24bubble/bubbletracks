@@ -2,6 +2,7 @@ package com.example.bubbletracksapp;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 import com.google.firebase.firestore.DocumentSnapshot;
 
@@ -35,7 +36,14 @@ public class Event implements Parcelable{
 
 
     public Event(){
+        Log.w("NewEvent", "Event has empty information.");
+
         this.id = UUID.randomUUID().toString();
+        waitList = new ArrayList<>();
+        invitedList = new ArrayList<>();
+        cancelledList = new ArrayList<>();
+        rejectedList = new ArrayList<>();
+        enrolledList = new ArrayList<>();
     }
 
     public Event(DocumentSnapshot document) {

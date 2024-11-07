@@ -24,7 +24,7 @@ import java.util.List;
  */
 public class OrganizerEditActivity extends AppCompatActivity {
     Event event;
-    EntrantDB entrantDB;
+    EntrantDB entrantDB = new EntrantDB();
 
     ArrayList<Entrant> waitList = new ArrayList<>();
     ArrayList<Entrant> invitedList = new ArrayList<>();
@@ -52,8 +52,7 @@ public class OrganizerEditActivity extends AppCompatActivity {
             throw new RuntimeException(e);
         }
 
-        // Update all lists from Firebase
-        updateEventLists();
+//        // Update all lists from Firebase
 
         if(invitedList.size() > 0)
         {
@@ -61,18 +60,32 @@ public class OrganizerEditActivity extends AppCompatActivity {
         }
 
         waitlistListView = binding.reusableListView;
-        waitlistAdapter = new EntrantListAdapter(this, waitList);
-        waitlistListView.setAdapter(waitlistAdapter);
+
+        entrantDB.getEntrantList(event.getWaitList()).thenAccept(entrants -> {
+            if(entrants != null){
+                waitList = entrants;
+                waitlistAdapter = new EntrantListAdapter(this, waitList);
+                waitlistListView.setAdapter(waitlistAdapter);
+
+                Log.d("getWaitList", "WaitList loaded");
+
+                Spinner nSpinner = binding.waitlistChooseCount;
+                List<String> spinList = new ArrayList<String>();
+                for (int i=1; i<=waitList.size(); i++){
+                    spinList.add(String.valueOf(i));
+                }
+                ArrayAdapter<String> spinAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, spinList);
+                spinAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                nSpinner.setAdapter(spinAdapter);
 
 
-        Spinner nSpinner = binding.waitlistChooseCount;
-        List<String> spinList = new ArrayList<String>();
-        for (int i=1; i<=waitList.size(); i++){
-            spinList.add(String.valueOf(i));
-        }
-        ArrayAdapter<String> spinAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, spinList);
-        spinAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        nSpinner.setAdapter(spinAdapter);
+            } else {
+                Log.d("getWaitList", "No entrants in waitlist");
+            }
+        });
+
+        updateEventLists();
+
 
         binding.chooseFromWaitlistButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -99,34 +112,40 @@ public class OrganizerEditActivity extends AppCompatActivity {
         entrantDB.getEntrantList(event.getWaitList()).thenAccept(entrants -> {
             if(entrants != null){
                 waitList = entrants;
+                Log.d("getWaitList", "WaitList loaded");
+
             } else {
                 Log.d("getWaitList", "No entrants in waitlist");
             }
         });
         entrantDB.getEntrantList(event.getInvitedList()).thenAccept(entrants -> {
             if(entrants != null){
-                waitList = entrants;
+                invitedList = entrants;
+                Log.d("getInvitedList", "invitedList loaded");
             } else {
                 Log.d("getInvitedList", "No entrants in InvitedList");
             }
         });
         entrantDB.getEntrantList(event.getRejectedList()).thenAccept(entrants -> {
             if(entrants != null){
-                waitList = entrants;
+                rejectedList = entrants;
+                Log.d("getRejectedList", "rejectedList loaded");
             } else {
                 Log.d("getRejectedList", "No entrants in RejectedList");
             }
         });
         entrantDB.getEntrantList(event.getCancelledList()).thenAccept(entrants -> {
             if(entrants != null){
-                waitList = entrants;
+                cancelledList = entrants;
+                Log.d("getCancelledList", "cancelledList loaded");
             } else {
                 Log.d("getCancelledList", "No entrants in CancelledList");
             }
         });
         entrantDB.getEntrantList(event.getEnrolledList()).thenAccept(entrants -> {
             if(entrants != null){
-                waitList = entrants;
+                enrolledList = entrants;
+                Log.d("getEnrolledList", "enrolledList loaded");
             } else {
                 Log.d("getEnrolledList", "No entrants in EnrolledList");
             }

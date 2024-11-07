@@ -152,6 +152,8 @@ public class EventDB {
 
                     events.add(newEvent);
                 }
+                Log.d("getEventList", "Found Events: " + events.toString());
+
                 returnCode.complete(events);
             }
         }).addOnFailureListener(new OnFailureListener() {

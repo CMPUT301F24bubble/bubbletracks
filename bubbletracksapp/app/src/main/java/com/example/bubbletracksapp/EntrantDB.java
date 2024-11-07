@@ -130,7 +130,13 @@ public class EntrantDB {
         CompletableFuture<ArrayList<Entrant>> returnCode = new CompletableFuture<>();
         ArrayList<Entrant> entrants = new ArrayList<>();
 
-        Query query = entrantsRef.whereIn("deviceID", IDs);
+        if (IDs.isEmpty())
+        {
+            returnCode.complete(null);
+            return returnCode;
+        }
+
+        Query query = entrantsRef.whereIn("ID", IDs);
 
         query.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
@@ -146,6 +152,8 @@ public class EntrantDB {
 
                     entrants.add(newEntrant);
                 }
+                Log.d("getEntrantList", "Found Entrants: " + entrants.toString());
+
                 returnCode.complete(entrants);
             }
         }).addOnFailureListener(new OnFailureListener() {
