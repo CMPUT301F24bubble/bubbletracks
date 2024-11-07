@@ -8,6 +8,7 @@ import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -25,13 +26,15 @@ public class Entrant implements Parcelable {
     private String phone;
     private String deviceID;
     private Boolean notification;
+    private ArrayList<String> eventsOrganized = new ArrayList<>();
 
-    public Entrant(String[] newName, String newEmail, String newPhone, String newDevice, Boolean notificationPermission) {
+    public Entrant(String[] newName, String newEmail, String newPhone, String newDevice, Boolean notificationPermission, ArrayList<String> eventsOrganized) {
         this.name = newName;
         this.email = newEmail;
         this.phone = newPhone;
         this.deviceID = newDevice;
         this.notification = notificationPermission;
+        this.eventsOrganized = eventsOrganized;
     }
 
     public Entrant(){
@@ -48,6 +51,10 @@ public class Entrant implements Parcelable {
         name = in.createStringArray();
         email = in.readString();
         phone = in.readString();
+        deviceID = in.readString();
+        byte tmpNotification = in.readByte();
+        notification = tmpNotification == 0 ? null : tmpNotification == 1;
+        eventsOrganized = in.createStringArrayList();
     }
 
     public static final Creator<Entrant> CREATOR = new Creator<Entrant>() {
@@ -61,8 +68,6 @@ public class Entrant implements Parcelable {
             return new Entrant[size];
         }
     };
-
-
 
     public String[] getName() {
         return name;
@@ -96,10 +101,6 @@ public class Entrant implements Parcelable {
         this.phone = phone;
     }
 
-    // MUST BE CHANGED, should be the phoneID but for now the ID is the name INCOMPLETE
-    public String getID() {
-        return name[0]+name[1];
-    }
 
     public Boolean getNotification() { return notification;}
 
@@ -131,5 +132,21 @@ public class Entrant implements Parcelable {
     @Override
     public int hashCode() {
         return Objects.hash(Arrays.hashCode(name), email, phone, deviceID);
+    }
+
+    public String getID() {
+        return deviceID;
+    }
+
+    public void setID(String deviceID) {
+        this.deviceID = deviceID;
+    }
+
+    public ArrayList<String> getEventsOrganized() {
+        return eventsOrganized;
+    }
+
+    public void setEventsOrganized(ArrayList<String> eventsOrganized) {
+        this.eventsOrganized = eventsOrganized;
     }
 }

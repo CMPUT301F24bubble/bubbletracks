@@ -133,6 +133,8 @@ public class EntrantDB {
         newEntrant.put("email", entrant.getEmail());
         newEntrant.put("phone", entrant.getPhone());
         newEntrant.put("notification", entrant.getNotification());
+        newEntrant.put("ID", entrant.getID());
+        newEntrant.put("events", entrant.getEventsOrganized());
 
         return newEntrant;
     }
@@ -147,6 +149,8 @@ public class EntrantDB {
         newEntrant.setEmail(map.get("email").toString());
         newEntrant.setPhone(map.get("phone").toString());
         newEntrant.setNotification((Boolean) map.get("notification"));
+        newEntrant.setID(map.get("ID").toString());
+        newEntrant.setEventsOrganized((ArrayList<String>) map.get("events"));
 
         return newEntrant;
     }
