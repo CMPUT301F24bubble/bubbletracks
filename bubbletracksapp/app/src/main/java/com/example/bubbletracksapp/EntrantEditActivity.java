@@ -23,6 +23,8 @@ import com.example.bubbletracksapp.databinding.ProfileManagementBinding;
 import android.Manifest; // For importing notification permissions
 import android.widget.Toast;
 
+import java.util.ArrayList;
+
 public class EntrantEditActivity extends AppCompatActivity {
     /**
      * This class allows entrant to update their profile information.
@@ -67,7 +69,7 @@ public class EntrantEditActivity extends AppCompatActivity {
 
         TextView deviceIDNote = binding.deviceIDNote;
 
-        Entrant currentUser = new Entrant(new String[]{"name1", "name2"},"a@mail","123","xxx", false);
+        Entrant currentUser = new Entrant(new String[]{"name1", "name2"},"a@mail","123","xxx", false, new ArrayList<String>());
 
         deviceIDNote.setText(currentUser.getID());
         entrantNameInput.setText(currentUser.getNameAsString());

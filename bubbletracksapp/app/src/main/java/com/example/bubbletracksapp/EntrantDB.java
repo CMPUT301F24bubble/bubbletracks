@@ -13,6 +13,9 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -123,6 +126,42 @@ public class EntrantDB {
         });
         return returnCode;
     }
+
+    public CompletableFuture<ArrayList<Entrant>> getEntrantList(ArrayList<String> IDs)
+    {
+        CompletableFuture<ArrayList<Entrant>> returnCode = new CompletableFuture<>();
+        ArrayList<Entrant> entrants = new ArrayList<>();
+
+        Query query = entrantsRef.whereIn("deviceID", IDs);
+
+        query.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot querySnapshot) {
+                if (querySnapshot.isEmpty()) {
+                    Log.d("getEntrantList", "No documents found: " + IDs.toString());
+                    returnCode.complete(null);
+                    return;
+                }
+                // Go through each document and get the Event information.
+                for (QueryDocumentSnapshot document : querySnapshot) {
+                    Map<String, Object> newEntrantMap = document.getData();
+                    Entrant newEntrant = mapToEntrant(newEntrantMap);
+
+                    entrants.add(newEntrant);
+                }
+                returnCode.complete(entrants);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                // Error if it does not work
+                Log.d("Database error", "Error getting all entrants", e);
+            }
+        });
+        return returnCode;
+
+    }
+
 
     // These two should be in Entrant
     //Update with required fields INCOMPLETE

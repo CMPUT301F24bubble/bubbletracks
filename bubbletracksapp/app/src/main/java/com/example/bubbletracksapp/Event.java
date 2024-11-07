@@ -1,18 +1,13 @@
 package com.example.bubbletracksapp;
 
-import android.location.Location;
-import android.media.Image;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.util.Log;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 import java.util.UUID;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Formatter;
 
 public class Event implements Parcelable{
     private String id;
@@ -197,9 +192,12 @@ public class Event implements Parcelable{
         return waitList;
     }
 
-    public ArrayList<String> setWaitList(ArrayList<String> waitList) {
+    public void setWaitList(ArrayList<String> waitList) {
         this.waitList = waitList;
-        return waitList;
+    }
+
+    public void setWaitListWithEvents(ArrayList<Entrant> waitList) {
+        this.waitList = entrantListToStringList(waitList);
     }
 
     public void addToWaitList(String entrant) {
@@ -222,6 +220,11 @@ public class Event implements Parcelable{
         this.invitedList = invitedList;
     }
 
+    public void setInvitedListWithEvents(ArrayList<Entrant> invitedList) {
+        this.invitedList = entrantListToStringList(invitedList);
+    }
+
+
     public void addToInvitedList(String entrant) {
         this.invitedList.add(entrant);
     }
@@ -240,6 +243,10 @@ public class Event implements Parcelable{
 
     public void setCancelledList(ArrayList<String> cancelledList) {
         this.cancelledList = cancelledList;
+    }
+
+    public void setCancelledListWithEvents(ArrayList<Entrant> cancelledList) {
+        this.cancelledList = entrantListToStringList(cancelledList);
     }
 
     public void addToCancelledList(String entrant) {
@@ -261,6 +268,11 @@ public class Event implements Parcelable{
     public void setRejectedList(ArrayList<String> rejectedList) {
         this.rejectedList = rejectedList;
     }
+
+    public void setRejectedListWithEvents(ArrayList<Entrant> rejectedList) {
+        this.rejectedList = entrantListToStringList(rejectedList);
+    }
+
     public void addToRejectedList(String entrant) {
         this.rejectedList.add(entrant);
     }
@@ -281,6 +293,10 @@ public class Event implements Parcelable{
         this.enrolledList = enrolledList;
     }
 
+    public void setEnrolledListWithEvents(ArrayList<Entrant> enrolledList) {
+        this.enrolledList = entrantListToStringList(enrolledList);
+    }
+
     public void addToEnrolledList(String entrant) {
         this.enrolledList.add(entrant);
     }
@@ -297,4 +313,11 @@ public class Event implements Parcelable{
         return this.enrolledList.contains(entrant);
     }
 
+    private ArrayList<String> entrantListToStringList(ArrayList<Entrant> entrants){
+        ArrayList<String> IDs = new ArrayList<>();
+        for (Entrant entrant: entrants) {
+            IDs.add(entrant.getID());
+        }
+        return IDs;
+    }
 }

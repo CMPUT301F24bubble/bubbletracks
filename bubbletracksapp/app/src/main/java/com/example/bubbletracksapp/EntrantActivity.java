@@ -22,7 +22,7 @@ public class EntrantActivity extends AppCompatActivity {
     Event event = new Event();
     Boolean inWaitlist = false;
     Entrant entrant = new Entrant();
-    private final ArrayList<Entrant> entrantArrayList = event.getWaitList();
+    private final ArrayList<Entrant> entrantArrayList = new ArrayList<>();
 
 
     @Override
@@ -52,7 +52,7 @@ public class EntrantActivity extends AppCompatActivity {
                     .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            event.addToWaitList(entrant);
+                            event.addToWaitList(entrant.getID());
                             waitlistButton.setText(R.string.leave_waitlist);
                             inWaitlist = true;
                             dialogInterface.dismiss();
@@ -73,7 +73,7 @@ public class EntrantActivity extends AppCompatActivity {
                     .setPositiveButton("Leave", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            event.deleteFromWaitList(entrant);
+                            event.deleteFromWaitList(entrant.getID());
                             waitlistButton.setText(R.string.join_waitlist);
                             inWaitlist = false;
                             dialogInterface.dismiss();

@@ -24,6 +24,8 @@ import java.util.List;
  */
 public class OrganizerEditActivity extends AppCompatActivity {
     Event event;
+    EntrantDB entrantDB;
+
     ArrayList<Entrant> waitList = new ArrayList<>();
     ArrayList<Entrant> invitedList = new ArrayList<>();
     ArrayList<Entrant> rejectedList = new ArrayList<>();
@@ -49,11 +51,9 @@ public class OrganizerEditActivity extends AppCompatActivity {
             Log.d("OrganizerEditActivity", "event extra was not passed correctly");
             throw new RuntimeException(e);
         }
-        waitList = event.getWaitList();
-        invitedList = event.getInvitedList();
-        rejectedList = event.getRejectedList();
-        cancelledList = event.getCancelledList();
-        enrolledList = event.getEnrolledList();
+
+        // Update all lists from Firebase
+        updateEventLists();
 
         if(invitedList.size() > 0)
         {
@@ -95,6 +95,44 @@ public class OrganizerEditActivity extends AppCompatActivity {
 
     }
 
+    private void updateEventLists() {
+        entrantDB.getEntrantList(event.getWaitList()).thenAccept(entrants -> {
+            if(entrants != null){
+                waitList = entrants;
+            } else {
+                Log.d("getWaitList", "No entrants in waitlist");
+            }
+        });
+        entrantDB.getEntrantList(event.getInvitedList()).thenAccept(entrants -> {
+            if(entrants != null){
+                waitList = entrants;
+            } else {
+                Log.d("getInvitedList", "No entrants in InvitedList");
+            }
+        });
+        entrantDB.getEntrantList(event.getRejectedList()).thenAccept(entrants -> {
+            if(entrants != null){
+                waitList = entrants;
+            } else {
+                Log.d("getRejectedList", "No entrants in RejectedList");
+            }
+        });
+        entrantDB.getEntrantList(event.getCancelledList()).thenAccept(entrants -> {
+            if(entrants != null){
+                waitList = entrants;
+            } else {
+                Log.d("getCancelledList", "No entrants in CancelledList");
+            }
+        });
+        entrantDB.getEntrantList(event.getEnrolledList()).thenAccept(entrants -> {
+            if(entrants != null){
+                waitList = entrants;
+            } else {
+                Log.d("getEnrolledList", "No entrants in EnrolledList");
+            }
+        });
+    }
+
 
     // should return error if n is bigger than the size of waitlist INCOMPLETE
     // Assuming it is the fist time it is called INCOMPLETE
@@ -117,11 +155,11 @@ public class OrganizerEditActivity extends AppCompatActivity {
 
 
     private void startListActivity() {
-        event.setWaitList(waitList);
-        event.setInvitedList(invitedList);
-        event.setRejectedList(rejectedList);
-        event.setCancelledList(cancelledList);
-        event.setEnrolledList(enrolledList);
+        event.setWaitListWithEvents(waitList);
+        event.setInvitedListWithEvents(invitedList);
+        event.setRejectedListWithEvents(rejectedList);
+        event.setCancelledListWithEvents(cancelledList);
+        event.setEnrolledListWithEvents(enrolledList);
         Intent intent = new Intent(OrganizerEditActivity.this, OrganizerEntrantListActivity.class);
         intent.putExtra("event", event);
         startActivity(intent);
