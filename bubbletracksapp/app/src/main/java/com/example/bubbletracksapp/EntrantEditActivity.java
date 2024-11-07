@@ -21,9 +21,13 @@ import androidx.core.app.NotificationManagerCompat;
 
 import com.example.bubbletracksapp.databinding.FragmentFirstBinding;
 import com.example.bubbletracksapp.databinding.ProfileManagementBinding;
+import com.google.android.gms.tasks.OnCompleteListener;
 
 import android.Manifest; // For importing notification permissions
 import android.widget.Toast;
+
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 public class EntrantEditActivity extends AppCompatActivity {
     /**
@@ -31,10 +35,11 @@ public class EntrantEditActivity extends AppCompatActivity {
      * INCOMPLETE:
      * There is currently no data validation.
      * There is no way to set the profile picture.
-     * There is no true current user.
+     * Updating the database is currently not functional
      */
     private ActivityResultLauncher<String> requestPermissionLauncher;
     private ProfileManagementBinding binding;
+    private Entrant currentUser;
     EntrantDB db = new EntrantDB();
 
     @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
@@ -60,7 +65,7 @@ public class EntrantEditActivity extends AppCompatActivity {
                     }
                 }
         );
-        
+
         EditText entrantNameInput = binding.entrantNameInput;
         EditText entrantEmailInput = binding.entrantEmailInput;
         EditText entrantPhoneInput = binding.entrantPhoneInput;
@@ -68,19 +73,27 @@ public class EntrantEditActivity extends AppCompatActivity {
 
         TextView deviceIDNote = binding.deviceIDNote;
 
-
         SharedPreferences localID = getSharedPreferences("LocalID", Context.MODE_PRIVATE);
         String ID = localID.getString("ID", "Device ID not found");
 
-        // Must update to actually get the current user lol
-        Entrant currentUser = new Entrant(new String[]{"name1", "name2"},"a@mail","123","xxx", false);
-
+        // Displays the user's profile
         deviceIDNote.setText(ID);
-        entrantNameInput.setText(currentUser.getNameAsString());
-        entrantEmailInput.setText(currentUser.getEmail());
-        entrantPhoneInput.setText(currentUser.getPhone());
-        entrantNotificationInput.setChecked(currentUser.getNotification());
+        db.getEntrant(ID).thenAccept(user -> {
+            if(user != null){
+                currentUser = user;
+                entrantNameInput.setText(currentUser.getNameAsString());
+                entrantEmailInput.setText(currentUser.getEmail());
+                entrantPhoneInput.setText(currentUser.getPhone());
+                entrantNotificationInput.setChecked(currentUser.getNotification());
+            } else {
+                Toast.makeText(EntrantEditActivity.this, "Could not load profile.", Toast.LENGTH_LONG).show();
+            }
+        }).exceptionally(e -> {
+            Toast.makeText(EntrantEditActivity.this, "Failed to load profile: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            return null;
+        });
 
+        // Update button functionality
         Button updateProfile = binding.profileUpdate;
         updateProfile.setOnClickListener(new View.OnClickListener() {
 
@@ -94,22 +107,34 @@ public class EntrantEditActivity extends AppCompatActivity {
                 String newPhone = entrantPhoneInput.getText().toString();
                 boolean notificationPermission = entrantNotificationInput.isChecked();
 
-                currentUser.setName(newFirst, newLast);
-                currentUser.setPhone(newPhone);
-                currentUser.setEmail(newEmail);
+                db.getEntrant(ID).thenAccept(user -> {
+                    if(user != null){
+                        currentUser = user;
 
-                if (!notificationPermission){
-                    currentUser.setNotification(false);
-                    Log.d("Notification check", "User opted out of notifications");
-                }
-                else {
-                    checkNotificationPermission(currentUser);
+                        currentUser.setName(newFirst, newLast);
+                        currentUser.setPhone(newPhone);
+                        currentUser.setEmail(newEmail);
 
-                }
+                        if (!notificationPermission){
+                            currentUser.setNotification(false);
+                            Log.d("Notification check", "User opted out of notifications");
+                        }
+                        else {
+                            checkNotificationPermission(currentUser);
 
-                db.updateEntrant(currentUser);
+                        }
 
-                Log.d("New user name:", currentUser.getNameAsString());
+                        db.updateEntrant(currentUser);
+
+                        Log.d("New user name:", currentUser.getNameAsString());
+                    } else {
+                        Log.d("User not found", "");
+                    }
+                }).exceptionally(e -> {
+                    Log.e("Error", e.getMessage());
+                    Toast.makeText(EntrantEditActivity.this, "Failed to load user: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    return null;
+                });
 
             }
         });

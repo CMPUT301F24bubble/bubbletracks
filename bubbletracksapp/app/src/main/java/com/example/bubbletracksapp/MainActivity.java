@@ -24,8 +24,14 @@ import androidx.navigation.ui.NavigationUI;
 
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import java.util.UUID;
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Supplier;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -40,9 +46,22 @@ public class MainActivity extends AppCompatActivity {
 
         binding = HomescreenBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        EntrantDB db = new EntrantDB();
 
         currentDeviceID = getDeviceID();
         Log.d("DeviceID:",currentDeviceID);
+
+        db.getEntrant(currentDeviceID).thenAccept(user -> {
+            if(user != null){
+                currentUser = user;
+            } else {
+                currentUser = new Entrant(currentDeviceID);
+                db.addEntrant(currentUser);
+                Log.d("Added new Entrant",currentUser.getID());}
+        }).exceptionally(e -> {
+            Toast.makeText(MainActivity.this, "Failed to load user: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            return null;
+        });
     }
 
     @Override
