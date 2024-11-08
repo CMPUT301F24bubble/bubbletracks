@@ -12,7 +12,6 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
-
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -46,7 +45,9 @@ public class AppUserEventScreenGenerator extends AppCompatActivity {
 
 
     /**
-     * Initializes main components of the screen: drop down menu,
+     * Initializes main components of the screen: drop down menu, the event display,
+     * Also creates onScroll/onClicklisteners
+     * Also Initializes the firebase.
      *
      * @param savedInstanceState
      *
@@ -84,33 +85,6 @@ public class AppUserEventScreenGenerator extends AppCompatActivity {
         eventsplace.setHasFixedSize(true);
 
         // Initialize a flag outside the listener to control the loop
-        // SETS UP ON CLICK LISTENER FOR SPINNER
-        statusSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-
-
-                // Get selected item
-                String selectedOption = parentView.getItemAtPosition(position).toString();
-                // Display a Toast or perform actions based on the selected item
-                Toast.makeText(AppUserEventScreenGenerator.this, "Selected: " + selectedOption, Toast.LENGTH_SHORT).show();
-
-
-
-                // Perform different actions based on selection
-                if (selectedOption.equals("Waitlist")) {
-                    // Displays Waitlisted Event
-                    displayList("Waitlist and Invited", user);
-                } else if (selectedOption.equals("Registered")) {
-                    displayList("Registered", user);
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
-        });
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -168,13 +142,50 @@ public class AppUserEventScreenGenerator extends AppCompatActivity {
             }
         });
 
+        // SETS UP ON CLICK LISTENER FOR SPINNER
+        statusSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+
+
+                // Get selected item
+                String selectedOption = parentView.getItemAtPosition(position).toString();
+                // Display a Toast or perform actions based on the selected item
+                Toast.makeText(AppUserEventScreenGenerator.this, "Selected: " + selectedOption, Toast.LENGTH_SHORT).show();
+
+
+
+                // Perform different actions based on selection
+                if (selectedOption.equals("Waitlist")) {
+                    // Displays Waitlisted Event
+                    displayList("Waitlist and Invited", user);
+                } else if (selectedOption.equals("Registered")) {
+                    displayList("Registered", user);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
 
     }
 
 
 
 
+
+
     // Method to display the selected list
+    /**
+     * Displays list
+     *
+     * @param listType
+     * @param user1
+     *
+     */
     private void displayList(String listType, Entrant user1) {
         List<String> eventListString = new ArrayList<>();
         List<Event> eventList =  new ArrayList<>();
@@ -182,11 +193,6 @@ public class AppUserEventScreenGenerator extends AppCompatActivity {
 
         // Determine which list to display
         if (listType.equals("Waitlist and Invited")) {
-            eventListString.allAdd
-            for (Event event : events) {
-                if ()
-
-            }
             eventList.addAll(user1.getInvitedEvents());
             eventList.addAll(user1.getWaitlistEvents());
         } else if (listType.equals("Registered")) {
