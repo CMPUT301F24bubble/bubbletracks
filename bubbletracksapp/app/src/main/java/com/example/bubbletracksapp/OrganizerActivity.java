@@ -384,6 +384,8 @@ public class OrganizerActivity extends AppCompatActivity {
                                     // change to a new layout to show the generated QR code
                                     setContentView(R.layout.qr_code);
                                     ImageView qrCode = findViewById(R.id.imageViewQRCode);
+                                    ImageButton backButton = findViewById(R.id.back_button);
+
                                     QRGenerator qrGenerator = new QRGenerator();
                                     try{
                                         Bitmap qrBitmap = qrGenerator.generateQRCode(event.getQRCode());
@@ -391,6 +393,13 @@ public class OrganizerActivity extends AppCompatActivity {
                                     } catch (WriterException exception){
                                         Log.e("OrganizerActivity", "Qr code generation failed", exception);
                                     }
+
+                                    backButton.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+                                            finish();
+                                        }
+                                    });
 
                                 }
 
