@@ -93,7 +93,7 @@ public class OrganizerEventHosting extends Fragment{
 
         context = getContext();
         MainActivity mainActivity = (MainActivity)getActivity();
-        currentUser = mainActivity.currentUser;
+        //currentUser = mainActivity.currentUser;
 
         eventListView = binding.reusableListView;
 
