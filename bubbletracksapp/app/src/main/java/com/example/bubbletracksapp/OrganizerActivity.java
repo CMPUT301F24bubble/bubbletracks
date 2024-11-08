@@ -1,8 +1,11 @@
 package com.example.bubbletracksapp;
 
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -43,6 +46,8 @@ import java.util.Locale;
  * @version 1.0
  */
 public class OrganizerActivity extends AppCompatActivity {
+
+    private Event event = new Event();
 
     // declare all views necessary
     private EditText nameText, descriptionText, maxCapacityText, priceText, waitListLimitText;
@@ -343,7 +348,6 @@ public class OrganizerActivity extends AppCompatActivity {
         } else {
 
             // create a new event class and store all the fields
-            Event event = new Event();
             event.setName(name);
             event.setGeolocation(location);
             event.setDateTime(dateTime);
@@ -380,6 +384,8 @@ public class OrganizerActivity extends AppCompatActivity {
                                     // store the event
                                     EventDB eventDB = new EventDB();
                                     eventDB.addEvent(event);
+
+                                    updateEntrant();
 
                                     // change to a new layout to show the generated QR code
                                     setContentView(R.layout.qr_code);
@@ -420,6 +426,23 @@ public class OrganizerActivity extends AppCompatActivity {
                         }
                     });
         }
+    }
+
+    protected void updateEntrant(){
+        SharedPreferences localID = getSharedPreferences("LocalID", Context.MODE_PRIVATE);
+        String ID = localID.getString("ID", "Not Found");
+        EntrantDB entrantDB = new EntrantDB();
+        entrantDB.getEntrant(ID).thenAccept(user -> {
+            if(user != null){
+                user.addToEventsOrganized(event.getId());
+                entrantDB.updateEntrant(user);
+            } else {
+                Toast.makeText(OrganizerActivity.this, "Could not load profile.", Toast.LENGTH_LONG).show();
+            }
+        }).exceptionally(e -> {
+            Toast.makeText(OrganizerActivity.this, "Failed to load profile: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            return null;
+        });
     }
 
 }
