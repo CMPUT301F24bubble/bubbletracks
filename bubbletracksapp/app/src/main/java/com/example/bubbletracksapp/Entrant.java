@@ -295,42 +295,81 @@ public class Entrant implements Parcelable {
         return Objects.hash(Arrays.hashCode(name), email, phone, deviceID);
     }
 
+    /**
+     * Get device ID of entrant
+     * @return device ID of entrant
+     */
     public String getID() {
         return deviceID;
     }
 
+    /**
+     * Set the device ID of entrant
+     * @param deviceID string of device ID
+     */
     public void setID(String deviceID) {
         this.deviceID = deviceID;
     }
 
+    /**
+     * Get the event entrant is interacting with
+     * @return Array of the events entrants is a part of
+     */
     public ArrayList<String> getEventsOrganized() {
         return eventsOrganized;
     }
 
+    /**
+     * set the array of the event entrant is interacting with
+     * @param eventsOrganized
+     */
     public void setEventsOrganized(ArrayList<String> eventsOrganized) {
         this.eventsOrganized = eventsOrganized;
     }
 
+    /**
+     * Update the entrant firebase
+     */
     public void updateEntrantFirebase() {
         new EntrantDB().updateEntrant(toMap());
     }
 
+    /**
+     * Get the events that the entrant is invited to
+     * @return list of events entrant is invited to
+     */
     public ArrayList<String> getEventsInvited() {
         return eventsInvited;
     }
 
+    /**
+     * Set the events that the entrant is invited to
+     * @param eventsInvited array of events entrant is invited to
+     */
     public void setEventsInvited(ArrayList<String> eventsInvited) {
         this.eventsInvited = eventsInvited;
     }
 
+    /**
+     * get the events the entrants are enrolled in
+     * @return list of events entrant is enrolled to
+     */
     public ArrayList<String> getEventsEnrolled() {
         return eventsEnrolled;
     }
 
+    /**
+     * set the events that the entrant is enrolled in
+     * @param eventsEnrolled list of events entrant is enrolled
+     */
     public void setEventsEnrolled(ArrayList<String> eventsEnrolled) {
         this.eventsEnrolled = eventsEnrolled;
     }
 
+    /**
+     * get and set the events the entrant is in the waitlist for
+     * @return
+     */
     public ArrayList<String> getEventsWaitlist() {
         return eventsWaitlist;
     }
@@ -339,19 +378,51 @@ public class Entrant implements Parcelable {
         this.eventsWaitlist = eventsWaitlist;
     }
 
+    /**
+     * Add entrant to event
+     * @param event string of event
+     */
     public void addToEventsOrganized(String event){ this.eventsOrganized.add(event); }
 
+    /**
+     * Delete entrant from event
+     * @param event string of event
+     */
     public void deleteFromEventsOrganized(String event){ this.eventsOrganized.remove(event); }
 
+    /**
+     * Add entrant to invited list
+     * @param event string of event
+     */
     public void addToEventsInvited(String event){ this.eventsInvited.add(event); }
 
+    /**
+     * Delete entrant from invited list
+     * @param event string of event
+     */
     public void deleteFromEventsInvited(String event){ this.eventsInvited.remove(event); }
 
+    /**
+     * add entrant to enrolled list
+     * @param event string of event
+     */
     public void addToEventsEnrolled(String event){ this.eventsEnrolled.add(event); }
 
+    /**
+     * delete entrant from enrolled list
+     * @param event string of event
+     */
     public void deleteFromEventsEnrolled(String event){ this.eventsEnrolled.remove(event); }
 
+    /**
+     * Add entrant to waitlist
+     * @param event string of event
+     */
     public void addToEventsWaitlist(String event){ this.eventsWaitlist.add(event); }
 
+    /**
+     * Delete entrant from waitlist
+     * @param event string of waitlist
+     */
     public void deleteFromEventsWaitlist(String event){ this.eventsWaitlist.remove(event); }
 }

@@ -70,6 +70,10 @@ public class CancelledListAdapter extends ArrayAdapter<Entrant>{
         redrawEntrant.setText("Redraw");
 
         redrawEntrant.setOnClickListener(new View.OnClickListener() {
+            /**
+             * Action to redraw a cancelled entrant
+             * @param view The view that was clicked.
+             */
             @Override
             public void onClick(View view) {
                 listener.redrawCancelledEntrant(entrant);
