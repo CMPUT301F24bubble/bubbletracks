@@ -364,7 +364,7 @@ public class EventTest {
     public void getQRCodeTest() {
         event = mockEvent();
         String QRCode = "https://www.bubbletracks.com/events/bcdc753e-f1ae-440e-97cf-2d13e4d7547c";
-        assertEquals(event.getImage(),QRCode);
+        assertEquals(event.getQRCode(),QRCode);
     }
 
     /**
@@ -375,7 +375,7 @@ public class EventTest {
         event = mockEvent();
         String QRCode = "https://www.bubbletracks.com/events/0d0d9557-dcf8-45ce-9b37-83a183f339cf";
         event.setQRCode(QRCode);
-        assertEquals(event.getImage(),QRCode);
+        assertEquals(event.getQRCode(),QRCode);
     }
 
     /**
@@ -515,6 +515,7 @@ public class EventTest {
      */
     @Test
     public void setInvitedListTest() {
+        event = mockEvent();
         ArrayList<String> invitedList = new ArrayList<>();
         invitedList.add("NewID1");
         invitedList.add("NewID2");
@@ -549,6 +550,8 @@ public class EventTest {
     @Test
     public void addToInvitedListTest() {
         event = mockEvent();
+        event.addToInvitedList("newID");
+        assertTrue(event.getInvitedList().contains("newID"));
     }
 
     /**
@@ -558,6 +561,9 @@ public class EventTest {
     @Test
     public void deleteFromInvitedListTest() {
         event = mockEvent();
+        assertTrue(event.getInvitedList().contains("ID1"));
+        event.deleteFromInvitedList("ID1");
+        assertFalse(event.getInvitedList().contains("ID1"));
     }
 
     /**
@@ -567,6 +573,8 @@ public class EventTest {
     @Test
     public void clearInvitedListTestTest() {
         event = mockEvent();
+        event.clearInvitedList();
+        assertEquals(event.getInvitedList().size(), 0);
     }
 
     /**
@@ -616,6 +624,8 @@ public class EventTest {
     @Test
     public void addToCancelledListTest() {
         event = mockEvent();
+        event.addToCancelledList("newID");
+        assertTrue(event.getCancelledList().contains("newID"));
     }
 
     /**
@@ -625,6 +635,9 @@ public class EventTest {
     @Test
     public void deleteFromCancelledListTest() {
         event = mockEvent();
+        assertTrue(event.getCancelledList().contains("ID3"));
+        event.deleteFromCancelledList("ID3");
+        assertFalse(event.getCancelledList().contains("ID3"));
     }
 
     /**
@@ -634,6 +647,8 @@ public class EventTest {
     @Test
     public void clearCancelledListTest() {
         event = mockEvent();
+        event.clearCancelledList();
+        assertEquals(event.getCancelledList().size(), 0);
     }
 
     /**
@@ -685,6 +700,8 @@ public class EventTest {
     @Test
     public void addToRejectedListTest() {
         event = mockEvent();
+        event.addToRejectedList("newID");
+        assertTrue(event.getRejectedList().contains("newID"));
     }
 
     /**
@@ -694,6 +711,9 @@ public class EventTest {
     @Test
     public void deleteFromRejectedListTest() {
         event = mockEvent();
+        assertTrue(event.getRejectedList().contains("ID2"));
+        event.deleteFromRejectedList("ID2");
+        assertFalse(event.getRejectedList().contains("ID2"));
     }
 
     /**
@@ -703,6 +723,8 @@ public class EventTest {
     @Test
     public void clearRejectedListTest() {
         event = mockEvent();
+        event.clearRejectedList();
+        assertEquals(event.getRejectedList().size(), 0);
     }
 
     /**
@@ -763,6 +785,9 @@ public class EventTest {
     @Test
     public void deleteFromEnrolledListTest() {
         event = mockEvent();
+        assertTrue(event.getEnrolledList().contains("ID1"));
+        event.deleteFromEnrolledList("ID1");
+        assertFalse(event.getEnrolledList().contains("ID1"));
     }
 
     /**
@@ -772,10 +797,8 @@ public class EventTest {
     @Test
     public void clearEnrolledListTest() {
         event = mockEvent();
+        event.clearEnrolledList();
+        assertEquals(event.getEnrolledList().size(), 0);
     }
 
-
-    public void isInEnrolledListTest(){
-   }
-   
 }
