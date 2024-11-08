@@ -1,8 +1,11 @@
 package com.example.bubbletracksapp;
 
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -39,10 +42,14 @@ import java.util.Locale;
 
 /**
  * this class is an activity that allows an organizer to create an event
+ * incomplete - input validation is not completed
+ *              the user needs to put in all the information for the event to work to work
  * @author Samyak
  * @version 1.0
  */
 public class OrganizerActivity extends AppCompatActivity {
+
+    private Event event = new Event();
 
     // declare all views necessary
     private EditText nameText, descriptionText, maxCapacityText, priceText, waitListLimitText;
@@ -343,7 +350,6 @@ public class OrganizerActivity extends AppCompatActivity {
         } else {
 
             // create a new event class and store all the fields
-            Event event = new Event();
             event.setName(name);
             event.setGeolocation(location);
             event.setDateTime(dateTime);
@@ -380,6 +386,10 @@ public class OrganizerActivity extends AppCompatActivity {
                                     // store the event
                                     EventDB eventDB = new EventDB();
                                     eventDB.addEvent(event);
+
+                                    // update the current user to add the created event in the organizer's
+                                    // organized events
+                                    updateEntrant();
 
                                     // change to a new layout to show the generated QR code
                                     setContentView(R.layout.qr_code);
@@ -420,6 +430,34 @@ public class OrganizerActivity extends AppCompatActivity {
                         }
                     });
         }
+    }
+
+    /**
+     * gets the current entrant and updates the entrant in the Database
+     * to store id of the created event
+     */
+    protected void updateEntrant(){
+
+        // get the current user's id
+        SharedPreferences localID = getSharedPreferences("LocalID", Context.MODE_PRIVATE);
+        String ID = localID.getString("ID", "Not Found");
+        EntrantDB entrantDB = new EntrantDB();
+
+        // get the entrant from the database
+        entrantDB.getEntrant(ID).thenAccept(user -> {
+            if(user != null){
+
+                // update the user to have the event's id in its events organized list and store it
+                user.addToEventsOrganized(event.getId());
+                entrantDB.updateEntrant(user);
+
+            } else {
+                Toast.makeText(OrganizerActivity.this, "Could not load profile.", Toast.LENGTH_LONG).show();
+            }
+        }).exceptionally(e -> {
+            Toast.makeText(OrganizerActivity.this, "Failed to load profile: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            return null;
+        });
     }
 
 }
