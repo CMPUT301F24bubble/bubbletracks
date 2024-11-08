@@ -42,6 +42,8 @@ import java.util.Locale;
 
 /**
  * this class is an activity that allows an organizer to create an event
+ * incomplete - input validation is not completed
+ *              the user needs to put in all the information for the event to work to work
  * @author Samyak
  * @version 1.0
  */
@@ -385,6 +387,8 @@ public class OrganizerActivity extends AppCompatActivity {
                                     EventDB eventDB = new EventDB();
                                     eventDB.addEvent(event);
 
+                                    // update the current user to add the created event in the organizer's
+                                    // organized events
                                     updateEntrant();
 
                                     // change to a new layout to show the generated QR code
@@ -428,6 +432,10 @@ public class OrganizerActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * gets the current entrant and updates the entrant in the Database
+     * to store id of the created event
+     */
     protected void updateEntrant(){
         SharedPreferences localID = getSharedPreferences("LocalID", Context.MODE_PRIVATE);
         String ID = localID.getString("ID", "Not Found");
