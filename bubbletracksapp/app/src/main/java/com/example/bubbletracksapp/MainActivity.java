@@ -62,6 +62,9 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(MainActivity.this, "Failed to load user: " + e.getMessage(), Toast.LENGTH_LONG).show();
             return null;
         });
+
+        Intent intent = new Intent(MainActivity.this, QRScanner.class);
+        startActivity(intent);
     }
 
     @Override

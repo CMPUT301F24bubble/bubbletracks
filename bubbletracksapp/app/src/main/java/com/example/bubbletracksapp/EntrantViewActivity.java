@@ -87,9 +87,9 @@ public class EntrantViewActivity extends AppCompatActivity {
         eventDB.getEvent(id).thenAccept(event -> {
             if(event != null){
                 this.event = event;
-                ArrayList<Entrant> waitList = event.getWaitList();
-                for(Entrant entrant : waitList){
-                    if(entrant.getID().equals(this.entrant.getID())){
+                ArrayList<String> waitList = event.getWaitList();
+                for(String entrant : waitList){
+                    if(entrant.equals(this.entrant.getID())){
                         inWaitlist = true;
                         break;
                     }
@@ -141,7 +141,9 @@ public class EntrantViewActivity extends AppCompatActivity {
                                 if(curDate.before(event.getRegistrationClose())){
                                     if(curDate.after(event.getRegistrationOpen())){
                                         event.addToWaitList(entrant.getID());
+                                        entrant.addToEventsWaitlist(event.getId());
                                         eventDB.updateEvent(event);
+                                        entrantDB.updateEntrant(entrant);
                                         joinButton.setText(R.string.leave_waitlist);
                                         inWaitlist = true;
                                         dialogInterface.dismiss();
@@ -178,7 +180,9 @@ public class EntrantViewActivity extends AppCompatActivity {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             event.deleteFromWaitList(entrant.getID());
+                            entrant.deleteFromEventsWaitlist(event.getId());
                             eventDB.updateEvent(event);
+                            entrantDB.updateEntrant(entrant);
                             joinButton.setText(R.string.join_waitlist);
                             inWaitlist = false;
                             dialogInterface.dismiss();
