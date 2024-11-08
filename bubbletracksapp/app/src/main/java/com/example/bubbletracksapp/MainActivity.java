@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
 
     private AppBarConfiguration appBarConfiguration;
     private HomescreenBinding binding;
-    private Entrant currentUser;
+    public Entrant currentUser;
     private String currentDeviceID;
 
     @Override
