@@ -41,7 +41,7 @@ public class OrganizerActivity extends AppCompatActivity {
 
     // declare all views necessary
     private EditText nameText, descriptionText, maxCapacityText, priceText, waitListLimitText;
-    private ImageButton dateTimeButton, registrationOpenButton, registrationCloseButton, locationButton;
+    private ImageButton dateTimeButton, registrationOpenButton, registrationCloseButton, locationButton, backButton;
     private Button uploadPhotoButton, createButton;
     private TextView dateTimeText, registrationOpenText, registrationCloseText, locationText;
     private ImageView posterImage;
@@ -92,6 +92,7 @@ public class OrganizerActivity extends AppCompatActivity {
         createButton = findViewById(R.id.buttonCreate);
         locationText = findViewById(R.id.textLocation);
         locationButton = findViewById(R.id.buttonLocation);
+        backButton =  findViewById(R.id.back_button);
 
         // initialize the activity result launcher for the image picker
         uploadImageLauncher = registerForActivityResult(new ActivityResultContracts.GetContent(), uri -> {
@@ -155,6 +156,14 @@ public class OrganizerActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 createEvent();
+            }
+        });
+        // handler to go back to homescreen
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent backIntent = new Intent(OrganizerActivity.this, MainActivity.class);
+                startActivity(backIntent);
             }
         });
     }

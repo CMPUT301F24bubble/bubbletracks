@@ -1,6 +1,7 @@
 package com.example.bubbletracksapp;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -93,7 +94,18 @@ public class EntrantEditActivity extends AppCompatActivity {
             return null;
         });
 
-        // Update button functionality
+        // Handler to go back to homescreen
+        Button backButton = binding.profileBack;
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d("h", "h");
+                Intent backIntent = new Intent(EntrantEditActivity.this, MainActivity.class);
+                startActivity(backIntent);
+            }
+        });
+
+        // Handler for update button (updates database)
         Button updateProfile = binding.profileUpdate;
         updateProfile.setOnClickListener(new View.OnClickListener() {
 
@@ -135,7 +147,6 @@ public class EntrantEditActivity extends AppCompatActivity {
                     Toast.makeText(EntrantEditActivity.this, "Failed to load user: " + e.getMessage(), Toast.LENGTH_LONG).show();
                     return null;
                 });
-
             }
         });
     }
