@@ -29,6 +29,8 @@ import android.widget.Toast;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
+import java.util.ArrayList;
+
 public class EntrantEditActivity extends AppCompatActivity {
     /**
      * This class allows an entrant to update their profile information.
@@ -65,6 +67,7 @@ public class EntrantEditActivity extends AppCompatActivity {
                     }
                 }
         );
+
 
         EditText entrantNameInput = binding.entrantNameInput;
         EditText entrantEmailInput = binding.entrantEmailInput;

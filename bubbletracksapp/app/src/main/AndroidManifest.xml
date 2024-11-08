@@ -67,6 +67,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".OrganizerActivity" />
+        <activity android:name=".EntrantViewActivity" />
     </application>
 
 </manifest>

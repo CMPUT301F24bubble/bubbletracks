@@ -125,7 +125,7 @@
             android:background="@drawable/image_border"
             android:padding="8dp"
             android:layout_margin="5dp"
-        />
+            />
         <TextView
             android:id="@+id/event_price"
             android:layout_width="match_parent"

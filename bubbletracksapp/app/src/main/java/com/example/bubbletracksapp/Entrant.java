@@ -8,8 +8,13 @@ import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 
+import com.google.firebase.firestore.DocumentSnapshot;
+
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 public class Entrant implements Parcelable {
@@ -24,13 +29,19 @@ public class Entrant implements Parcelable {
     private String phone;
     private String deviceID;
     private Boolean notification;
+    private ArrayList<String> eventsOrganized = new ArrayList<>();
+    private ArrayList<String> eventsInvited = new ArrayList<>();
+    private ArrayList<String> eventsEnrolled = new ArrayList<>();
 
-    public Entrant(String[] newName, String newEmail, String newPhone, String newDevice, Boolean notificationPermission) {
-        this.name = newName;
-        this.email = newEmail;
-        this.phone = newPhone;
-        this.deviceID = newDevice;
-        this.notification = notificationPermission;
+    public Entrant(String[] name, String email, String phone, String deviceID, Boolean notification, ArrayList<String> eventsOrganized, ArrayList<String> eventsInvited, ArrayList<String> eventsEnrolled) {
+        this.name = name;
+        this.email = email;
+        this.phone = phone;
+        this.deviceID = deviceID;
+        this.notification = notification;
+        this.eventsOrganized = eventsOrganized;
+        this.eventsInvited = eventsInvited;
+        this.eventsEnrolled = eventsEnrolled;
     }
 
     public Entrant(String newDeviceID){
@@ -48,12 +59,34 @@ public class Entrant implements Parcelable {
         this.phone = "";
         this.deviceID = "";
         this.notification = false;
+        this.eventsOrganized = new ArrayList<>();
+        this.eventsInvited = new ArrayList<>();
+        this.eventsEnrolled = new ArrayList<>();
+    }
+
+    public Entrant(DocumentSnapshot document) {
+        ArrayList<String> name = (ArrayList<String>)document.getData().get("name");
+
+        this.name = new String[]{name.get(0), name.get(1)};
+        this.email = document.getString("email");
+        this.phone = document.getString("phone");
+        this.deviceID = document.getString("ID");
+        this.notification = document.getBoolean("notification");
+        this.eventsOrganized = (ArrayList<String>)document.getData().get("organized");
+        this.eventsInvited = (ArrayList<String>)document.getData().get("invited");
+        this.eventsEnrolled = (ArrayList<String>)document.getData().get("enrolled");
     }
 
     protected Entrant(Parcel in) {
         name = in.createStringArray();
         email = in.readString();
         phone = in.readString();
+        deviceID = in.readString();
+        byte tmpNotification = in.readByte();
+        notification = tmpNotification == 0 ? null : tmpNotification == 1;
+        eventsOrganized = in.createStringArrayList();
+        eventsInvited = in.createStringArrayList();
+        eventsEnrolled = in.createStringArrayList();
     }
 
     public static final Creator<Entrant> CREATOR = new Creator<Entrant>() {
@@ -68,7 +101,20 @@ public class Entrant implements Parcelable {
         }
     };
 
+    public Map<String, Object> toMap() {
+        Map<String, Object> map = new HashMap<>();
 
+        map.put("name", getNameAsList());
+        map.put("email", email);
+        map.put("phone", phone);
+        map.put("notification", notification);
+        map.put("ID", deviceID);
+        map.put("organized", eventsOrganized);
+        map.put("invited", eventsInvited);
+        map.put("enrolled", eventsEnrolled);
+
+        return map;
+    }
 
     public String[] getName() {
         return name;
@@ -102,10 +148,6 @@ public class Entrant implements Parcelable {
         this.phone = phone;
     }
 
-    public String getID() {
-        return deviceID;
-    }
-
     public Boolean getNotification() { return notification;}
 
     public void setNotification(Boolean notification) {
@@ -136,5 +178,41 @@ public class Entrant implements Parcelable {
     @Override
     public int hashCode() {
         return Objects.hash(Arrays.hashCode(name), email, phone, deviceID);
+    }
+
+    public String getID() {
+        return deviceID;
+    }
+
+    public void setID(String deviceID) {
+        this.deviceID = deviceID;
+    }
+
+    public ArrayList<String> getEventsOrganized() {
+        return eventsOrganized;
+    }
+
+    public void setEventsOrganized(ArrayList<String> eventsOrganized) {
+        this.eventsOrganized = eventsOrganized;
+    }
+
+    public void updateEntrantFirebase() {
+        new EntrantDB().updateEntrant(toMap());
+    }
+
+    public ArrayList<String> getEventsInvited() {
+        return eventsInvited;
+    }
+
+    public void setEventsInvited(ArrayList<String> eventsInvited) {
+        this.eventsInvited = eventsInvited;
+    }
+
+    public ArrayList<String> getEventsEnrolled() {
+        return eventsEnrolled;
+    }
+
+    public void setEventsEnrolled(ArrayList<String> eventsEnrolled) {
+        this.eventsEnrolled = eventsEnrolled;
     }
 }
