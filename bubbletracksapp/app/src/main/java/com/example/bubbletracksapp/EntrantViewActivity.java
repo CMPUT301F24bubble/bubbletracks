@@ -14,6 +14,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import com.squareup.picasso.Picasso;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -28,7 +29,7 @@ public class EntrantViewActivity extends AppCompatActivity {
 
     private ImageView posterImage;
     private TextView monthText, dateText, timeText, locationText, nameText, descriptionText,
-            capacityText, priceText, needsLocationText;
+            capacityText, priceText, needsLocationText, registrationOpenText, registrationCloseText;
     private Button joinButton;
 
     @Override
@@ -48,6 +49,8 @@ public class EntrantViewActivity extends AppCompatActivity {
         priceText = findViewById(R.id.event_price);
         needsLocationText = findViewById(R.id.event_requires_geo);
         joinButton = findViewById(R.id.join_waitlist_button);
+        registrationOpenText = findViewById(R.id.event_registration_open);
+        registrationCloseText = findViewById(R.id.event_registration_close);
 
         Intent intent = getIntent();
         id = intent.getStringExtra("id");
@@ -120,6 +123,9 @@ public class EntrantViewActivity extends AppCompatActivity {
         } else{
             needsLocationText.setText("Requires Location: No");
         }
+        SimpleDateFormat formatter = new SimpleDateFormat("dd MMMM yyyy");
+        registrationOpenText.setText("Registration Opens: " + formatter.format(event.getRegistrationOpen()));
+        registrationCloseText.setText("Registration Closes: " + formatter.format(event.getRegistrationClose()));
 
     }
 
