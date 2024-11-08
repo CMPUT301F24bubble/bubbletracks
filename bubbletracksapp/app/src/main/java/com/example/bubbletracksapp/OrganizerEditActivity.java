@@ -100,7 +100,9 @@ public class OrganizerEditActivity extends AppCompatActivity {
         binding.backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // Filled with going to the last activity. INCOMPLETE
+                Intent intent = new Intent(OrganizerEditActivity.this, MainActivity.class);
+                intent.putExtra("event", event);
+                startActivity(intent);
             }
         });
 

@@ -37,7 +37,6 @@ public class EntrantEditActivity extends AppCompatActivity {
      * INCOMPLETE:
      * There is currently no data validation.
      * There is no way to set the profile picture.
-     * Updating the database is currently not functional
      */
     private ActivityResultLauncher<String> requestPermissionLauncher;
     private ProfileManagementBinding binding;

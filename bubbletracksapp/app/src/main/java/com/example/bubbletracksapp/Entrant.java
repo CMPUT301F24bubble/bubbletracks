@@ -23,6 +23,7 @@ public class Entrant implements Parcelable {
      * INCOMPLETE:
      * This class currently lacks a way to store profile pictures
      * It also doesn't track any contact info besides email and phone
+     * Also, there's no fancy data types for email or phone.
      */
     private String[] name;
     private String email;
@@ -32,8 +33,9 @@ public class Entrant implements Parcelable {
     private ArrayList<String> eventsOrganized = new ArrayList<>();
     private ArrayList<String> eventsInvited = new ArrayList<>();
     private ArrayList<String> eventsEnrolled = new ArrayList<>();
+    private ArrayList<String> eventsWaitlist = new ArrayList<>();
 
-    public Entrant(String[] name, String email, String phone, String deviceID, Boolean notification, ArrayList<String> eventsOrganized, ArrayList<String> eventsInvited, ArrayList<String> eventsEnrolled) {
+    public Entrant(String[] name, String email, String phone, String deviceID, Boolean notification, ArrayList<String> eventsOrganized, ArrayList<String> eventsInvited, ArrayList<String> eventsEnrolled, ArrayList<String> eventsWaitlist) {
         this.name = name;
         this.email = email;
         this.phone = phone;
@@ -42,6 +44,7 @@ public class Entrant implements Parcelable {
         this.eventsOrganized = eventsOrganized;
         this.eventsInvited = eventsInvited;
         this.eventsEnrolled = eventsEnrolled;
+        this.eventsWaitlist = eventsWaitlist;
     }
 
     public Entrant(String newDeviceID){
@@ -53,7 +56,7 @@ public class Entrant implements Parcelable {
     }
 
     public Entrant(){
-        Log.w("NewEntrant", "Entrant has empty strings for information, including ID.");
+        Log.w("NewEntrant", "Entrant has empty strings for information.");
         this.name = new String[]{"",""};
         this.email = "";
         this.phone = "";
@@ -62,6 +65,7 @@ public class Entrant implements Parcelable {
         this.eventsOrganized = new ArrayList<>();
         this.eventsInvited = new ArrayList<>();
         this.eventsEnrolled = new ArrayList<>();
+        this.eventsWaitlist = new ArrayList<>();
     }
 
     public Entrant(DocumentSnapshot document) {
@@ -75,6 +79,8 @@ public class Entrant implements Parcelable {
         this.eventsOrganized = (ArrayList<String>)document.getData().get("organized");
         this.eventsInvited = (ArrayList<String>)document.getData().get("invited");
         this.eventsEnrolled = (ArrayList<String>)document.getData().get("enrolled");
+        this.eventsWaitlist = (ArrayList<String>)document.getData().get("waitlist");
+
     }
 
     protected Entrant(Parcel in) {
@@ -87,6 +93,7 @@ public class Entrant implements Parcelable {
         eventsOrganized = in.createStringArrayList();
         eventsInvited = in.createStringArrayList();
         eventsEnrolled = in.createStringArrayList();
+        eventsWaitlist = in.createStringArrayList();
     }
 
     public static final Creator<Entrant> CREATOR = new Creator<Entrant>() {
@@ -112,6 +119,7 @@ public class Entrant implements Parcelable {
         map.put("organized", eventsOrganized);
         map.put("invited", eventsInvited);
         map.put("enrolled", eventsEnrolled);
+        map.put("waitlist", eventsWaitlist);
 
         return map;
     }
@@ -214,5 +222,13 @@ public class Entrant implements Parcelable {
 
     public void setEventsEnrolled(ArrayList<String> eventsEnrolled) {
         this.eventsEnrolled = eventsEnrolled;
+    }
+
+    public ArrayList<String> getEventsWaitlist() {
+        return eventsWaitlist;
+    }
+
+    public void setEventsWaitlist(ArrayList<String> eventsWaitlist) {
+        this.eventsWaitlist = eventsWaitlist;
     }
 }
