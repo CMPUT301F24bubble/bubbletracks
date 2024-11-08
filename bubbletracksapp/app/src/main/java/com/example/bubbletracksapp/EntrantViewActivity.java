@@ -20,10 +20,13 @@ import java.util.Date;
 
 public class EntrantViewActivity extends AppCompatActivity {
 
+    // declare the retrieved event, entrant and id
     private Event event;
     private String id;
+    private Entrant entrant;
+
+    // declare and initialize the databases and the variable to see if
     private Boolean inWaitlist = false;
-    private Entrant entrant = new Entrant();
     private EventDB eventDB = new EventDB();
     private EntrantDB entrantDB = new EntrantDB();
 

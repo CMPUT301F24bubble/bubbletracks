@@ -45,64 +45,28 @@ import java.util.Locale;
 public class OrganizerActivity extends AppCompatActivity {
 
     // declare all views necessary
-    /** edit text for the name */
-    private EditText nameText;
-    /** button to select the date and time */
-    private ImageButton dateTimeButton;
-    /** text view to show the date and time */
-    private TextView dateTimeText;
-    /** edit text for the description */
-    private EditText descriptionText;
-    /** button to select the location */
-    private ImageButton locationButton;
-    /** text view to display the selected location */
-    private TextView locationText;
-    /** button to set the registration opening date */
-    private ImageButton registrationOpenButton;
-    /** text view to display the registration opening date */
-    private TextView registrationOpenText;
-    /** button to set the registration closing date */
-    private ImageButton registrationCloseButton;
-    /** Text view to display the registration closing date */
-    private TextView registrationCloseText;
-    /** edit text for the maximum capacity */
-    private EditText maxCapacityText;
-    /** edit text for the price */
-    private EditText priceText;
-    /** edit text for the waitlist limit */
-    private EditText waitListLimitText;
-    /** checkbox for require geolocation */
-    private CheckBox requireGeolocationCheckBox;
-    /** button to upload a poster */
-    private Button uploadPhotoButton;
-    /** image view to display the uploaded poster */
+    private EditText nameText, descriptionText, maxCapacityText, priceText, waitListLimitText;
+    private ImageButton dateTimeButton, registrationOpenButton, registrationCloseButton, locationButton;
+    private Button uploadPhotoButton, createButton;
+    private TextView dateTimeText, registrationOpenText, registrationCloseText, locationText;
     private ImageView posterImage;
-    /** button to create and save */
-    private Button createButton;
+    private CheckBox requireGeolocationCheckBox;
 
+    // declare calendar variables
+    private Date dateTime, registrationOpen, registrationClose;
 
-    // declare date variables
-    /** date and time of the event */
-    private Date dateTime;
-    /** registration open date of the event */
-    private Date registrationOpen;
-    /** registration close date of the event */
-    private Date registrationClose;
-
-
-    // Declares an ActivityResultLauncher needed
-    /** activity result launcher for the location search */
-    private ActivityResultLauncher<Intent> autocompleteLauncher;
-    /** activity result launcher for the image upload */
+    // Declares an ActivityResultLauncher that will handle the result of an image upload action
     private ActivityResultLauncher<String> uploadImageLauncher;
 
-    /** fields to be extracted from the selected location */
-    private List<Place.Field> fields = Arrays.asList(Place.Field.ID, Place.Field.ADDRESS);
+    // Declares an ActivityResultLauncher that will handle the result of a location selecting action
+    private ActivityResultLauncher<Intent> autocompleteLauncher;
 
-    /** uri for the image uploaded */
+    // fields to extract from the selected Location
+    List<Place.Field> fields = Arrays.asList(Place.Field.ID, Place.Field.ADDRESS);
+
+    // declare uri variable
     private Uri posterUri;
 
-    /** address of the selected location */
     // declare place variable
     private String location;
 
