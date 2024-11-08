@@ -67,6 +67,7 @@ public class QRScanner extends AppCompatActivity {
                 Intent intent = new Intent(QRScanner.this, EntrantViewActivity.class);
                 intent.putExtra("id", id);
                 startActivity(intent);
+                finish();
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data);
