@@ -20,11 +20,11 @@ public class AppEventAdapter extends RecyclerView.Adapter<AppEventAdapter.EventV
 
     // ATTRIBUTES
     Context context;
-    List<AppEvent> eventList;
+    List<Event> eventList;
     AppUser user;
     Integer eventPicInteger;
 
-    public AppEventAdapter (Context context, List<AppEvent> eventList, AppUser user, Integer eventPicInteger) {
+    public AppEventAdapter (Context context, List<Event> eventList, AppUser user, Integer eventPicInteger) {
         this.context = context;
         this.eventList = eventList;
         this.user = user;
@@ -34,7 +34,7 @@ public class AppEventAdapter extends RecyclerView.Adapter<AppEventAdapter.EventV
     // CONSTRUCTOR THAT MATCHES SUPER CLASS
     class EventViewHolder extends RecyclerView.ViewHolder {
 
-        TextView eventTitle, eventRegStatus, eventDateTime ,eventLocation, eventWaitListCloses;
+        TextView eventTitle, eventRegStatus, eventDateTime ,eventLocation;
         ImageView eventPic;
         LinearLayout eventParent;
         Button accept, decline;
@@ -43,9 +43,8 @@ public class AppEventAdapter extends RecyclerView.Adapter<AppEventAdapter.EventV
 
             eventTitle = itemView.findViewById(R.id.eventTitle);
             eventRegStatus = itemView.findViewById(R.id.eventRegStatus);
-            //eventDateTime = itemView.findViewById(R.id.eventDateTime);
-            //eventLocation = itemView.findViewById(R.id.eventLocation);
-            //eventWaitListCloses = itemView.findViewById(R.id.eventWaitlistClose);
+            eventDateTime = itemView.findViewById(R.id.eventDateTime);
+            eventLocation = itemView.findViewById(R.id.eventLocation);
             eventPic = itemView.findViewById(R.id.eventPic);
             eventParent = itemView.findViewById(R.id.eventParent);
             accept = itemView.findViewById(R.id.accept);
@@ -64,7 +63,10 @@ public class AppEventAdapter extends RecyclerView.Adapter<AppEventAdapter.EventV
 
     @Override
     public void onBindViewHolder(@NonNull EventViewHolder holder, int position) {
-        AppEvent event = eventList.get(position);
+        Event event = eventList.get(position);
+
+
+
 
 
         // Set up the accept button with an OnClickListener, passing the event object
@@ -127,13 +129,13 @@ public class AppEventAdapter extends RecyclerView.Adapter<AppEventAdapter.EventV
         return eventList.size();
     }
 
-    private void handleAcceptClick(AppEvent event) {
+    private void handleAcceptClick(Event event) {
         // Code to handle accepting this specific event
         Toast.makeText(context, "Accepted: " + event.getEventTitle(), Toast.LENGTH_SHORT).show();
         user.addRegEvent(event);
     }
 
-    private void handleDeclineClick(AppEvent event) {
+    private void handleDeclineClick(Event event) {
         // MAKES A NOTIFICATION, CHECKS IF YOU TRULY WANT TO DECLINE
         // Code to handle declining this specific event
         Toast.makeText(context, "Declined: " + event.getEventTitle(), Toast.LENGTH_SHORT).show();

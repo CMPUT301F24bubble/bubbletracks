@@ -33,13 +33,13 @@ public class AppUserEventScreenGenerator extends AppCompatActivity {
 
     private RecyclerView eventsplace;
     private AppEventAdapter eventAdapter;
-    private List<AppEvent> waitlistEvents = new ArrayList<>();
-    private List<AppEvent> registeredEvents = new ArrayList<>();
+    private List<Event> waitlistEvents = new ArrayList<>();
+    private List<Event> registeredEvents = new ArrayList<>();
     private Button accept, decline;
     FirebaseFirestore firestore;
     private List<String> otherOption = Arrays.asList("Waitlist", "Registered");
     private Spinner statusSpinner;
-    private AppUser user;
+    private Entrant user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +48,7 @@ public class AppUserEventScreenGenerator extends AppCompatActivity {
         setContentView(R.layout.event_lists);
 
         // SETS UP DATABASE INSTANCE
-        firestore = FirebaseFirestore.getInstance();
+        firestore = FirebaseFirestore.getInstance();  // WOULD THIS CAUSE A MERGE
 
         // INITIALIZES DROP DOWN MENU/SPINNER
         statusSpinner = findViewById(R.id.listOptions);
@@ -165,8 +165,8 @@ public class AppUserEventScreenGenerator extends AppCompatActivity {
 
 
     // Method to display the selected list
-    private void displayList(String listType, AppUser user1) {
-        List<AppEvent> eventList =  new ArrayList<>();
+    private void displayList(String listType, Entrant user1) {
+        List<Event> eventList =  new ArrayList<>();
         String regStatus = "unknown"; // Default status if no matching user is found
 
         // Determine which list to display
@@ -180,8 +180,9 @@ public class AppUserEventScreenGenerator extends AppCompatActivity {
         }
 
         // Loop through events and set regStatus if user is found in the list
-        for (AppEvent event : eventList) {
-            for (AppUser user : event.getAllUsers()) {
+        for (Event event : eventList) {
+            //GETS ALL USERS
+            for (Entrant user : event.getAllUsers()) {
                 if (user1.getDevice_id()!= null && user1.getDevice_id().equals(user.getDevice_id())) {
                     regStatus = user.getRegStatus(event); // Set regStatus if a matching user is found
                     break; // Break out of the loop once we find a matching user

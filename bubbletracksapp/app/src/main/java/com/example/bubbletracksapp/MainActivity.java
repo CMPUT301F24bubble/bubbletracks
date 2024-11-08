@@ -62,6 +62,9 @@ public class MainActivity extends AppCompatActivity {
         currentDeviceID = getDeviceID();
         Log.d("DeviceID:",currentDeviceID);
 
+        Intent i = new Intent(MainActivity.this, AppUserEventScreenGenerator.class);
+        startActivity(i);
+
         db.getEntrant(currentDeviceID).thenAccept(user -> {
             if(user != null){
                 currentUser = user;
@@ -73,6 +76,7 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(MainActivity.this, "Failed to load user: " + e.getMessage(), Toast.LENGTH_LONG).show();
             return null;
         });
+
 
     }
 
