@@ -37,38 +37,84 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+/**
+ * this class is an activity that allows an organizer to create an event
+ * @author Samyak
+ * @version 1.0
+ */
 public class OrganizerActivity extends AppCompatActivity {
 
     // declare all views necessary
-    private EditText nameText, descriptionText, maxCapacityText, priceText, waitListLimitText;
-    private ImageButton dateTimeButton, registrationOpenButton, registrationCloseButton, locationButton;
-    private Button uploadPhotoButton, createButton;
-    private TextView dateTimeText, registrationOpenText, registrationCloseText, locationText;
-    private ImageView posterImage;
+    /** edit text for the name */
+    private EditText nameText;
+    /** button to select the date and time */
+    private ImageButton dateTimeButton;
+    /** text view to show the date and time */
+    private TextView dateTimeText;
+    /** edit text for the description */
+    private EditText descriptionText;
+    /** button to select the location */
+    private ImageButton locationButton;
+    /** text view to display the selected location */
+    private TextView locationText;
+    /** button to set the registration opening date */
+    private ImageButton registrationOpenButton;
+    /** text view to display the registration opening date */
+    private TextView registrationOpenText;
+    /** button to set the registration closing date */
+    private ImageButton registrationCloseButton;
+    /** Text view to display the registration closing date */
+    private TextView registrationCloseText;
+    /** edit text for the maximum capacity */
+    private EditText maxCapacityText;
+    /** edit text for the price */
+    private EditText priceText;
+    /** edit text for the waitlist limit */
+    private EditText waitListLimitText;
+    /** checkbox for require geolocation */
     private CheckBox requireGeolocationCheckBox;
+    /** button to upload a poster */
+    private Button uploadPhotoButton;
+    /** image view to display the uploaded poster */
+    private ImageView posterImage;
+    /** button to create and save */
+    private Button createButton;
 
-    // declare calendar variables
-    private Date dateTime, registrationOpen, registrationClose;
 
-    // Declares an ActivityResultLauncher that will handle the result of an image upload action
+    // declare date variables
+    /** date and time of the event */
+    private Date dateTime;
+    /** registration open date of the event */
+    private Date registrationOpen;
+    /** registration close date of the event */
+    private Date registrationClose;
+
+
+    // Declares an ActivityResultLauncher needed
+    /** activity result launcher for the location search */
+    private ActivityResultLauncher<Intent> autocompleteLauncher;
+    /** activity result launcher for the image upload */
     private ActivityResultLauncher<String> uploadImageLauncher;
 
-    // Declares an ActivityResultLauncher that will handle the result of a location selecting action
-    private ActivityResultLauncher<Intent> autocompleteLauncher;
+    /** fields to be extracted from the selected location */
+    private List<Place.Field> fields = Arrays.asList(Place.Field.ID, Place.Field.ADDRESS);
 
-    // fields to extract from the selected Location
-    List<Place.Field> fields = Arrays.asList(Place.Field.ID, Place.Field.ADDRESS);
-
-    // declare uri variable
+    /** uri for the image uploaded */
     private Uri posterUri;
 
+    /** address of the selected location */
     // declare place variable
     private String location;
 
+    /**
+     * sets the layout, assigns all the views declared and sets up all the on click listeners
+     * @param savedInstanceState stores the state of the activity
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // initialize the places API
         Places.initialize(getApplicationContext(), "AIzaSyBOt38qDT81Qj6jR0cmNHVGs3hPPw0XrZA");
 
         // set the layout to the create event page
@@ -160,7 +206,9 @@ public class OrganizerActivity extends AppCompatActivity {
     }
 
 
-    // selects the date and time
+    /**
+     * opens dialogue to select the event's date and time and stores it in dateTime
+     */
     protected void selectDateTime(){
 
         final Calendar calendar = Calendar.getInstance();
@@ -209,7 +257,9 @@ public class OrganizerActivity extends AppCompatActivity {
 
     }
 
-    // selects the location
+    /**
+     * opens google places API to search for a location and stores it in location
+     */
     protected void selectLocation(){
 
         // launch activity result launcher
@@ -218,7 +268,9 @@ public class OrganizerActivity extends AppCompatActivity {
         autocompleteLauncher.launch(intent);
     }
 
-    // selects registration open date
+    /**
+     * opens dialogue to select the event's registration open date and stores it in registrationOpen
+     */
     protected void selectRegistrationOpen(){
 
         final Calendar calendar = Calendar.getInstance();
@@ -253,7 +305,9 @@ public class OrganizerActivity extends AppCompatActivity {
 
     }
 
-    // selects registration close date
+    /**
+     * opens dialogue to select the event's registration close date and stores it in registrationClose
+     */
     protected void selectRegistrationClose(){
 
         final Calendar calendar = Calendar.getInstance();
@@ -288,7 +342,9 @@ public class OrganizerActivity extends AppCompatActivity {
 
     }
 
-    // uploads image
+    /**
+     * opens the action pick api to select an image
+     */
     protected void uploadImage(){
 
         // launch activity result launcher
@@ -297,6 +353,13 @@ public class OrganizerActivity extends AppCompatActivity {
         posterImage.setImageTintList(null);
     }
 
+    /**
+     * creates an event, stores it in the database, switches the layout to show the generated QR code
+     * @throws WriterException if QR code generation fails
+     * @throws NumberFormatException if parsing of max capacity, price, or waitlist limit fails
+     * @throws IllegalArgumentException if required fields are empty or invalid
+     * (Firebase-related errors)
+     */
     protected void createEvent(){
         // input validation is not complete, all fields need to be filled otherwise there will be errors
 
