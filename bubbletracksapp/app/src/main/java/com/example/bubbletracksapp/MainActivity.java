@@ -66,10 +66,16 @@ public class MainActivity extends AppCompatActivity {
         db.getEntrant(currentDeviceID).thenAccept(user -> {
             if(user != null){
                 currentUser = user;
+                if (currentUser.getNameAsString().isBlank() || currentUser.getEmail().isBlank()){
+                    Toast.makeText(MainActivity.this, "Select profile to enter your name and email.", Toast.LENGTH_LONG).show();
+                }
             } else {
                 currentUser = new Entrant(currentDeviceID);
                 db.addEntrant(currentUser);
-                Log.d("Added new Entrant",currentUser.getID());}
+                Log.d("Added new Entrant",currentUser.getID());
+                Toast.makeText(MainActivity.this, "Select profile to enter your name and email.", Toast.LENGTH_LONG).show();
+            }
+
         }).exceptionally(e -> {
             Toast.makeText(MainActivity.this, "Failed to load user: " + e.getMessage(), Toast.LENGTH_LONG).show();
             return null;
