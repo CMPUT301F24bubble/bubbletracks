@@ -177,4 +177,8 @@ public class Entrant implements Parcelable {
     public void setEventsOrganized(ArrayList<String> eventsOrganized) {
         this.eventsOrganized = eventsOrganized;
     }
+
+    public void updateEntrantFirebase() {
+        new EntrantDB().updateEntrant(toMap());
+    }
 }

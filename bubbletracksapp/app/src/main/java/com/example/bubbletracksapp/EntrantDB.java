@@ -77,10 +77,29 @@ public class EntrantDB {
 
     public void updateEntrant(Entrant newEntrant)
     {
-        //Maybe this should be in Entrant class INCOMPLETE
         Map<String, Object> newEntrantMap = newEntrant.toMap();
 
         String docID = newEntrant.getID();
+
+        entrantsRef.document(docID)
+                .update(newEntrantMap)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d("updateEntrant", "Entrant successfully updated!");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w("updateEntrant", "Error updating entrant", e);
+                    }
+                });
+    }
+
+    public void updateEntrant(Map<String, Object> newEntrantMap)
+    {
+        String docID = newEntrantMap.get("ID").toString();
 
         entrantsRef.document(docID)
                 .update(newEntrantMap)

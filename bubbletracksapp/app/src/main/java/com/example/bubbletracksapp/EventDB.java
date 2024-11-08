@@ -82,10 +82,29 @@ public class EventDB {
 
     public void updateEvent(Event newEvent)
     {
-        //Maybe this should be in Entrant class INCOMPLETE
         Map<String, Object> newEventMap = newEvent.toMap();
 
         String docID = newEvent.getId();
+
+        eventsRef.document(docID)
+                .update(newEventMap)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d("updateEvent", "Event successfully updated!");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w("updateEvent", "Error updating event", e);
+                    }
+                });
+    }
+
+    public void updateEvent(Map<String, Object> newEventMap)
+    {
+        String docID = newEventMap.get("id").toString();
 
         eventsRef.document(docID)
                 .update(newEventMap)

@@ -371,6 +371,10 @@ public class Event implements Parcelable{
         return this.enrolledList.contains(entrant);
     }
 
+    public void updateEventFirebase() {
+        new EventDB().updateEvent(toMap());
+    }
+
     private ArrayList<String> entrantListToStringList(ArrayList<Entrant> entrants){
         ArrayList<String> IDs = new ArrayList<>();
         for (Entrant entrant: entrants) {
