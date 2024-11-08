@@ -222,6 +222,12 @@ public class EventDB {
         CompletableFuture<ArrayList<Event>> returnCode = new CompletableFuture<>();
         ArrayList<Event> events = new ArrayList<>();
 
+        if (IDs.isEmpty()) {
+            returnCode.complete(null);
+            Log.d("Is this array empty", IDs.toString());
+            return returnCode;
+        }
+
         Query query = eventsRef.whereIn("id", IDs);
 
         query.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {

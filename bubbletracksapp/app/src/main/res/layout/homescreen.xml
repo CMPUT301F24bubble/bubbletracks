@@ -83,6 +83,16 @@
                 android:text="Create Event" />
 
             <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/button_eventHost"
+                style="@style/HomeButtons"
+                android:layout_width="wrap_content"
+                android:layout_height="60dp"
+                android:layout_weight="1"
+                android:backgroundTint="@color/home_blue"
+                android:drawableTop="@drawable/baseline_image_search_24"
+                android:text="Hosted Events" />
+
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/button_facility"
                 style="@style/HomeButtons"
                 android:backgroundTint="@color/home_blue"

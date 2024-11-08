@@ -81,6 +81,7 @@ public class MainActivity extends AppCompatActivity {
         Button ticketsButton = binding.buttonTickets;
         Button profileButton = binding.buttonProfile;
         //Button userEventsButton = binding.buttonEvents;
+        Button eventHostButton = binding.buttonEventHost;
 
         Intent createEventIntent = new Intent(MainActivity.this, OrganizerActivity.class); //class where you are, then class where you wanan go
         switchActivityButton(createEventButton, createEventIntent);
@@ -93,6 +94,18 @@ public class MainActivity extends AppCompatActivity {
 
         /*Intent userEventsIntent = new Intent(MainActivity.this, AppUserEventScreenGeneratorActivity.class);
         switchActivityButton(userEventsButton, userEventsIntent);*/
+
+        eventHostButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (savedInstanceState == null) {
+                    getSupportFragmentManager().beginTransaction()
+                            .setReorderingAllowed(true)
+                            .add(R.id.content_holder, OrganizerEventHosting.class, null)
+                            .commit();
+                }
+            }
+        });
     }
 
     public void switchActivityButton(Button button, Intent intent){
