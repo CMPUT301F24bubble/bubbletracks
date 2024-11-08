@@ -63,8 +63,6 @@ public class MainActivity extends AppCompatActivity {
             return null;
         });
 
-        Intent intent = new Intent(MainActivity.this, QRScanner.class);
-        startActivity(intent);
     }
 
     @Override
