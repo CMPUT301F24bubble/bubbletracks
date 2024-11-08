@@ -28,7 +28,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-
+/**
+ * This is a class that displays a user's waitlist/invited list/registered list
+ * depending on what needs to be displayed.
+ */
 public class AppUserEventScreenGenerator extends AppCompatActivity {
 
     private RecyclerView eventsplace;
@@ -41,6 +44,13 @@ public class AppUserEventScreenGenerator extends AppCompatActivity {
     private Spinner statusSpinner;
     private Entrant user;
 
+
+    /**
+     * Initializes main components of the screen: drop down menu,
+     *
+     * @param savedInstanceState
+     *
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -166,11 +176,17 @@ public class AppUserEventScreenGenerator extends AppCompatActivity {
 
     // Method to display the selected list
     private void displayList(String listType, Entrant user1) {
+        List<String> eventListString = new ArrayList<>();
         List<Event> eventList =  new ArrayList<>();
         String regStatus = "unknown"; // Default status if no matching user is found
 
         // Determine which list to display
         if (listType.equals("Waitlist and Invited")) {
+            eventListString.allAdd
+            for (Event event : events) {
+                if ()
+
+            }
             eventList.addAll(user1.getInvitedEvents());
             eventList.addAll(user1.getWaitlistEvents());
         } else if (listType.equals("Registered")) {
@@ -180,6 +196,7 @@ public class AppUserEventScreenGenerator extends AppCompatActivity {
         }
 
         // Loop through events and set regStatus if user is found in the list
+        /*
         for (Event event : eventList) {
             //GETS ALL USERS
             for (Entrant user : event.getAllUsers()) {
@@ -189,6 +206,8 @@ public class AppUserEventScreenGenerator extends AppCompatActivity {
                 }
             }
         }
+
+       */
 
         // Initialize the adapter with the event list and the determined registration status
         eventAdapter = new AppEventAdapter(this, eventList, user1, null);

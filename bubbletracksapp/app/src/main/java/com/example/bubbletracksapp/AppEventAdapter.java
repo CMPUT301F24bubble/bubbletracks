@@ -93,13 +93,15 @@ public class AppEventAdapter extends RecyclerView.Adapter<AppEventAdapter.EventV
         });
 
         holder.eventTitle.setText(event.getEventTitle());
+
+        // CHANGE THIS CODE
         String regStatus = event.getRegistrationStatus(user.getDevice_id());
         holder.eventRegStatus.setText(regStatus != null ? regStatus : "unknown");
 
 
 
         // Safe drawable handling
-        Integer eventPicInteger = event.getEventPic();
+        Integer eventPicInteger = R.drawable.default_image;
         if (eventPicInteger != null){
             holder.eventPic.setImageDrawable(ContextCompat.getDrawable(context, eventPicInteger));
         } else {
