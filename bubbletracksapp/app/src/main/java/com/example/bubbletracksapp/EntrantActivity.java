@@ -17,6 +17,7 @@ import java.util.ArrayList;
 
 /**
  * This is a class for the entrants' activities with events
+ * @author Erza
  */
 public class EntrantActivity extends AppCompatActivity {
     Event event = new Event();
@@ -24,7 +25,13 @@ public class EntrantActivity extends AppCompatActivity {
     Entrant entrant = new Entrant();
     private final ArrayList<Entrant> entrantArrayList = new ArrayList<>();
 
-
+    /**
+     * Initializes entrantActivity activity
+     * @param savedInstanceState If the activity is being re-initialized after
+     *     previously being shut down then this Bundle contains the data it most
+     *     recently supplied in {@link #onSaveInstanceState}.  <b><i>Note: Otherwise it is null.</i></b>
+     *
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,7 +46,6 @@ public class EntrantActivity extends AppCompatActivity {
 
     /**
      * This modifies whether the entrant wants to join or leave the waitlist for an event
-     * @author Erza Tamon
      * @param waitlistButton
      *      adds/removes entrant from waitlist upon user click
      */
