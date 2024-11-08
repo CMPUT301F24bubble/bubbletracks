@@ -79,6 +79,16 @@
                 android:backgroundTint="@color/home_blue"
                 />
 
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/button_profile"
+                style="@style/HomeButtons"
+                android:layout_width="wrap_content"
+                android:layout_height="60dp"
+                android:layout_weight="1"
+                android:backgroundTint="@color/home_blue"
+                android:drawableTop="@drawable/baseline_key_24"
+                android:text="Profile" />
+
         </LinearLayout>
     </HorizontalScrollView>
     <!-- This is where each activity will go like "your Events" "Your Tickets" "admin Access" every screen will use this and just change the content -->

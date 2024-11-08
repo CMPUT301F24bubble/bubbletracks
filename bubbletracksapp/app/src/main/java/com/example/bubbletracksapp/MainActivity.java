@@ -24,6 +24,7 @@ import androidx.navigation.ui.NavigationUI;
 
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
 import android.widget.Toast;
 
 import java.util.UUID;
@@ -61,6 +62,29 @@ public class MainActivity extends AppCompatActivity {
         }).exceptionally(e -> {
             Toast.makeText(MainActivity.this, "Failed to load user: " + e.getMessage(), Toast.LENGTH_LONG).show();
             return null;
+        });
+
+        Button eventsButton = binding.buttonEvents;
+        Button scanButton = binding.buttonScan;
+        Button ticketsButton = binding.buttonTickets;
+        Button profileButton = binding.buttonProfile;
+
+        Intent eventsIntent = new Intent(MainActivity.this, OrganizerActivity.class); //class where you are, then class where you wanan go
+        switchActivityButton(eventsButton, eventsIntent);
+
+        Intent scanIntent = new Intent(MainActivity.this, QRScanner.class);
+        switchActivityButton(scanButton, scanIntent);
+
+        Intent profileIntent = new Intent(MainActivity.this, EntrantEditActivity.class);
+        switchActivityButton(profileButton, profileIntent);
+    }
+
+    public void switchActivityButton(Button button, Intent intent){
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(intent);
+            }
         });
     }
 
