@@ -102,6 +102,8 @@ public class OrganizerEntrantListActivity extends AppCompatActivity
                 event.setRejectedListWithEvents(rejectedList);
                 event.setCancelledListWithEvents(cancelledList);
                 event.setEnrolledListWithEvents(enrolledList);
+                event.updateEventFirebase();
+
                 Intent intent = new Intent(OrganizerEntrantListActivity.this, MainActivity.class);
                 intent.putExtra("event", event);
 

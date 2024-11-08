@@ -179,6 +179,7 @@ public class OrganizerEditActivity extends AppCompatActivity {
         event.setRejectedListWithEvents(rejectedList);
         event.setCancelledListWithEvents(cancelledList);
         event.setEnrolledListWithEvents(enrolledList);
+        event.updateEventFirebase();
         Intent intent = new Intent(OrganizerEditActivity.this, OrganizerEntrantListActivity.class);
         intent.putExtra("event", event);
         startActivity(intent);
