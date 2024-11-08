@@ -1,6 +1,7 @@
 package com.example.bubbletracksapp;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -92,17 +93,17 @@ public class EntrantEditActivity extends AppCompatActivity {
         db.getEntrant(ID).thenAccept(user -> {
             if(user != null){
                 currentUser = user;
-                if (currentUser.getNameAsString().isEmpty()) {
+                if (currentUser.getNameAsString().isBlank()) {
                     entrantNameInput.setText("Enter your name");
                 } else {
                 entrantNameInput.setText(currentUser.getNameAsString()); }
 
-                if (currentUser.getEmail().isEmpty()) {
+                if (currentUser.getEmail().isBlank()) {
                     entrantEmailInput.setText("Enter your email");
                 } else {
                     entrantEmailInput.setText(currentUser.getEmail()); }
 
-                if (currentUser.getPhone().isEmpty()) {
+                if (currentUser.getPhone().isBlank()) {
                     entrantPhoneInput.setText("Enter your phone number");
                 } else {
                     entrantPhoneInput.setText(currentUser.getPhone()); }
@@ -116,7 +117,16 @@ public class EntrantEditActivity extends AppCompatActivity {
             return null;
         });
 
-        // Update button functionality
+        // Handler to go back to homescreen
+        Button backButton = binding.profileBack;
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
+
+        // Handler for update button (updates database)
         Button updateProfile = binding.profileUpdate;
         updateProfile.setOnClickListener(new View.OnClickListener() {
 
@@ -162,7 +172,6 @@ public class EntrantEditActivity extends AppCompatActivity {
                     Toast.makeText(EntrantEditActivity.this, "Failed to load user: " + e.getMessage(), Toast.LENGTH_LONG).show();
                     return null;
                 });
-
             }
         });
     }
