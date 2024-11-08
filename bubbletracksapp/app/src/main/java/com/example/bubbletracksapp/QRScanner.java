@@ -62,6 +62,12 @@ public class QRScanner extends AppCompatActivity {
                 Toast.makeText(this, "Scan cancelled", Toast.LENGTH_LONG).show();
             } else {
                 Toast.makeText(this, "Scanned: " + result.getContents(), Toast.LENGTH_LONG).show();
+                String url = result.getContents();
+                String[] splits = url.split("/");
+                String id = splits[splits.length-1];
+                Intent intent = new Intent(QRScanner.this, EntrantViewActivity.class);
+                intent.putExtra("id", id);
+                startActivity(intent);
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data);

@@ -13,6 +13,9 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,11 +35,10 @@ public class EntrantDB {
     public void addEntrant(Entrant entrant)
     {
         //Maybe this should be in Entrant class INCOMPLETE
-        Map<String, Object> newEntrant = entrantToMap(entrant);
+        Map<String, Object> newEntrant = entrant.toMap();
 
         String docID = entrant.getID();
-
-
+        
         entrantsRef.document(docID)
                 .set(newEntrant)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -75,10 +77,29 @@ public class EntrantDB {
 
     public void updateEntrant(Entrant newEntrant)
     {
-        //Maybe this should be in Entrant class INCOMPLETE
-        Map<String, Object> newEntrantMap = entrantToMap(newEntrant);
+        Map<String, Object> newEntrantMap = newEntrant.toMap();
 
         String docID = newEntrant.getID();
+
+        entrantsRef.document(docID)
+                .update(newEntrantMap)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d("updateEntrant", "Entrant successfully updated!");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w("updateEntrant", "Error updating entrant", e);
+                    }
+                });
+    }
+
+    public void updateEntrant(Map<String, Object> newEntrantMap)
+    {
+        String docID = newEntrantMap.get("ID").toString();
 
         entrantsRef.document(docID)
                 .update(newEntrantMap)
@@ -108,8 +129,7 @@ public class EntrantDB {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
-                        Map<String, Object> newEntrantMap = document.getData();
-                        Entrant newEntrant = mapToEntrant(newEntrantMap);
+                        Entrant newEntrant = new Entrant(document);
 
                         returnCode.complete(newEntrant);
                         Log.d("EntrantDB", "DocumentSnapshot data: " + document.getData());
@@ -125,32 +145,46 @@ public class EntrantDB {
         return returnCode;
     }
 
-    // These two should be in Entrant
-    //Update with required fields INCOMPLETE
-    private Map<String, Object> entrantToMap(Entrant entrant) {
-        Map<String, Object> newEntrant = new HashMap<>();
+    public CompletableFuture<ArrayList<Entrant>> getEntrantList(ArrayList<String> IDs)
+    {
+        CompletableFuture<ArrayList<Entrant>> returnCode = new CompletableFuture<>();
+        ArrayList<Entrant> entrants = new ArrayList<>();
 
-        newEntrant.put("name", entrant.getNameAsList());
-        newEntrant.put("email", entrant.getEmail());
-        newEntrant.put("phone", entrant.getPhone());
-        newEntrant.put("notification", entrant.getNotification());
+        if (IDs.isEmpty())
+        {
+            returnCode.complete(null);
+            return returnCode;
+        }
 
-        return newEntrant;
+        Query query = entrantsRef.whereIn("ID", IDs);
+
+        query.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot querySnapshot) {
+                if (querySnapshot.isEmpty()) {
+                    Log.d("getEntrantList", "No documents found: " + IDs.toString());
+                    returnCode.complete(null);
+                    return;
+                }
+                // Go through each document and get the Event information.
+                for (QueryDocumentSnapshot document : querySnapshot) {
+                    Entrant newEntrant = new Entrant(document);
+
+                    entrants.add(newEntrant);
+                }
+                Log.d("getEntrantList", "Found Entrants: " + entrants.toString());
+
+                returnCode.complete(entrants);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                // Error if it does not work
+                Log.d("Database error", "Error getting all entrants", e);
+            }
+        });
+        return returnCode;
+
     }
-
-    //Update with required fields INCOMPLETE
-    private static Entrant mapToEntrant(Map<String, Object> map) {
-        Entrant newEntrant = new Entrant();
-
-        ArrayList<String> name = (ArrayList<String>)map.get("name");
-
-        newEntrant.setName(name.get(0), name.get(1));
-        newEntrant.setEmail(map.get("email").toString());
-        newEntrant.setPhone(map.get("phone").toString());
-        newEntrant.setNotification((Boolean) map.get("notification"));
-
-        return newEntrant;
-    }
-
 
 }
