@@ -53,6 +53,10 @@ public class Entrant implements Parcelable {
         this.phone = "";
         this.deviceID = newDeviceID;
         this.notification = false;
+        this.eventsOrganized = new ArrayList<>();
+        this.eventsInvited = new ArrayList<>();
+        this.eventsEnrolled = new ArrayList<>();
+        this.eventsWaitlist = new ArrayList<>();
     }
 
     public Entrant(){
@@ -231,4 +235,20 @@ public class Entrant implements Parcelable {
     public void setEventsWaitlist(ArrayList<String> eventsWaitlist) {
         this.eventsWaitlist = eventsWaitlist;
     }
+
+    public void addToEventsOrganized(String event){ this.eventsOrganized.add(event); }
+
+    public void deleteFromEventsOrganized(String event){ this.eventsOrganized.remove(event); }
+
+    public void addToEventsInvited(String event){ this.eventsInvited.add(event); }
+
+    public void deleteFromEventsInvited(String event){ this.eventsInvited.remove(event); }
+
+    public void addToEventsEnrolled(String event){ this.eventsEnrolled.add(event); }
+
+    public void deleteFromEventsEnrolled(String event){ this.eventsEnrolled.remove(event); }
+
+    public void addToEventsWaitlist(String event){ this.eventsWaitlist.add(event); }
+
+    public void deleteFromEventsWaitlist(String event){ this.eventsWaitlist.remove(event); }
 }
