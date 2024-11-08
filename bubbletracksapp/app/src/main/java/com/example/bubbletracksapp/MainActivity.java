@@ -4,6 +4,9 @@ import static java.util.UUID.randomUUID;
 
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import com.example.bubbletracksapp.databinding.HomescreenBinding;
@@ -19,12 +22,16 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
-import com.example.bubbletracksapp.databinding.HomescreenBinding;
-
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import java.util.UUID;
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Supplier;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -39,10 +46,22 @@ public class MainActivity extends AppCompatActivity {
 
         binding = HomescreenBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        EntrantDB db = new EntrantDB();
 
         currentDeviceID = getDeviceID();
         Log.d("DeviceID:",currentDeviceID);
 
+        db.getEntrant(currentDeviceID).thenAccept(user -> {
+            if(user != null){
+                currentUser = user;
+            } else {
+                currentUser = new Entrant(currentDeviceID);
+                db.addEntrant(currentUser);
+                Log.d("Added new Entrant",currentUser.getID());}
+        }).exceptionally(e -> {
+            Toast.makeText(MainActivity.this, "Failed to load user: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            return null;
+        });
     }
 
     @Override
@@ -67,11 +86,21 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
     /**
-     * This function is not implemented. It just returns a random string every time.
-     * https://firebase.google.com/docs/projects/manage-installations#java_2
+     * This function checks to see if the user has a local ID stored.
+     * If they don't it generates one for them.
+     * Either way, it returns the ID.
      **/
     public String getDeviceID() {
-        return randomUUID().toString();
-        //private final Result get(FirebaseInstallations.getInstance().getId());
+        // The first two lines of this function can be used in any activity
+        // To fetch the current device id. You can expect it to never be "Not Found" elsewhere.
+        SharedPreferences localID = getSharedPreferences("LocalID", Context.MODE_PRIVATE);
+        String ID = localID.getString("ID", "Not Found");
+        if (ID.equals("Not Found")) {
+            ID = randomUUID().toString();
+            SharedPreferences.Editor editor = localID.edit();
+            editor.putString("ID", ID);
+            editor.apply();
+        };
+        return ID;
     }
 }

@@ -47,6 +47,14 @@ public class Entrant implements Parcelable {
         this.eventsWaitlist = eventsWaitlist;
     }
 
+    public Entrant(String newDeviceID){
+        this.name = new String[]{"",""};
+        this.email = "";
+        this.phone = "";
+        this.deviceID = newDeviceID;
+        this.notification = false;
+    }
+
     public Entrant(){
         Log.w("NewEntrant", "Entrant has empty strings for information.");
         this.name = new String[]{"",""};
@@ -147,7 +155,6 @@ public class Entrant implements Parcelable {
         // should enforce a format for the phone number
         this.phone = phone;
     }
-
 
     public Boolean getNotification() { return notification;}
 
