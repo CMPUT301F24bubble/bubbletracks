@@ -4,6 +4,8 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import com.google.firebase.firestore.DocumentSnapshot;
 
 import java.text.SimpleDateFormat;
@@ -105,30 +107,9 @@ public class Event implements Parcelable{
         cancelledList = in.createStringArrayList();
         rejectedList = in.createStringArrayList();
         enrolledList = in.createStringArrayList();
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(id);
-        dest.writeString(name);
-        dest.writeString(description);
-        dest.writeString(geolocation);
-        dest.writeInt(maxCapacity);
-        dest.writeInt(price);
-        dest.writeInt(WaitListLimit);
-        dest.writeByte((byte) (needsGeolocation ? 1 : 0));
-        dest.writeString(image);
-        dest.writeString(QRCode);
-        dest.writeStringList(waitList);
-        dest.writeStringList(invitedList);
-        dest.writeStringList(cancelledList);
-        dest.writeStringList(rejectedList);
-        dest.writeStringList(enrolledList);
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
+        dateTime = new Date(in.readLong());
+        registrationOpen = new Date(in.readLong());
+        registrationClose = new Date(in.readLong());
     }
 
     public static final Creator<Event> CREATOR = new Creator<Event>() {
@@ -371,11 +352,42 @@ public class Event implements Parcelable{
         return this.enrolledList.contains(entrant);
     }
 
+    public void updateEventFirebase() {
+        new EventDB().updateEvent(toMap());
+    }
+
     private ArrayList<String> entrantListToStringList(ArrayList<Entrant> entrants){
         ArrayList<String> IDs = new ArrayList<>();
         for (Entrant entrant: entrants) {
             IDs.add(entrant.getID());
         }
         return IDs;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(@NonNull Parcel parcel, int i) {
+        parcel.writeString(id);
+        parcel.writeString(name);
+        parcel.writeString(description);
+        parcel.writeString(geolocation);
+        parcel.writeInt(maxCapacity);
+        parcel.writeInt(price);
+        parcel.writeInt(WaitListLimit);
+        parcel.writeByte((byte) (needsGeolocation ? 1 : 0));
+        parcel.writeString(image);
+        parcel.writeString(QRCode);
+        parcel.writeStringList(waitList);
+        parcel.writeStringList(invitedList);
+        parcel.writeStringList(cancelledList);
+        parcel.writeStringList(rejectedList);
+        parcel.writeStringList(enrolledList);
+        parcel.writeLong(dateTime.getTime());
+        parcel.writeLong(registrationOpen.getTime());
+        parcel.writeLong(registrationClose.getTime());
     }
 }

@@ -18,6 +18,7 @@
             android:layout_marginTop="8dp"
             android:padding="20dp">
 
+            <!--image button to go back to home screen-->
             <ImageButton
                 android:id="@+id/back_button"
                 android:layout_width="40dp"
@@ -26,6 +27,7 @@
                 android:src="@drawable/baseline_arrow_back_24"
                 android:layout_margin="16dp"/>
 
+            <!--text view for the title of the page-->
             <TextView
                 android:id="@+id/rounded_textview"
                 android:layout_width="300dp"
@@ -38,19 +40,24 @@
                 android:padding="16dp"
                 android:paddingBottom="16dp"
                 android:gravity="center"/>
-        </LinearLayout>
-    <ImageView
-        android:id="@+id/imageViewQRCode"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:contentDescription="QR Code"
-        android:scaleType="centerInside" />
 
+        </LinearLayout>
+
+        <!--image view to show the generated QR code-->
+        <ImageView
+            android:id="@+id/imageViewQRCode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="QR Code"
+            android:scaleType="centerInside" />
+
+        <!--text view to ask the user to take a screenshot-->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="16dp"
             android:text="Your Generated QR Code for your event. Make sure you take a screenshot to save it!"/>
+
     </LinearLayout>
 
 </ScrollView>

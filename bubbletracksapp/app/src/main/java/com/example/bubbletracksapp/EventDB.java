@@ -9,7 +9,7 @@ import androidx.annotation.Nullable;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.libraries.places.api.model.Place;
+//import com.google.android.libraries.places.api.model.Place;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.CollectionReference;
@@ -27,16 +27,27 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
+/**
+ * Holds database for event
+ * @author Chester
+ */
 public class EventDB {
 
     FirebaseFirestore db;
     CollectionReference eventsRef;
 
+    /**
+     * Retrieves event from firebase
+     */
     public EventDB() {
         db = FirebaseFirestore.getInstance();
         eventsRef = db.collection("events");
     }
 
+    /**
+     * Adds event details to the database
+     * @param event event that organizer is holding
+     */
     public void addEvent(Event event)
     {
         //Maybe this should be in Entrant class INCOMPLETE
@@ -47,12 +58,20 @@ public class EventDB {
         eventsRef.document(docID)
                 .set(newEvent)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    /**
+                     * Logs that event has been added
+                     * @param aVoid void
+                     */
                     @Override
                     public void onSuccess(Void aVoid) {
                         Log.d("addEvent", "Event successfully added!");
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
+                    /**
+                     * Logs that there's been an error
+                     * @param e exception
+                     */
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         Log.w("addEvent", "Error writing event", e);
@@ -60,6 +79,10 @@ public class EventDB {
                 });
     }
 
+    /**
+     * Deletes event from database
+     * @param event event that organizer holds
+     */
     public void deleteEvent(Event event)
     {
         String docID = event.getId();
@@ -67,12 +90,20 @@ public class EventDB {
         eventsRef.document(docID)
                 .delete()
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    /**
+                     * Logs that event has been deleted
+                     * @param aVoid void
+                     */
                     @Override
                     public void onSuccess(Void aVoid) {
                         Log.d("deleteEvent", "Event successfully deleted!");
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
+                    /**
+                     * Logs that there's been an error
+                     * @param e exception
+                     */
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         Log.w("deleteEvent", "Error deleting event", e);
@@ -80,9 +111,12 @@ public class EventDB {
                 });
     }
 
+    /**
+     * Updates event details to the database
+     * @param newEvent new event details
+     */
     public void updateEvent(Event newEvent)
     {
-        //Maybe this should be in Entrant class INCOMPLETE
         Map<String, Object> newEventMap = newEvent.toMap();
 
         String docID = newEvent.getId();
@@ -90,12 +124,20 @@ public class EventDB {
         eventsRef.document(docID)
                 .update(newEventMap)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    /**
+                     * Logs that event has been deleted
+                     * @param aVoid void
+                     */
                     @Override
                     public void onSuccess(Void aVoid) {
                         Log.d("updateEvent", "Event successfully updated!");
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
+                    /**
+                     * Logs that there's been an error
+                     * @param e exception
+                     */
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         Log.w("updateEvent", "Error updating event", e);
@@ -103,13 +145,53 @@ public class EventDB {
                 });
     }
 
+    /**
+     * updates map to event
+     * @param newEventMap event map
+     */
+    public void updateEvent(Map<String, Object> newEventMap)
+    {
+        String docID = newEventMap.get("id").toString();
 
+        eventsRef.document(docID)
+                .update(newEventMap)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    /**
+                     * Logs that event has been updated
+                     * @param aVoid void
+                     */
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d("updateEvent", "Event successfully updated!");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    /**
+                     * Logs that event has been deleted
+                     * @param e exception
+                     */
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w("updateEvent", "Error updating event", e);
+                    }
+                });
+    }
+
+    /**
+     * Allows to get event document from database
+     * @param ID event ID
+     * @return return code
+     */
     public CompletableFuture<Event> getEvent(String ID)
     {
         CompletableFuture<Event> returnCode = new CompletableFuture<>();
         DocumentReference eventRef = eventsRef.document(ID);
 
         eventRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            /**
+             * tries to retrieve event document from database
+             * @param task document snapshot
+             */
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
@@ -131,6 +213,11 @@ public class EventDB {
         return returnCode;
     }
 
+    /**
+     * Allows to retrieve event list details
+     * @param IDs list of event ids
+     * @return
+     */
     public CompletableFuture<ArrayList<Event>> getEventList(ArrayList<String> IDs)
     {
         CompletableFuture<ArrayList<Event>> returnCode = new CompletableFuture<>();
@@ -139,6 +226,10 @@ public class EventDB {
         Query query = eventsRef.whereIn("id", IDs);
 
         query.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            /**
+             * Indicates either that the document was found or not
+             * @param querySnapshot query snapshot
+             */
             @Override
             public void onSuccess(QuerySnapshot querySnapshot) {
                 if (querySnapshot.isEmpty()) {
@@ -157,6 +248,9 @@ public class EventDB {
                 returnCode.complete(events);
             }
         }).addOnFailureListener(new OnFailureListener() {
+            /**
+             * logs that there has been an error retrieving events list
+             */
             @Override
             public void onFailure(@NonNull Exception e) {
                 // Error if it does not work

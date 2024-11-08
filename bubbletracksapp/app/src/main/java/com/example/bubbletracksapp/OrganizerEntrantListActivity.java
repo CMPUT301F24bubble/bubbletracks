@@ -62,6 +62,13 @@ public class OrganizerEntrantListActivity extends AppCompatActivity
     ListView cancelledListView;
     CancelledListAdapter cancelledAdapter;
 
+    /**
+     * Set up creation of activity
+     * @param savedInstanceState If the activity is being re-initialized after
+     *     previously being shut down then this Bundle contains the data it most
+     *     recently supplied in {@link #onSaveInstanceState}.  <b><i>Note: Otherwise it is null.</i></b>
+     *
+     */
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -95,6 +102,10 @@ public class OrganizerEntrantListActivity extends AppCompatActivity
 
 
         binding.backButton.setOnClickListener(new View.OnClickListener() {
+            /**
+             * set details of event lists
+             * @param view The view that was clicked.
+             */
             @Override
             public void onClick(View view) {
                 event.setWaitListWithEvents(waitList);
@@ -102,13 +113,14 @@ public class OrganizerEntrantListActivity extends AppCompatActivity
                 event.setRejectedListWithEvents(rejectedList);
                 event.setCancelledListWithEvents(cancelledList);
                 event.setEnrolledListWithEvents(enrolledList);
+                event.updateEventFirebase();
+
                 Intent intent = new Intent(OrganizerEntrantListActivity.this, MainActivity.class);
                 intent.putExtra("event", event);
 
                 startActivity(intent);
             }
         });
-
         binding.viewAttendeeMapButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -116,6 +128,7 @@ public class OrganizerEntrantListActivity extends AppCompatActivity
             }
         });
     }
+
 
     private void setEventLists() {
         entrantDB.getEntrantList(event.getWaitList()).thenAccept(entrants -> {
@@ -190,7 +203,10 @@ public class OrganizerEntrantListActivity extends AppCompatActivity
         return chosenEntrant;
     }
 
-    //Called when an Entrant cancels or rejects invitation and organize clicks on it
+    /**
+     * Called when an Entrant cancels or rejects invitation and organize clicks on it
+     * @param entrant The entrant
+     */
     public void cancelEntrant(Entrant entrant) {
         waitList.remove(entrant);
         invitedList.remove(entrant);
@@ -200,6 +216,11 @@ public class OrganizerEntrantListActivity extends AppCompatActivity
         UpdateListDisplay();
     }
 
+    /**
+     * checks if the entrant accepted the invitation
+     * @param entrant The entrant
+     * @return if the entrant accepted the invitation
+     */
     @Override
     public boolean hasEntrantAccepted(Entrant entrant) {
         // Should check if entant accepted invitation

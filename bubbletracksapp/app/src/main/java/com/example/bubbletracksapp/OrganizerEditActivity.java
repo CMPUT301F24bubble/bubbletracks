@@ -38,11 +38,17 @@ public class OrganizerEditActivity extends AppCompatActivity {
 
     private LotteryMainBinding binding;
 
+    /**
+     * Set up creation of activity
+     * @param savedInstanceState If the activity is being re-initialized after
+     *     previously being shut down then this Bundle contains the data it most
+     *     recently supplied in {@link #onSaveInstanceState}.  <b><i>Note: Otherwise it is null.</i></b>
+     *
+     */
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = LotteryMainBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
 
         Intent in =  getIntent();
         try {
@@ -52,12 +58,12 @@ public class OrganizerEditActivity extends AppCompatActivity {
             throw new RuntimeException(e);
         }
 
-//        // Update all lists from Firebase
-
-        if(invitedList.size() > 0)
+        //If the Event has been pooled already, just show the lists
+        if(event.getInvitedList().size() > 0)
         {
-            // Go to homescreen
+            startListActivity();
         }
+        setContentView(binding.getRoot());
 
         waitlistListView = binding.reusableListView;
 
@@ -84,74 +90,38 @@ public class OrganizerEditActivity extends AppCompatActivity {
             }
         });
 
-        updateEventLists();
-
 
         binding.chooseFromWaitlistButton.setOnClickListener(new View.OnClickListener() {
+            /**
+             * set actions upon clicking on choosing from waitlist button
+             * @param view The view that was clicked.
+             */
             @Override
             public void onClick(View view) {
                 Spinner nSpin = binding.waitlistChooseCount;
                 String nStr = nSpin.getSelectedItem().toString();
                 int n = Integer.parseInt(nStr);
                 drawEntrants(n);
+                updateEventWithLists();
                 startListActivity();
             }
         });
 
 
         binding.backButton.setOnClickListener(new View.OnClickListener() {
+            /**
+             * Set actions upon clicking the back button
+             * @param view The view that was clicked.
+             */
             @Override
             public void onClick(View view) {
-                // Filled with going to the last activity. INCOMPLETE
+                Intent intent = new Intent(OrganizerEditActivity.this, MainActivity.class);
+                intent.putExtra("event", event);
+                startActivity(intent);
             }
         });
 
     }
-
-    private void updateEventLists() {
-        entrantDB.getEntrantList(event.getWaitList()).thenAccept(entrants -> {
-            if(entrants != null){
-                waitList = entrants;
-                Log.d("getWaitList", "WaitList loaded");
-
-            } else {
-                Log.d("getWaitList", "No entrants in waitlist");
-            }
-        });
-        entrantDB.getEntrantList(event.getInvitedList()).thenAccept(entrants -> {
-            if(entrants != null){
-                invitedList = entrants;
-                Log.d("getInvitedList", "invitedList loaded");
-            } else {
-                Log.d("getInvitedList", "No entrants in InvitedList");
-            }
-        });
-        entrantDB.getEntrantList(event.getRejectedList()).thenAccept(entrants -> {
-            if(entrants != null){
-                rejectedList = entrants;
-                Log.d("getRejectedList", "rejectedList loaded");
-            } else {
-                Log.d("getRejectedList", "No entrants in RejectedList");
-            }
-        });
-        entrantDB.getEntrantList(event.getCancelledList()).thenAccept(entrants -> {
-            if(entrants != null){
-                cancelledList = entrants;
-                Log.d("getCancelledList", "cancelledList loaded");
-            } else {
-                Log.d("getCancelledList", "No entrants in CancelledList");
-            }
-        });
-        entrantDB.getEntrantList(event.getEnrolledList()).thenAccept(entrants -> {
-            if(entrants != null){
-                enrolledList = entrants;
-                Log.d("getEnrolledList", "enrolledList loaded");
-            } else {
-                Log.d("getEnrolledList", "No entrants in EnrolledList");
-            }
-        });
-    }
-
 
     // should return error if n is bigger than the size of waitlist INCOMPLETE
     // Assuming it is the fist time it is called INCOMPLETE
@@ -172,16 +142,25 @@ public class OrganizerEditActivity extends AppCompatActivity {
         return true;
     }
 
-
+    /**
+     * Shows the lists
+     */
     private void startListActivity() {
+        event.updateEventFirebase();
+        Intent intent = new Intent(OrganizerEditActivity.this, OrganizerEntrantListActivity.class);
+        intent.putExtra("event", event);
+        startActivity(intent);
+    }
+
+    /**
+     * Updates event lists
+     */
+    private void updateEventWithLists() {
         event.setWaitListWithEvents(waitList);
         event.setInvitedListWithEvents(invitedList);
         event.setRejectedListWithEvents(rejectedList);
         event.setCancelledListWithEvents(cancelledList);
         event.setEnrolledListWithEvents(enrolledList);
-        Intent intent = new Intent(OrganizerEditActivity.this, OrganizerEntrantListActivity.class);
-        intent.putExtra("event", event);
-        startActivity(intent);
     }
 
 }
