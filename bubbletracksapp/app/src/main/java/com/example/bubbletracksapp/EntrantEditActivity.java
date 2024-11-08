@@ -26,16 +26,18 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import android.Manifest; // For importing notification permissions
 import android.widget.Toast;
 
+import java.util.ArrayList;
+
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 public class EntrantEditActivity extends AppCompatActivity {
     /**
-     * This class allows an entrant to update their profile information.
+     * This class allows entrant to update their profile information.
      * INCOMPLETE:
      * There is currently no data validation.
      * There is no way to set the profile picture.
-     * Updating the database is currently not functional
+     * There is no true current user; data is not entered into the database.
      */
     private ActivityResultLauncher<String> requestPermissionLauncher;
     private ProfileManagementBinding binding;

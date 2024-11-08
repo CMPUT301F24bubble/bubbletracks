@@ -24,6 +24,8 @@ import java.util.List;
  */
 public class OrganizerEditActivity extends AppCompatActivity {
     Event event;
+    EntrantDB entrantDB = new EntrantDB();
+
     ArrayList<Entrant> waitList = new ArrayList<>();
     ArrayList<Entrant> invitedList = new ArrayList<>();
     ArrayList<Entrant> rejectedList = new ArrayList<>();
@@ -40,7 +42,6 @@ public class OrganizerEditActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = LotteryMainBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
 
         Intent in =  getIntent();
         try {
@@ -49,30 +50,39 @@ public class OrganizerEditActivity extends AppCompatActivity {
             Log.d("OrganizerEditActivity", "event extra was not passed correctly");
             throw new RuntimeException(e);
         }
-        waitList = event.getWaitList();
-        invitedList = event.getInvitedList();
-        rejectedList = event.getRejectedList();
-        cancelledList = event.getCancelledList();
-        enrolledList = event.getEnrolledList();
 
-        if(invitedList.size() > 0)
+        //If the Event has been pooled already, just show the lists
+        if(event.getInvitedList().size() > 0)
         {
-            // Go to homescreen
+            startListActivity();
         }
+        setContentView(binding.getRoot());
 
         waitlistListView = binding.reusableListView;
-        waitlistAdapter = new EntrantListAdapter(this, waitList);
-        waitlistListView.setAdapter(waitlistAdapter);
+
+        entrantDB.getEntrantList(event.getWaitList()).thenAccept(entrants -> {
+            if(entrants != null){
+                waitList = entrants;
+                waitlistAdapter = new EntrantListAdapter(this, waitList);
+                waitlistListView.setAdapter(waitlistAdapter);
+
+                Log.d("getWaitList", "WaitList loaded");
+
+                Spinner nSpinner = binding.waitlistChooseCount;
+                List<String> spinList = new ArrayList<String>();
+                for (int i=1; i<=waitList.size(); i++){
+                    spinList.add(String.valueOf(i));
+                }
+                ArrayAdapter<String> spinAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, spinList);
+                spinAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                nSpinner.setAdapter(spinAdapter);
 
 
-        Spinner nSpinner = binding.waitlistChooseCount;
-        List<String> spinList = new ArrayList<String>();
-        for (int i=1; i<=waitList.size(); i++){
-            spinList.add(String.valueOf(i));
-        }
-        ArrayAdapter<String> spinAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, spinList);
-        spinAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        nSpinner.setAdapter(spinAdapter);
+            } else {
+                Log.d("getWaitList", "No entrants in waitlist");
+            }
+        });
+
 
         binding.chooseFromWaitlistButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -81,6 +91,7 @@ public class OrganizerEditActivity extends AppCompatActivity {
                 String nStr = nSpin.getSelectedItem().toString();
                 int n = Integer.parseInt(nStr);
                 drawEntrants(n);
+                updateEventWithLists();
                 startListActivity();
             }
         });
@@ -94,7 +105,6 @@ public class OrganizerEditActivity extends AppCompatActivity {
         });
 
     }
-
 
     // should return error if n is bigger than the size of waitlist INCOMPLETE
     // Assuming it is the fist time it is called INCOMPLETE
@@ -117,14 +127,18 @@ public class OrganizerEditActivity extends AppCompatActivity {
 
 
     private void startListActivity() {
-        event.setWaitList(waitList);
-        event.setInvitedList(invitedList);
-        event.setRejectedList(rejectedList);
-        event.setCancelledList(cancelledList);
-        event.setEnrolledList(enrolledList);
+        event.updateEventFirebase();
         Intent intent = new Intent(OrganizerEditActivity.this, OrganizerEntrantListActivity.class);
         intent.putExtra("event", event);
         startActivity(intent);
+    }
+
+    private void updateEventWithLists() {
+        event.setWaitListWithEvents(waitList);
+        event.setInvitedListWithEvents(invitedList);
+        event.setRejectedListWithEvents(rejectedList);
+        event.setCancelledListWithEvents(cancelledList);
+        event.setEnrolledListWithEvents(enrolledList);
     }
 
 }

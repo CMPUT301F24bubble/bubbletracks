@@ -140,7 +140,7 @@ public class EntrantViewActivity extends AppCompatActivity {
                                 Date curDate = new Date();
                                 if(curDate.before(event.getRegistrationClose())){
                                     if(curDate.after(event.getRegistrationOpen())){
-                                        event.addToWaitList(entrant);
+                                        event.addToWaitList(entrant.getID());
                                         eventDB.updateEvent(event);
                                         joinButton.setText(R.string.leave_waitlist);
                                         inWaitlist = true;
@@ -177,7 +177,7 @@ public class EntrantViewActivity extends AppCompatActivity {
                     .setPositiveButton("Leave", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            event.deleteFromWaitList(entrant);
+                            event.deleteFromWaitList(entrant.getID());
                             eventDB.updateEvent(event);
                             joinButton.setText(R.string.join_waitlist);
                             inWaitlist = false;
