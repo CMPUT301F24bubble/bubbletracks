@@ -119,32 +119,38 @@ public class AppEventAdapter extends RecyclerView.Adapter<AppEventAdapter.EventV
 
         });
 
+        // SETS EVENT TITLE
         holder.eventTitle.setText(event.getName());
+
+        // SETS EVENT REG STATUS
         String regStatus = null;
-        if(user.getEventsWaitlist().contains(event.getId()))
-        {
-            regStatus = "WAITLISTED";
-        }
-        else if(user.getEventsInvited().contains(event.getId()))
-        {
-            regStatus = "INVITED";
-        }
-        else if(user.getEventsEnrolled().contains(event.getId()))
+        if(user.getEventsEnrolled().contains(event.getId()) && user.getEventsEnrolled() != null)
         {
             regStatus = "REGISTERED";
         }
-        holder.eventRegStatus.setText(regStatus != null ? regStatus : "unknown");
-
-
-
-        // Safe drawable handling
-        Integer eventPicInteger = R.drawable.default_image;
-        if (eventPicInteger != null){
-            holder.eventPic.setImageDrawable(ContextCompat.getDrawable(context, eventPicInteger));
+        else if(user.getEventsInvited().contains(event.getId()) && user.getEventsInvited()!=null)
+        {
+            regStatus = "INVITED";
+        }
+        else if(user.getEventsWaitlist().contains(event.getId()) && user.getEventsWaitlist()!=null)
+        {
+            regStatus = "WAITLISTED";
         } else {
-            holder.eventPic.setImageResource(R.drawable.default_image); // Replace with a default drawable
+            holder.eventRegStatus.setText(regStatus != null ? regStatus : "unknown");
         }
 
+        // SETS EVENT LOCATION
+        //holder.eventLocation.setText();
+
+        //SET EVENT TIME
+        //holder.eventDateTime.setText();
+
+
+        // SETS EVENT IMAGE
+        holder.eventPic.setImageResource(R.drawable.default_image); // Replace with a default drawable
+
+
+        // DETERMINES EVENT DISPLAY SIZE
         if (position == 0) {
             holder.eventParent.setScaleX(1.0f); // Increase scale for the first item
             holder.eventParent.setScaleY(1.0f);
@@ -154,6 +160,7 @@ public class AppEventAdapter extends RecyclerView.Adapter<AppEventAdapter.EventV
             holder.eventParent.setScaleY(0.7f);
         }
 
+        // DETERMINES IF ACCEPT/DECLINE BUTTONS SHOULD BE VISIBLE
         if ("INVITED".equals(regStatus)) {
             holder.accept.setVisibility(View.VISIBLE);
             holder.decline.setVisibility(View.VISIBLE);
@@ -196,8 +203,17 @@ public class AppEventAdapter extends RecyclerView.Adapter<AppEventAdapter.EventV
         Toast.makeText(context, "Declined: " + event.getName(), Toast.LENGTH_SHORT).show();
 
         // Handle decline logic, if any
-        user.deleteFromEventsWaitlist(event.getId());
-        user.deleteFromEventsEnrolled(event.getId());
+        if (user.getEventsWaitlist().contains(event.getId()) && user.getEventsEnrolled().contains(event.getId())) {
+            user.deleteFromEventsWaitlist(event.getId());
+            user.deleteFromEventsEnrolled(event.getId());
+
+        } else if (user.getEventsWaitlist().contains(event.getId())) {
+            user.deleteFromEventsWaitlist(event.getId());
+
+        } else if (user.getEventsEnrolled().contains(event.getId())) {
+            user.deleteFromEventsEnrolled(event.getId());
+        }
+
         user.updateEntrantFirebase();
 
     }

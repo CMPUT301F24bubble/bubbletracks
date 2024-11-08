@@ -3,6 +3,7 @@ package com.example.bubbletracksapp;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
@@ -180,15 +181,20 @@ public class AppUserEventScreenGenerator extends AppCompatActivity {
      *
      */
     private void displayList(String listType, Entrant user1) {
+        if (user1 == null) {
+            // Log an error or handle the case when user is not yet available
+            Log.e("AppUserEventScreen", "User object is null. Cannot display list.");
+            return; // Exit the method early
+        } else {
         String regStatus = "unknown"; // Default status if no matching user is found
+            eventDB.getEventList(user1.getEventsWaitlist()).thenAccept(events -> {
+                List<Event> eventList = events;
+                // Initialize the adapter with the event list and the determined registration status
+                eventAdapter = new AppEventAdapter(this, eventList, user1, null);
+                eventsplace.setAdapter(eventAdapter);
 
-        eventDB.getEventList(user1.getEventsWaitlist()).thenAccept(events -> {
-            List<Event> eventList = events;
-            // Initialize the adapter with the event list and the determined registration status
-            eventAdapter = new AppEventAdapter(this, eventList, user1, null);
-            eventsplace.setAdapter(eventAdapter);
-
-        });
+            });
+        }
     }
 
 
