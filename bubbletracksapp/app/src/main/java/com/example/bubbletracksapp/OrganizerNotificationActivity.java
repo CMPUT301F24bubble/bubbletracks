@@ -27,7 +27,14 @@ import android.Manifest; // For importing post notification permissions
 public class OrganizerNotificationActivity extends AppCompatActivity {
 
     private static final String CHANNEL_ID = "notify_entrants";
-    private static final Integer NOTIFICATION_ID = 123;
+    private static final Integer SELECTED_NOTIFICATION_ID = 1;
+    private static final Integer NON_SELECTED_NOTIFICATION_ID = 2;
+    private static final Integer CONFIRMED_NOTIFICATION_ID = 3;
+    private static final Integer CANCELLED_NOTIFICATION_ID = 4;
+
+
+
+
     private ActivityResultLauncher<String> requestPermissionLauncher;
 
     /*
@@ -63,7 +70,6 @@ public class OrganizerNotificationActivity extends AppCompatActivity {
         CheckBox checkNonSelected = findViewById(R.id.checkbox_notify_non_selected);
         CheckBox checkConfirmed = findViewById(R.id.checkbox_notify_confirmed_attendees);
         CheckBox checkCancelled = findViewById(R.id.checkbox_notify_cancelled);
-// TODO: add separate notifications for each checkbox
         Button notif_button = findViewById(R.id.button_confirm);
         notif_button.setOnClickListener(view -> checkNotificationPermission(checkSelected, checkNonSelected, checkConfirmed, checkCancelled));
     }
@@ -149,16 +155,16 @@ public class OrganizerNotificationActivity extends AppCompatActivity {
         try {
             // Attempt to post the notification
             if (checkSelected.isChecked()) {
-                notificationManager.notify((Integer) NOTIFICATION_ID, selectedBuilder.build());
+                notificationManager.notify(SELECTED_NOTIFICATION_ID, selectedBuilder.build());
             }
             if (checkNonSelected.isChecked()) {
-                notificationManager.notify((Integer) NOTIFICATION_ID, nonSelectedBuilder.build());
+                notificationManager.notify(NON_SELECTED_NOTIFICATION_ID, nonSelectedBuilder.build());
             }
             if (checkConfirmed.isChecked()) {
-                notificationManager.notify((Integer) NOTIFICATION_ID, confirmedBuilder.build());
+                notificationManager.notify(CONFIRMED_NOTIFICATION_ID, confirmedBuilder.build());
             }
             if (checkCancelled.isChecked()) {
-                notificationManager.notify((Integer) NOTIFICATION_ID, cancelledBuilder.build());
+                notificationManager.notify(CANCELLED_NOTIFICATION_ID, cancelledBuilder.build());
             }
         } catch (SecurityException e) {
             // Log the exception or handle it if the notification couldn't be posted
