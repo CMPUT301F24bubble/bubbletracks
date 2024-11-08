@@ -91,6 +91,7 @@ public class EntrantViewActivity extends AppCompatActivity {
                 for(String entrant : waitList){
                     if(entrant.equals(this.entrant.getID())){
                         inWaitlist = true;
+                        joinButton.setText(R.string.leave_waitlist);
                         break;
                     }
                 }
