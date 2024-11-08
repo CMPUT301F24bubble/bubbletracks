@@ -16,6 +16,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+/**
+ *
+ * @author Zoe, Chester, Erza
+ * @version 1.0
+ */
 
 public class Entrant implements Parcelable {
     /**
@@ -35,6 +40,18 @@ public class Entrant implements Parcelable {
     private ArrayList<String> eventsEnrolled = new ArrayList<>();
     private ArrayList<String> eventsWaitlist = new ArrayList<>();
 
+    /**
+     *
+     * @param name A string of the entrants name
+     * @param email Entrants email
+     * @param phone Entrants phone number
+     * @param deviceID Entrants device ID to determine who the entrant is
+     * @param notification Entrants declaration of allowing notification
+     * @param eventsOrganized events from the organizer
+     * @param eventsInvited evened entrant is invited to
+     * @param eventsEnrolled event entrant is enrolled in
+     * @param eventsWaitlist event entrant is in waitlist for
+     */
     public Entrant(String[] name, String email, String phone, String deviceID, Boolean notification, ArrayList<String> eventsOrganized, ArrayList<String> eventsInvited, ArrayList<String> eventsEnrolled, ArrayList<String> eventsWaitlist) {
         this.name = name;
         this.email = email;
@@ -47,6 +64,10 @@ public class Entrant implements Parcelable {
         this.eventsWaitlist = eventsWaitlist;
     }
 
+    /**
+     * Store initial values for entrant
+     * @param newDeviceID device ID of entrant
+     */
     public Entrant(String newDeviceID){
         this.name = new String[]{"",""};
         this.email = "";
@@ -59,6 +80,9 @@ public class Entrant implements Parcelable {
         this.eventsWaitlist = new ArrayList<>();
     }
 
+    /**
+     * To log entrant information
+     */
     public Entrant(){
         Log.w("NewEntrant", "Entrant has empty strings for information.");
         this.name = new String[]{"",""};
@@ -72,6 +96,10 @@ public class Entrant implements Parcelable {
         this.eventsWaitlist = new ArrayList<>();
     }
 
+    /**
+     * To retrieve entrant information from document
+     * @param document document snapshot
+     */
     public Entrant(DocumentSnapshot document) {
         ArrayList<String> name = (ArrayList<String>)document.getData().get("name");
 
@@ -86,6 +114,11 @@ public class Entrant implements Parcelable {
         this.eventsWaitlist = (ArrayList<String>)document.getData().get("waitlist");
 
     }
+    /**
+     * For the entrant information to be used in a parcel
+     * @param in
+     *      parcel with entrant information
+     */
 
     protected Entrant(Parcel in) {
         name = in.createStringArray();
@@ -99,12 +132,20 @@ public class Entrant implements Parcelable {
         eventsEnrolled = in.createStringArrayList();
         eventsWaitlist = in.createStringArrayList();
     }
+    /**
+     * Makes creator of entrant
+     */
 
     public static final Creator<Entrant> CREATOR = new Creator<Entrant>() {
         @Override
         public Entrant createFromParcel(Parcel in) {
             return new Entrant(in);
         }
+        /**
+         * Create new array of the entrants details
+         * @param size Size of the array.
+         * @return array of the entrants details
+         */
 
         @Override
         public Entrant[] newArray(int size) {
@@ -112,6 +153,10 @@ public class Entrant implements Parcelable {
         }
     };
 
+    /**
+     * Hash map of entrant information
+     * @return hash map of entrant
+     */
     public Map<String, Object> toMap() {
         Map<String, Object> map = new HashMap<>();
 
@@ -127,50 +172,100 @@ public class Entrant implements Parcelable {
 
         return map;
     }
+    /**
+     * Retrieve name of entrant
+     * @return the name of the entrant
+     */
 
     public String[] getName() {
         return name;
     }
+    /**
+     *Retrieve name of entrant in list form
+     * @return name of entrant as a list
+     */
 
     public List<String> getNameAsList() {
         return Arrays.asList(name);
     }
 
+    /**
+     * Get entrant name as a string
+     * @return string format of name of entrant
+     */
     public String getNameAsString() {return String.format("%s %s",name[0],name[1]); };
 
+    /**
+     * Set the name of the entrant
+     * @param first a string of the entrants first name
+     * @param last a a string of the entrants last name
+     */
     public void setName(String first, String last) {
         this.name = new String[]{first, last};
     }
+    /**
+     * retrieve the entrants email
+     * @return the entrants email
+     */
 
     public String getEmail() {
         return email;
     }
-
+    /**
+     * Set the email of the entrant
+     * @param email a string of the entrants new email
+     */
     public void setEmail(String email) {
         // should enforce a format for the email
         this.email = email;
     }
 
+    /**
+     * Get the phone number of the entrant
+     * @return a string format of the entrants phone number
+     */
     public String getPhone() {
         return phone;
     }
 
+    /**
+     * Set the entrants phone number
+     * @param phone a string format of the entrants new phone number
+     */
     public void setPhone(String phone) {
         // should enforce a format for the phone number
         this.phone = phone;
     }
 
+    /**
+     * Gets whether the entrant allows notifications or not
+     * @return boolean if entrant allows notification
+     */
     public Boolean getNotification() { return notification;}
 
+    /**
+     * Sets whether entrant allows for notification or not
+     * @param notification boolean if entrant allows for notification
+     */
     public void setNotification(Boolean notification) {
         this.notification = notification;
     }
 
+    /**
+     * describes the content of the entrant
+     * @return 0
+     */
     @Override
     public int describeContents() {
         return 0;
     }
 
+    /**
+     * Writes to the parcel that holds the entrants details
+     * @param parcel The Parcel in which the object should be written.
+     * @param i Additional flags about how the object should be written.
+     * May be 0 or {@link #PARCELABLE_WRITE_RETURN_VALUE}.
+     */
     @Override
     public void writeToParcel(@NonNull Parcel parcel, int i) {
         parcel.writeStringArray(name);
@@ -178,7 +273,12 @@ public class Entrant implements Parcelable {
         parcel.writeString(phone);
     }
 
-    // Will need to be updated after changing the fields. May be easy to just use the device ID.
+    // Will need to be updated after changing the fields. May be easy to just use the device ID.\
+    /**
+     * Find the entrant in list of entrants (checks for id)
+     * @param o entrant object
+     * @return a boolean to find the entrant
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -186,7 +286,10 @@ public class Entrant implements Parcelable {
         Entrant entrant = (Entrant) o;
         return Objects.deepEquals(name, entrant.name) && Objects.equals(email, entrant.email) && Objects.equals(phone, entrant.phone) && Objects.equals(deviceID, entrant.deviceID);
     }
-
+    /**
+     * get hash code of entrant
+     * @return has code of entrant
+     */
     @Override
     public int hashCode() {
         return Objects.hash(Arrays.hashCode(name), email, phone, deviceID);
