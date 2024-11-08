@@ -84,9 +84,21 @@ public class EntrantEditActivity extends AppCompatActivity {
         db.getEntrant(ID).thenAccept(user -> {
             if(user != null){
                 currentUser = user;
-                entrantNameInput.setText(currentUser.getNameAsString());
-                entrantEmailInput.setText(currentUser.getEmail());
-                entrantPhoneInput.setText(currentUser.getPhone());
+                if (currentUser.getNameAsString().isEmpty()) {
+                    entrantNameInput.setText("Enter your name");
+                } else {
+                entrantNameInput.setText(currentUser.getNameAsString()); }
+
+                if (currentUser.getEmail().isEmpty()) {
+                    entrantEmailInput.setText("Enter your email");
+                } else {
+                    entrantEmailInput.setText(currentUser.getEmail()); }
+
+                if (currentUser.getPhone().isEmpty()) {
+                    entrantPhoneInput.setText("Enter your phone number");
+                } else {
+                    entrantPhoneInput.setText(currentUser.getPhone()); }
+
                 entrantNotificationInput.setChecked(currentUser.getNotification());
             } else {
                 Toast.makeText(EntrantEditActivity.this, "Could not load profile.", Toast.LENGTH_LONG).show();
