@@ -1,5 +1,7 @@
 package com.example.bubbletracksapp;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -60,115 +62,129 @@ public class AppUserEventScreenGenerator extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.event_lists);
 
-        // INITIALIZES DROP DOWN MENU/SPINNER
-        statusSpinner = findViewById(R.id.listOptions);
 
-        //setupSpinner(new ArrayList<>(allOptions));
+        SharedPreferences localID = getSharedPreferences("LocalID", Context.MODE_PRIVATE);
+        String ID = localID.getString("ID", "Device ID not found");
 
-        // CREATES AN ADAPTER FOR SPINNER
-        ArrayAdapter<CharSequence> spinnerAdapter = ArrayAdapter.createFromResource(this,
-                R.array.list_options, android.R.layout.simple_spinner_item);
+        entrantDB.getEntrant(ID).thenAccept(theUser -> {
+            if(theUser != null) {
+                user = theUser;
+                // INITIALIZES DROP DOWN MENU/SPINNER
+                statusSpinner = findViewById(R.id.listOptions);
 
-        // SETS UP ADAPTER
-        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                //setupSpinner(new ArrayList<>(allOptions));
 
-        // SETS UP STATUS SPINNER
-        statusSpinner.setAdapter(spinnerAdapter);
-        statusSpinner.setSelection(0);
+                // CREATES AN ADAPTER FOR SPINNER
+                ArrayAdapter<CharSequence> spinnerAdapter = ArrayAdapter.createFromResource(this,
+                        R.array.list_options, android.R.layout.simple_spinner_item);
 
+                // SETS UP ADAPTER
+                spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
-        // SETS UP RECYCLER VIEW
-        eventsplace = findViewById(R.id.waitlist);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
-        eventsplace.setLayoutManager(linearLayoutManager);
-        eventsplace.setHasFixedSize(true);
-
-        // Initialize a flag outside the listener to control the loop
-
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
+                // SETS UP STATUS SPINNER
+                statusSpinner.setAdapter(spinnerAdapter);
+                statusSpinner.setSelection(0);
 
 
+                // SETS UP RECYCLER VIEW
+                eventsplace = findViewById(R.id.waitlist);
+                LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+                eventsplace.setLayoutManager(linearLayoutManager);
+                eventsplace.setHasFixedSize(true);
 
-        // SNAPPING THE SCROLL ITEMS
-        SnapHelper snapHelper = new GravitySnapHelper(Gravity.START);
-        snapHelper.attachToRecyclerView(eventsplace);
+                // Initialize a flag outside the listener to control the loop
 
-        //SET A TIMER FOR DEFAULT BUTTON
-        final Handler handler = new Handler(Looper.getMainLooper());
-        handler.postDelayed(() -> {
-            RecyclerView.ViewHolder viewHolderDefault = eventsplace.findViewHolderForAdapterPosition(0);
+                ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+                    Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+                    v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+                    return insets;
+                });
 
-            if (viewHolderDefault != null) {
-                LinearLayout eventParentDefault = viewHolderDefault.itemView.findViewById(R.id.eventParent);
-                eventParentDefault.animate()
-                        .scaleY(1)
-                        .scaleX(1)
-                        .setDuration(350)
-                        .setInterpolator(new AccelerateInterpolator())
-                        .start();
-            }
-        }, 100);
 
-        // ADD ANIMATE SCROLL
-        eventsplace.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
 
-                View view = snapHelper.findSnapView(linearLayoutManager);
-                if (view != null) {
-                    int pos = linearLayoutManager.getPosition(view);
-                    RecyclerView.ViewHolder viewHolder = eventsplace.findViewHolderForAdapterPosition(pos);
-                    if (viewHolder != null) {
-                        LinearLayout eventParent = viewHolder.itemView.findViewById(R.id.eventParent);
+                // SNAPPING THE SCROLL ITEMS
+                SnapHelper snapHelper = new GravitySnapHelper(Gravity.START);
+                snapHelper.attachToRecyclerView(eventsplace);
 
-                        if (newState == RecyclerView.SCROLL_STATE_IDLE) {
-                            eventParent.animate().scaleY(1.0f).scaleX(1.0f).setDuration(350).setInterpolator(new AccelerateInterpolator()).start();
-                        } else {
-                            eventParent.animate().scaleY(0.7f).scaleX(0.7f).setDuration(350).setInterpolator(new AccelerateInterpolator()).start();
+                //SET A TIMER FOR DEFAULT BUTTON
+                final Handler handler = new Handler(Looper.getMainLooper());
+                handler.postDelayed(() -> {
+                    RecyclerView.ViewHolder viewHolderDefault = eventsplace.findViewHolderForAdapterPosition(0);
+
+                    if (viewHolderDefault != null) {
+                        LinearLayout eventParentDefault = viewHolderDefault.itemView.findViewById(R.id.eventParent);
+                        eventParentDefault.animate()
+                                .scaleY(1)
+                                .scaleX(1)
+                                .setDuration(350)
+                                .setInterpolator(new AccelerateInterpolator())
+                                .start();
+                    }
+                }, 100);
+
+                // ADD ANIMATE SCROLL
+                eventsplace.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                    @Override
+                    public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                        super.onScrollStateChanged(recyclerView, newState);
+
+                        View view = snapHelper.findSnapView(linearLayoutManager);
+                        if (view != null) {
+                            int pos = linearLayoutManager.getPosition(view);
+                            RecyclerView.ViewHolder viewHolder = eventsplace.findViewHolderForAdapterPosition(pos);
+                            if (viewHolder != null) {
+                                LinearLayout eventParent = viewHolder.itemView.findViewById(R.id.eventParent);
+
+                                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                                    eventParent.animate().scaleY(1.0f).scaleX(1.0f).setDuration(350).setInterpolator(new AccelerateInterpolator()).start();
+                                } else {
+                                    eventParent.animate().scaleY(0.7f).scaleX(0.7f).setDuration(350).setInterpolator(new AccelerateInterpolator()).start();
+                                }
+                            }
                         }
                     }
-                }
+
+                    @Override
+                    public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                        super.onScrolled(recyclerView, dx, dy);
+                    }
+                });
+
+                // SETS UP ON CLICK LISTENER FOR SPINNER
+                statusSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+
+
+                        // Get selected item
+                        String selectedOption = parentView.getItemAtPosition(position).toString();
+                        // Display a Toast or perform actions based on the selected item
+                        Toast.makeText(AppUserEventScreenGenerator.this, "Selected: " + selectedOption, Toast.LENGTH_SHORT).show();
+
+
+
+                        // Perform different actions based on selection
+                        if (selectedOption.equals("Waitlist")) {
+                            // Displays Waitlisted Event
+                            displayList("Waitlist and Invited", user);
+                        } else if (selectedOption.equals("Registered")) {
+                            displayList("Registered", user);
+                        }
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> adapterView) {
+
+                    }
+                });
+
+
             }
 
-            @Override
-            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-            }
+        }).exceptionally(e -> {
+            Toast.makeText(AppUserEventScreenGenerator.this, "Failed to load profile: " + e.getMessage(), Toast.LENGTH_LONG).show(); //also a fail
+            return null;
         });
-
-        // SETS UP ON CLICK LISTENER FOR SPINNER
-        statusSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-
-
-                // Get selected item
-                String selectedOption = parentView.getItemAtPosition(position).toString();
-                // Display a Toast or perform actions based on the selected item
-                Toast.makeText(AppUserEventScreenGenerator.this, "Selected: " + selectedOption, Toast.LENGTH_SHORT).show();
-
-
-
-                // Perform different actions based on selection
-                if (selectedOption.equals("Waitlist")) {
-                    // Displays Waitlisted Event
-                    displayList("Waitlist and Invited", user);
-                } else if (selectedOption.equals("Registered")) {
-                    displayList("Registered", user);
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
-        });
-
 
     }
 
