@@ -30,7 +30,7 @@
                 android:id="@+id/rounded_textview"
                 android:layout_width="300dp"
                 android:layout_height="wrap_content"
-                android:text="EVENT QR CODE"
+                android:text="EVENT VIEWER"
                 android:textColor="#FFFFFF"
                 android:textSize="30sp"
                 android:background="@drawable/round_event"
@@ -39,18 +39,12 @@
                 android:paddingBottom="16dp"
                 android:gravity="center"/>
         </LinearLayout>
-    <ImageView
-        android:id="@+id/imageViewQRCode"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:contentDescription="QR Code"
-        android:scaleType="centerInside" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="16dp"
-            android:text="Your Generated QR Code for your event. Make sure you take a screenshot to save it!"/>
+        <!-- FrameLayout to hold the event content -->
+        <FrameLayout
+            android:id="@+id/event_holder"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
     </LinearLayout>
 
 </ScrollView>

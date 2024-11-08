@@ -115,6 +115,7 @@ public class EntrantDB {
                         Log.d("EntrantDB", "DocumentSnapshot data: " + document.getData());
                     } else {
                         Log.d("EntrantDB", "No such document");
+                        returnCode.complete(null);
                     }
                 } else {
                     Log.d("EntrantDB", "get failed with ", task.getException());
