@@ -1,10 +1,8 @@
 package com.example.bubbletracksapp;
 
-import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
@@ -31,7 +29,7 @@ import java.util.Arrays;
 import java.util.List;
 
 
-public class AppMain extends AppCompatActivity {
+public class AppUserEventScreenGenerator extends AppCompatActivity {
 
     private RecyclerView eventsplace;
     private AppEventAdapter eventAdapter;
@@ -85,7 +83,7 @@ public class AppMain extends AppCompatActivity {
                 // Get selected item
                 String selectedOption = parentView.getItemAtPosition(position).toString();
                 // Display a Toast or perform actions based on the selected item
-                Toast.makeText(AppMain.this, "Selected: " + selectedOption, Toast.LENGTH_SHORT).show();
+                Toast.makeText(AppUserEventScreenGenerator.this, "Selected: " + selectedOption, Toast.LENGTH_SHORT).show();
 
 
 
