@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,10 +21,13 @@ import java.util.Date;
 
 public class EntrantViewActivity extends AppCompatActivity {
 
+    // declare the retrieved event, entrant and id
     private Event event;
     private String id;
+    private Entrant entrant;
+
+    // declare and initialize the databases and the variable to see if
     private Boolean inWaitlist = false;
-    private Entrant entrant = new Entrant();
     private EventDB eventDB = new EventDB();
     private EntrantDB entrantDB = new EntrantDB();
 
@@ -31,6 +35,7 @@ public class EntrantViewActivity extends AppCompatActivity {
     private TextView monthText, dateText, timeText, locationText, nameText, descriptionText,
             capacityText, priceText, needsLocationText, registrationOpenText, registrationCloseText;
     private Button joinButton;
+    private ImageButton backButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +56,7 @@ public class EntrantViewActivity extends AppCompatActivity {
         joinButton = findViewById(R.id.join_waitlist_button);
         registrationOpenText = findViewById(R.id.event_registration_open);
         registrationCloseText = findViewById(R.id.event_registration_close);
+        backButton = findViewById(R.id.back_button);
 
         Intent intent = getIntent();
         id = intent.getStringExtra("id");
@@ -61,6 +67,13 @@ public class EntrantViewActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 addEntrant();
+            }
+        });
+
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
             }
         });
 

@@ -1,8 +1,11 @@
 package com.example.bubbletracksapp;
 
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -39,72 +42,40 @@ import java.util.Locale;
 
 /**
  * this class is an activity that allows an organizer to create an event
+ * incomplete - input validation is not completed
+ *              the user needs to put in all the information for the event to work to work
  * @author Samyak
  * @version 1.0
  */
 public class OrganizerActivity extends AppCompatActivity {
 
+    private Event event = new Event();
+
     // declare all views necessary
-    /** edit text for the name */
-    private EditText nameText;
-    /** button to select the date and time */
-    private ImageButton dateTimeButton;
-    /** text view to show the date and time */
-    private TextView dateTimeText;
-    /** edit text for the description */
-    private EditText descriptionText;
-    /** button to select the location */
-    private ImageButton locationButton;
-    /** text view to display the selected location */
-    private TextView locationText;
-    /** button to set the registration opening date */
-    private ImageButton registrationOpenButton;
-    /** text view to display the registration opening date */
-    private TextView registrationOpenText;
-    /** button to set the registration closing date */
-    private ImageButton registrationCloseButton;
-    /** Text view to display the registration closing date */
-    private TextView registrationCloseText;
-    /** edit text for the maximum capacity */
-    private EditText maxCapacityText;
-    /** edit text for the price */
-    private EditText priceText;
-    /** edit text for the waitlist limit */
-    private EditText waitListLimitText;
-    /** checkbox for require geolocation */
-    private CheckBox requireGeolocationCheckBox;
-    /** button to upload a poster */
-    private Button uploadPhotoButton;
-    /** image view to display the uploaded poster */
+    private EditText nameText, descriptionText, maxCapacityText, priceText, waitListLimitText;
+    private ImageButton dateTimeButton, registrationOpenButton, registrationCloseButton, locationButton;
+    private Button uploadPhotoButton, createButton;
+    private TextView dateTimeText, registrationOpenText, registrationCloseText, locationText;
     private ImageView posterImage;
-    /** button to create and save */
-    private Button createButton;
-    /** button for returning to homescreen **/
+    private CheckBox requireGeolocationCheckBox;
     private ImageButton backButton;
 
 
-    // declare date variables
-    /** date and time of the event */
-    private Date dateTime;
-    /** registration open date of the event */
-    private Date registrationOpen;
-    /** registration close date of the event */
-    private Date registrationClose;
+    // declare calendar variables
+    private Date dateTime, registrationOpen, registrationClose;
 
-
-    // Declares an ActivityResultLauncher needed
-    /** activity result launcher for the location search */
-    private ActivityResultLauncher<Intent> autocompleteLauncher;
-    /** activity result launcher for the image upload */
+    // Declares an ActivityResultLauncher that will handle the result of an image upload action
     private ActivityResultLauncher<String> uploadImageLauncher;
 
-    /** fields to be extracted from the selected location */
-    private List<Place.Field> fields = Arrays.asList(Place.Field.ID, Place.Field.ADDRESS);
+    // Declares an ActivityResultLauncher that will handle the result of a location selecting action
+    private ActivityResultLauncher<Intent> autocompleteLauncher;
 
-    /** uri for the image uploaded */
+    // fields to extract from the selected Location
+    List<Place.Field> fields = Arrays.asList(Place.Field.ID, Place.Field.ADDRESS);
+
+    // declare uri variable
     private Uri posterUri;
 
-    /** address of the selected location */
     // declare place variable
     private String location;
 
@@ -389,7 +360,6 @@ public class OrganizerActivity extends AppCompatActivity {
         } else {
 
             // create a new event class and store all the fields
-            Event event = new Event();
             event.setName(name);
             event.setGeolocation(location);
             event.setDateTime(dateTime);
@@ -427,9 +397,15 @@ public class OrganizerActivity extends AppCompatActivity {
                                     EventDB eventDB = new EventDB();
                                     eventDB.addEvent(event);
 
+                                    // update the current user to add the created event in the organizer's
+                                    // organized events
+                                    updateEntrant();
+
                                     // change to a new layout to show the generated QR code
                                     setContentView(R.layout.qr_code);
                                     ImageView qrCode = findViewById(R.id.imageViewQRCode);
+                                    ImageButton backButton = findViewById(R.id.back_button);
+
                                     QRGenerator qrGenerator = new QRGenerator();
                                     try{
                                         Bitmap qrBitmap = qrGenerator.generateQRCode(event.getQRCode());
@@ -437,6 +413,13 @@ public class OrganizerActivity extends AppCompatActivity {
                                     } catch (WriterException exception){
                                         Log.e("OrganizerActivity", "Qr code generation failed", exception);
                                     }
+
+                                    backButton.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+                                            finish();
+                                        }
+                                    });
 
                                 }
 
@@ -457,6 +440,34 @@ public class OrganizerActivity extends AppCompatActivity {
                         }
                     });
         }
+    }
+
+    /**
+     * gets the current entrant and updates the entrant in the Database
+     * to store id of the created event
+     */
+    protected void updateEntrant(){
+
+        // get the current user's id
+        SharedPreferences localID = getSharedPreferences("LocalID", Context.MODE_PRIVATE);
+        String ID = localID.getString("ID", "Not Found");
+        EntrantDB entrantDB = new EntrantDB();
+
+        // get the entrant from the database
+        entrantDB.getEntrant(ID).thenAccept(user -> {
+            if(user != null){
+
+                // update the user to have the event's id in its events organized list and store it
+                user.addToEventsOrganized(event.getId());
+                entrantDB.updateEntrant(user);
+
+            } else {
+                Toast.makeText(OrganizerActivity.this, "Could not load profile.", Toast.LENGTH_LONG).show();
+            }
+        }).exceptionally(e -> {
+            Toast.makeText(OrganizerActivity.this, "Failed to load profile: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            return null;
+        });
     }
 
 }

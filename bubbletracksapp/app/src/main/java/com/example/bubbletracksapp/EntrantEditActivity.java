@@ -32,18 +32,27 @@ import java.util.concurrent.ExecutionException;
 
 import java.util.ArrayList;
 
+/**
+ * This class allows an entrant to update their profile information.
+ * INCOMPLETE:
+ * There is currently no data validation.
+ * There is no way to set the profile picture.
+ * @author Zoe, Erza
+ */
 public class EntrantEditActivity extends AppCompatActivity {
-    /**
-     * This class allows an entrant to update their profile information.
-     * INCOMPLETE:
-     * There is currently no data validation.
-     * There is no way to set the profile picture.
-     */
+
     private ActivityResultLauncher<String> requestPermissionLauncher;
     private ProfileManagementBinding binding;
     private Entrant currentUser;
     EntrantDB db = new EntrantDB();
 
+    /**
+     * Start up activity for entrant to edit their profile
+     * @param savedInstanceState If the activity is being re-initialized after
+     *     previously being shut down then this Bundle contains the data it most
+     *     recently supplied in {@link #onSaveInstanceState}.  <b><i>Note: Otherwise it is null.</i></b>
+     *
+     */
     @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -121,6 +130,10 @@ public class EntrantEditActivity extends AppCompatActivity {
         Button updateProfile = binding.profileUpdate;
         updateProfile.setOnClickListener(new View.OnClickListener() {
 
+            /**
+             * Action after entrant wants to update their profile
+             * @param view The view that was clicked.
+             */
             @Override
             public void onClick(View view) {
                 checkNotificationPermission(currentUser);
@@ -163,6 +176,10 @@ public class EntrantEditActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Launcher to ask user for notification permission
+     * @param currentUser entrant updating their profile
+     */
     private void checkNotificationPermission(Entrant currentUser) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             // Check if the notification permission is granted
