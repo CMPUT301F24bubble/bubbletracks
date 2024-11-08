@@ -56,8 +56,9 @@
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/button_tickets"
                 style="@style/HomeButtons"
+                android:layout_width="150dp"
                 android:layout_height="60dp"
-                android:backgroundTint="@color/home_blue"
+                android:backgroundTint="@color/neutral"
                 android:drawableTop="@drawable/ticketicon"
                 android:text="Tickets"
                 android:tint="@color/white" />
@@ -70,6 +71,8 @@
                 android:layout_weight="1"
                 android:backgroundTint="@color/home_blue"
                 android:drawableTop="@drawable/baseline_groups_24"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
                 android:text="Profile" />
 
             <androidx.appcompat.widget.AppCompatButton
@@ -80,6 +83,8 @@
                 android:layout_weight="1"
                 android:backgroundTint="@color/home_blue"
                 android:drawableTop="@drawable/baseline_image_search_24"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
                 android:text="Create Event" />
 
             <androidx.appcompat.widget.AppCompatButton
@@ -90,25 +95,25 @@
                 android:layout_weight="1"
                 android:backgroundTint="@color/home_blue"
                 android:drawableTop="@drawable/baseline_image_search_24"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
                 android:text="Hosted Events" />
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/button_facility"
                 style="@style/HomeButtons"
-                android:backgroundTint="@color/home_blue"
                 android:layout_height="60dp"
+                android:backgroundTint="@color/neutral"
                 android:drawableTop="@drawable/facility_icon"
-                android:text="Your Facility"
-                 />
+                android:text="Your Facility" />
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/button_admin"
                 style="@style/HomeButtons"
-                android:drawableTop="@drawable/baseline_key_24"
                 android:layout_height="60dp"
-                android:text="Admin Access"
-                android:backgroundTint="@color/home_blue"
-                />
+                android:backgroundTint="@color/neutral"
+                android:drawableTop="@drawable/baseline_key_24"
+                android:text="Admin Access" />
 
         </LinearLayout>
     </HorizontalScrollView>
