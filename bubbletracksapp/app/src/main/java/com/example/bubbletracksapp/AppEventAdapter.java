@@ -21,10 +21,10 @@ public class AppEventAdapter extends RecyclerView.Adapter<AppEventAdapter.EventV
     // ATTRIBUTES
     Context context;
     List<Event> eventList;
-    AppUser user;
+    Entrant user;
     Integer eventPicInteger;
 
-    public AppEventAdapter (Context context, List<Event> eventList, AppUser user, Integer eventPicInteger) {
+    public AppEventAdapter (Context context, List<Event> eventList, Entrant user, Integer eventPicInteger) {
         this.context = context;
         this.eventList = eventList;
         this.user = user;
@@ -92,10 +92,20 @@ public class AppEventAdapter extends RecyclerView.Adapter<AppEventAdapter.EventV
 
         });
 
-        holder.eventTitle.setText(event.getEventTitle());
-
-        // CHANGE THIS CODE
-        String regStatus = event.getRegistrationStatus(user.getDevice_id());
+        holder.eventTitle.setText(event.getName());
+        String regStatus = null;
+        if(user.getEventsInvited().contains(event.getId()))
+        {
+            regStatus = "INVITED";
+        }
+        if(user.getEventsEnrolled().contains(event.getId()))
+        {
+            regStatus = "REGISTERED";
+        }
+        if(user.getEventsEnrolled().contains(event.getId()))
+        {
+            regStatus = "WAITLISTED";
+        }
         holder.eventRegStatus.setText(regStatus != null ? regStatus : "unknown");
 
 
