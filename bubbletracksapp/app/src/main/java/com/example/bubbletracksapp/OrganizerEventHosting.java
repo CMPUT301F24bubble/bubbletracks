@@ -121,12 +121,14 @@ public class OrganizerEventHosting extends Fragment{
 
         eventDB.getEventList(currentUser.getEventsOrganized()).thenAccept(events -> {
             if(events != null){
+                Log.d("AHHHHHHHHHHHHHHHHHHHHHHHHHHHH", "events is not null");
                 hostedEvents = events;
-                eventListAdapter = new EventHostListAdapter(this.getContext(), events);
+                eventListAdapter = new EventHostListAdapter(this.getContext(), hostedEvents);
                 eventListView.setAdapter(eventListAdapter);
 
             } else {
                 Toast.makeText(context, "No hosted events", Toast.LENGTH_LONG).show();
+                Log.d("AHHHHHHHHHHHHHHHHHHHHHHHHHHHH", "this will catch my attention");
             }
         });
 

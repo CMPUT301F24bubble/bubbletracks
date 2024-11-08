@@ -4,18 +4,19 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools">
+
     <TextView
         android:id="@+id/activity_title"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:gravity="center"
         android:padding="16dp"
-        app:layout_constraintBottom_toTopOf="@id/content_holder"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:text="Activity Title"
+        android:text="Homescreen"
+        android:textColor="@color/home_blue"
         android:textSize="50dp"
         android:textStyle="bold"
-        android:gravity="center"
-        android:textColor="@color/home_blue"/>
+        app:layout_constraintBottom_toTopOf="@id/content_holder"
+        app:layout_constraintEnd_toEndOf="parent" />
     <!-- Other content above buttons -->
     <!-- Your Events, Tickets, Your Facility, Admin Access -->
     <!-- Why aren't the buttons changing color? Insufficient color contrast ratio? -->
@@ -55,29 +56,64 @@
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/button_tickets"
                 style="@style/HomeButtons"
+                android:layout_width="150dp"
                 android:layout_height="60dp"
-                android:backgroundTint="@color/home_blue"
+                android:backgroundTint="@color/neutral"
                 android:drawableTop="@drawable/ticketicon"
                 android:text="Tickets"
                 android:tint="@color/white" />
 
             <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/button_profile"
+                style="@style/HomeButtons"
+                android:layout_width="wrap_content"
+                android:layout_height="60dp"
+                android:layout_weight="1"
+                android:backgroundTint="@color/home_blue"
+                android:drawableTop="@drawable/baseline_groups_24"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:text="Profile" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/button_createEvents"
+                style="@style/HomeButtons"
+                android:layout_width="wrap_content"
+                android:layout_height="60dp"
+                android:layout_weight="1"
+                android:backgroundTint="@color/home_blue"
+                android:drawableTop="@drawable/baseline_image_search_24"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:text="Create Event" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/button_eventHost"
+                style="@style/HomeButtons"
+                android:layout_width="wrap_content"
+                android:layout_height="60dp"
+                android:layout_weight="1"
+                android:backgroundTint="@color/home_blue"
+                android:drawableTop="@drawable/baseline_image_search_24"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:text="Hosted Events" />
+
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/button_facility"
                 style="@style/HomeButtons"
-                android:backgroundTint="@color/home_blue"
                 android:layout_height="60dp"
+                android:backgroundTint="@color/neutral"
                 android:drawableTop="@drawable/facility_icon"
-                android:text="Your Facility"
-                 />
+                android:text="Your Facility" />
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/button_admin"
                 style="@style/HomeButtons"
-                android:drawableTop="@drawable/baseline_key_24"
                 android:layout_height="60dp"
-                android:text="Admin Access"
-                android:backgroundTint="@color/home_blue"
-                />
+                android:backgroundTint="@color/neutral"
+                android:drawableTop="@drawable/baseline_key_24"
+                android:text="Admin Access" />
 
         </LinearLayout>
     </HorizontalScrollView>
@@ -85,8 +121,7 @@
     <FrameLayout
         android:id="@+id/content_holder"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@id/button_scroll_view"
+        android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"

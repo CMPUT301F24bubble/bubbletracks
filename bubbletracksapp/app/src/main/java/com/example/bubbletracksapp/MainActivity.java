@@ -24,6 +24,7 @@ import androidx.navigation.ui.NavigationUI;
 
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
 import android.widget.Toast;
 
 import java.util.UUID;
@@ -74,6 +75,50 @@ public class MainActivity extends AppCompatActivity {
             return null;
         });
 
+        Button eventsButton = binding.buttonEvents;
+        Button createEventButton = binding.buttonCreateEvents;
+        Button scanButton = binding.buttonScan;
+        Button ticketsButton = binding.buttonTickets;
+        Button profileButton = binding.buttonProfile;
+        Button userEventsButton = binding.buttonEvents;
+        Button eventHostButton = binding.buttonEventHost;
+
+        Intent createEventIntent = new Intent(MainActivity.this, OrganizerActivity.class); //class where you are, then class where you wanan go
+        switchActivityButton(createEventButton, createEventIntent);
+
+        Intent scanIntent = new Intent(MainActivity.this, QRScanner.class);
+        switchActivityButton(scanButton, scanIntent);
+
+        Intent profileIntent = new Intent(MainActivity.this, EntrantEditActivity.class);
+        switchActivityButton(profileButton, profileIntent);
+
+        Intent userEventsIntent = new Intent(MainActivity.this, AppUserEventScreenGenerator.class);
+        switchActivityButton(userEventsButton, userEventsIntent);
+
+        eventHostButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (savedInstanceState == null) {
+                    getSupportFragmentManager().beginTransaction()
+                            .setReorderingAllowed(true)
+                            .add(R.id.content_holder, OrganizerEventHosting.class, null)
+                            .commit();
+                }
+            }
+        });
+    }
+    /**
+     * Generalized code for buttons that use start(Activity()
+     * @param button is the button that will be clicked
+     * @param intent is the intent passed to startActivity()
+     */
+    public void switchActivityButton(Button button, Intent intent){
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(intent);
+            }
+        });
     }
 
     /**

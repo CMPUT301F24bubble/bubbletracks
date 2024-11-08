@@ -8,6 +8,12 @@
     <string name="previous">Previous</string>
     <string name="not_selected">Not selected</string>
 
+    <!-- Used for drop down menu in user events -->
+    <string-array name="list_options">
+    <item>Registered</item>
+    <item>Waitlist</item>
+    </string-array>
+
     <string name="lorem_ipsum">
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam in scelerisque sem. Mauris
         volutpat, dolor id interdum ullamcorper, risus dolor egestas lectus, sit amet mattis purus
