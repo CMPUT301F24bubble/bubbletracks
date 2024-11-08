@@ -437,13 +437,20 @@ public class OrganizerActivity extends AppCompatActivity {
      * to store id of the created event
      */
     protected void updateEntrant(){
+
+        // get the current user's id
         SharedPreferences localID = getSharedPreferences("LocalID", Context.MODE_PRIVATE);
         String ID = localID.getString("ID", "Not Found");
         EntrantDB entrantDB = new EntrantDB();
+
+        // get the entrant from the database
         entrantDB.getEntrant(ID).thenAccept(user -> {
             if(user != null){
+
+                // update the user to have the event's id in its events organized list and store it
                 user.addToEventsOrganized(event.getId());
                 entrantDB.updateEntrant(user);
+
             } else {
                 Toast.makeText(OrganizerActivity.this, "Could not load profile.", Toast.LENGTH_LONG).show();
             }
