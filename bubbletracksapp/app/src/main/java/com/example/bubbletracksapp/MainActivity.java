@@ -34,13 +34,24 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
+/**
+ *Main Activity for the user.
+ * @author Zoe
+ */
 public class MainActivity extends AppCompatActivity {
 
     private AppBarConfiguration appBarConfiguration;
     private HomescreenBinding binding;
-    private Entrant currentUser;
+    public Entrant currentUser;
     private String currentDeviceID;
 
+    /**
+     * Set up creation of activity
+     * @param savedInstanceState If the activity is being re-initialized after
+     *     previously being shut down then this Bundle contains the data it most
+     *     recently supplied in {@link #onSaveInstanceState}.  <b><i>Note: Otherwise it is null.</i></b>
+     *
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -88,6 +99,12 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Create the activity involving the options menu
+     * @param menu The options menu in which you place your items.
+     *
+     * @return true
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -95,6 +112,12 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+    /**
+     * Identify what was clicked among the options menu
+     * @param item The menu item that was selected.
+     *
+     * @return true
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -113,6 +136,7 @@ public class MainActivity extends AppCompatActivity {
      * This function checks to see if the user has a local ID stored.
      * If they don't it generates one for them.
      * Either way, it returns the ID.
+     * @return device ID
      **/
     public String getDeviceID() {
         // The first two lines of this function can be used in any activity

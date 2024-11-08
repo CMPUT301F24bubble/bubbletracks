@@ -30,13 +30,14 @@ import android.widget.Toast;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
+import java.util.ArrayList;
+
 public class EntrantEditActivity extends AppCompatActivity {
     /**
      * This class allows an entrant to update their profile information.
      * INCOMPLETE:
      * There is currently no data validation.
      * There is no way to set the profile picture.
-     * Updating the database is currently not functional
      */
     private ActivityResultLauncher<String> requestPermissionLauncher;
     private ProfileManagementBinding binding;
@@ -67,6 +68,7 @@ public class EntrantEditActivity extends AppCompatActivity {
                 }
         );
 
+
         EditText entrantNameInput = binding.entrantNameInput;
         EditText entrantEmailInput = binding.entrantEmailInput;
         EditText entrantPhoneInput = binding.entrantPhoneInput;
@@ -82,9 +84,21 @@ public class EntrantEditActivity extends AppCompatActivity {
         db.getEntrant(ID).thenAccept(user -> {
             if(user != null){
                 currentUser = user;
-                entrantNameInput.setText(currentUser.getNameAsString());
-                entrantEmailInput.setText(currentUser.getEmail());
-                entrantPhoneInput.setText(currentUser.getPhone());
+                if (currentUser.getNameAsString().isEmpty()) {
+                    entrantNameInput.setText("Enter your name");
+                } else {
+                entrantNameInput.setText(currentUser.getNameAsString()); }
+
+                if (currentUser.getEmail().isEmpty()) {
+                    entrantEmailInput.setText("Enter your email");
+                } else {
+                    entrantEmailInput.setText(currentUser.getEmail()); }
+
+                if (currentUser.getPhone().isEmpty()) {
+                    entrantPhoneInput.setText("Enter your phone number");
+                } else {
+                    entrantPhoneInput.setText(currentUser.getPhone()); }
+
                 entrantNotificationInput.setChecked(currentUser.getNotification());
             } else {
                 Toast.makeText(EntrantEditActivity.this, "Could not load profile.", Toast.LENGTH_LONG).show();
