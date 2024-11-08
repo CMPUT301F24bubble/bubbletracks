@@ -1,8 +1,10 @@
 package com.example.bubbletracksapp;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -11,6 +13,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import com.squareup.picasso.Picasso;
+
+import java.util.ArrayList;
 import java.util.Date;
 
 public class EntrantViewActivity extends AppCompatActivity {
@@ -20,6 +24,7 @@ public class EntrantViewActivity extends AppCompatActivity {
     private Boolean inWaitlist = false;
     private Entrant entrant = new Entrant();
     private EventDB eventDB = new EventDB();
+    private EntrantDB entrantDB = new EntrantDB();
 
     private ImageView posterImage;
     private TextView monthText, dateText, timeText, locationText, nameText, descriptionText,
@@ -44,11 +49,10 @@ public class EntrantViewActivity extends AppCompatActivity {
         needsLocationText = findViewById(R.id.event_requires_geo);
         joinButton = findViewById(R.id.join_waitlist_button);
 
-
         Intent intent = getIntent();
         id = intent.getStringExtra("id");
 
-        getEvent();
+        getCurrentEntrant();
 
         joinButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -59,11 +63,36 @@ public class EntrantViewActivity extends AppCompatActivity {
 
     }
 
+    protected void getCurrentEntrant(){
+        SharedPreferences localID = getSharedPreferences("LocalID", Context.MODE_PRIVATE);
+        String ID = localID.getString("ID", "Not Found");
+        entrantDB.getEntrant(ID).thenAccept(user -> {
+            if(user != null){
+                entrant = user;
+                getEvent();
+            } else {
+                entrant = new Entrant();
+                getEvent();
+                Toast.makeText(EntrantViewActivity.this, "Could not load profile.", Toast.LENGTH_LONG).show();
+            }
+        }).exceptionally(e -> {
+            Toast.makeText(EntrantViewActivity.this, "Failed to load profile: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            return null;
+        });
+    }
+
     protected void getEvent(){
 
         eventDB.getEvent(id).thenAccept(event -> {
             if(event != null){
                 this.event = event;
+                ArrayList<Entrant> waitList = event.getWaitList();
+                for(Entrant entrant : waitList){
+                    if(entrant.getID().equals(this.entrant.getID())){
+                        inWaitlist = true;
+                        break;
+                    }
+                }
                 setViews();
             } else {
                 Toast.makeText(EntrantViewActivity.this, "Event does not exist", Toast.LENGTH_LONG).show();

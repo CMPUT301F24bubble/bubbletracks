@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:background="@drawable/round_event"
     android:color="#B6C6DC"
     android:orientation="vertical"
@@ -68,14 +68,6 @@
                 android:textSize="16sp" />
 
             <TextView
-                android:id="@+id/event_location"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Adress"
-                android:textColor="#555555"
-                android:textSize="14sp" />
-
-            <TextView
                 android:id="@+id/event_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -84,18 +76,28 @@
                 android:textSize="18sp"
                 android:textStyle="bold" />
         </LinearLayout>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/join_waitlist_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/round_event"
+            android:backgroundTint="@color/home_blue"
+            android:padding="12dp"
+            android:text="Join Waitlist"
+            android:textColor="#FFFFFF" />
     </LinearLayout>
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/join_waitlist_button"
+
+    <TextView
+        android:id="@+id/event_location"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:background="@drawable/round_event"
-        android:padding="12dp"
-        android:layout_marginTop="16dp"
-        android:text="Join Waitlist"
-        android:textColor="#FFFFFF"
-        android:backgroundTint="@color/home_blue"/>
+        android:text="Adress"
+        android:textColor="#555555"
+        android:textSize="14sp" />
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -109,6 +111,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
+        android:textColor="#000000"
         android:text="Insert Description here"/>
 
     <LinearLayout
@@ -124,6 +127,7 @@
             android:backgroundTint="@color/home_blue"
             android:background="@drawable/image_border"
             android:padding="8dp"
+            android:textColor="#000000"
             android:layout_margin="5dp"
             />
         <TextView
@@ -133,6 +137,7 @@
             android:text="Insert Price"
             android:backgroundTint="@color/home_blue"
             android:background="@drawable/image_border"
+            android:textColor="#000000"
             android:padding="8dp"
             android:layout_margin="5dp"
             />
@@ -142,6 +147,7 @@
             android:layout_height="match_parent"
             android:backgroundTint="@color/home_blue"
             android:background="@drawable/image_border"
+            android:textColor="#000000"
             android:text="Requires Geolocation: ?"
             android:padding="8dp"
             android:layout_margin="5dp"

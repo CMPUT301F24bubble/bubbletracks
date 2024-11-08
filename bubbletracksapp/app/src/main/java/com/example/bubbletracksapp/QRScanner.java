@@ -61,7 +61,6 @@ public class QRScanner extends AppCompatActivity {
             if (result.getContents() == null) {
                 Toast.makeText(this, "Scan cancelled", Toast.LENGTH_LONG).show();
             } else {
-                Toast.makeText(this, "Scanned: " + result.getContents(), Toast.LENGTH_LONG).show();
                 String url = result.getContents();
                 String[] splits = url.split("/");
                 String id = splits[splits.length-1];
