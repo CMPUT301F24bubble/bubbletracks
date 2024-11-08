@@ -31,14 +31,18 @@ public class Entrant implements Parcelable {
     private String deviceID;
     private Boolean notification;
     private ArrayList<String> eventsOrganized = new ArrayList<>();
+    private ArrayList<String> eventsInvited = new ArrayList<>();
+    private ArrayList<String> eventsEnrolled = new ArrayList<>();
 
-    public Entrant(String[] newName, String newEmail, String newPhone, String newDevice, Boolean notificationPermission, ArrayList<String> eventsOrganized) {
-        this.name = newName;
-        this.email = newEmail;
-        this.phone = newPhone;
-        this.deviceID = newDevice;
-        this.notification = notificationPermission;
+    public Entrant(String[] name, String email, String phone, String deviceID, Boolean notification, ArrayList<String> eventsOrganized, ArrayList<String> eventsInvited, ArrayList<String> eventsEnrolled) {
+        this.name = name;
+        this.email = email;
+        this.phone = phone;
+        this.deviceID = deviceID;
+        this.notification = notification;
         this.eventsOrganized = eventsOrganized;
+        this.eventsInvited = eventsInvited;
+        this.eventsEnrolled = eventsEnrolled;
     }
 
     public Entrant(){
@@ -49,6 +53,8 @@ public class Entrant implements Parcelable {
         this.deviceID = "";
         this.notification = false;
         this.eventsOrganized = new ArrayList<>();
+        this.eventsInvited = new ArrayList<>();
+        this.eventsEnrolled = new ArrayList<>();
     }
 
     public Entrant(DocumentSnapshot document) {
@@ -59,7 +65,9 @@ public class Entrant implements Parcelable {
         this.phone = document.getString("phone");
         this.deviceID = document.getString("ID");
         this.notification = document.getBoolean("notification");
-        this.eventsOrganized = (ArrayList<String>)document.getData().get("events");
+        this.eventsOrganized = (ArrayList<String>)document.getData().get("organized");
+        this.eventsInvited = (ArrayList<String>)document.getData().get("invited");
+        this.eventsEnrolled = (ArrayList<String>)document.getData().get("enrolled");
     }
 
     protected Entrant(Parcel in) {
@@ -70,6 +78,8 @@ public class Entrant implements Parcelable {
         byte tmpNotification = in.readByte();
         notification = tmpNotification == 0 ? null : tmpNotification == 1;
         eventsOrganized = in.createStringArrayList();
+        eventsInvited = in.createStringArrayList();
+        eventsEnrolled = in.createStringArrayList();
     }
 
     public static final Creator<Entrant> CREATOR = new Creator<Entrant>() {
@@ -92,7 +102,9 @@ public class Entrant implements Parcelable {
         map.put("phone", phone);
         map.put("notification", notification);
         map.put("ID", deviceID);
-        map.put("events", eventsOrganized);
+        map.put("organized", eventsOrganized);
+        map.put("invited", eventsInvited);
+        map.put("enrolled", eventsEnrolled);
 
         return map;
     }
@@ -180,5 +192,21 @@ public class Entrant implements Parcelable {
 
     public void updateEntrantFirebase() {
         new EntrantDB().updateEntrant(toMap());
+    }
+
+    public ArrayList<String> getEventsInvited() {
+        return eventsInvited;
+    }
+
+    public void setEventsInvited(ArrayList<String> eventsInvited) {
+        this.eventsInvited = eventsInvited;
+    }
+
+    public ArrayList<String> getEventsEnrolled() {
+        return eventsEnrolled;
+    }
+
+    public void setEventsEnrolled(ArrayList<String> eventsEnrolled) {
+        this.eventsEnrolled = eventsEnrolled;
     }
 }

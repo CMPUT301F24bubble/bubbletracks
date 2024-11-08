@@ -1,5 +1,7 @@
 package com.example.bubbletracksapp;
 
+import static java.util.UUID.randomUUID;
+
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -69,7 +71,7 @@ public class EntrantEditActivity extends AppCompatActivity {
 
         TextView deviceIDNote = binding.deviceIDNote;
 
-        Entrant currentUser = new Entrant(new String[]{"name1", "name2"},"a@mail","123","xxx", false, new ArrayList<String>());
+        Entrant currentUser = new Entrant(new String[]{"name1", "name2"},"a@mail","123","xxx", false, new ArrayList<String>(), new ArrayList<String>(), new ArrayList<String>());
 
         deviceIDNote.setText(currentUser.getID());
         entrantNameInput.setText(currentUser.getNameAsString());
@@ -92,6 +94,7 @@ public class EntrantEditActivity extends AppCompatActivity {
 
                 currentUser.setPhone(newPhone);
                 currentUser.setEmail(newEmail);
+                currentUser.setID(randomUUID().toString());
 
                 if (!notificationPermission){
                     currentUser.setNotification(false);
