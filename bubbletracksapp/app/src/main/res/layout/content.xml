@@ -82,7 +82,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginTop="16dp"
             android:background="@drawable/round_event"
             android:backgroundTint="@color/home_blue"
             android:padding="12dp"
@@ -94,6 +93,7 @@
         android:id="@+id/event_location"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
         android:text="Adress"
         android:textColor="#555555"
         android:textSize="14sp" />
@@ -159,6 +159,7 @@
         android:id="@+id/event_registration_open"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
         android:layout_marginBottom="16dp"
         android:textColor="#000000"
         android:text="Insert Registration Open here"/>

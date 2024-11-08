@@ -74,8 +74,6 @@ public class EntrantViewActivity extends AppCompatActivity {
                 entrant = user;
                 getEvent();
             } else {
-                entrant = new Entrant();
-                getEvent();
                 Toast.makeText(EntrantViewActivity.this, "Could not load profile.", Toast.LENGTH_LONG).show();
             }
         }).exceptionally(e -> {
