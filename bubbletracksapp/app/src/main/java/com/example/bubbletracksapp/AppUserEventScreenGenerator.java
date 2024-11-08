@@ -171,11 +171,6 @@ public class AppUserEventScreenGenerator extends AppCompatActivity {
 
     }
 
-
-
-
-
-
     // Method to display the selected list
     /**
      * Displays list
