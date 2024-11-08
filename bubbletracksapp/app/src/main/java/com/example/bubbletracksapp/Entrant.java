@@ -18,7 +18,6 @@ public class Entrant implements Parcelable {
      * INCOMPLETE:
      * This class currently lacks a way to store profile pictures
      * It also doesn't track any contact info besides email and phone
-     * Also, there's no fancy data types for email or phone.
      */
     private String[] name;
     private String email;
@@ -34,8 +33,16 @@ public class Entrant implements Parcelable {
         this.notification = notificationPermission;
     }
 
+    public Entrant(String newDeviceID){
+        this.name = new String[]{"",""};
+        this.email = "";
+        this.phone = "";
+        this.deviceID = newDeviceID;
+        this.notification = false;
+    }
+
     public Entrant(){
-        Log.w("NewEntrant", "Entrant has empty strings for information.");
+        Log.w("NewEntrant", "Entrant has empty strings for information, including ID.");
         this.name = new String[]{"",""};
         this.email = "";
         this.phone = "";
@@ -95,9 +102,8 @@ public class Entrant implements Parcelable {
         this.phone = phone;
     }
 
-    // MUST BE CHANGED, should be the phoneID but for now the ID is the name INCOMPLETE
     public String getID() {
-        return name[0]+name[1];
+        return deviceID;
     }
 
     public Boolean getNotification() { return notification;}
