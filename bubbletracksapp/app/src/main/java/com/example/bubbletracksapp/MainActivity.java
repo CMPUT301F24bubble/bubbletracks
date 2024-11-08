@@ -107,7 +107,11 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-
+    /**
+     * Generalized code for buttons that use start(Activity()
+     * @param button is the button that will be clicked
+     * @param intent is the intent passed to startActivity()
+     */
     public void switchActivityButton(Button button, Intent intent){
         button.setOnClickListener(new View.OnClickListener() {
             @Override
