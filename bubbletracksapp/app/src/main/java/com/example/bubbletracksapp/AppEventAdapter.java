@@ -94,17 +94,17 @@ public class AppEventAdapter extends RecyclerView.Adapter<AppEventAdapter.EventV
 
         holder.eventTitle.setText(event.getName());
         String regStatus = null;
-        if(user.getEventsInvited().contains(event.getId()))
+        if(user.getEventsWaitlist().contains(event.getId()))
+        {
+            regStatus = "WAITLISTED";
+        }
+        else if(user.getEventsInvited().contains(event.getId()))
         {
             regStatus = "INVITED";
         }
-        if(user.getEventsEnrolled().contains(event.getId()))
+        else if(user.getEventsEnrolled().contains(event.getId()))
         {
             regStatus = "REGISTERED";
-        }
-        if(user.getEventsEnrolled().contains(event.getId()))
-        {
-            regStatus = "WAITLISTED";
         }
         holder.eventRegStatus.setText(regStatus != null ? regStatus : "unknown");
 
@@ -143,15 +143,17 @@ public class AppEventAdapter extends RecyclerView.Adapter<AppEventAdapter.EventV
 
     private void handleAcceptClick(Event event) {
         // Code to handle accepting this specific event
-        Toast.makeText(context, "Accepted: " + event.getEventTitle(), Toast.LENGTH_SHORT).show();
-        user.addRegEvent(event);
+        Toast.makeText(context, "Accepted: " + event.getName(), Toast.LENGTH_SHORT).show();
+        user.addToEventsEnrolled(event.getId());
+        user.updateEntrantFirebase();
     }
 
     private void handleDeclineClick(Event event) {
         // MAKES A NOTIFICATION, CHECKS IF YOU TRULY WANT TO DECLINE
         // Code to handle declining this specific event
-        Toast.makeText(context, "Declined: " + event.getEventTitle(), Toast.LENGTH_SHORT).show();
+        Toast.makeText(context, "Declined: " + event.getName(), Toast.LENGTH_SHORT).show();
         // Handle decline logic, if any
-        user.removeWLEvent(event);
+        user.deleteFromEventsEnrolled(event.getId());
+        user.updateEntrantFirebase();
     }
 }
