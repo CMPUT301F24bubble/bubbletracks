@@ -24,8 +24,8 @@ import java.util.concurrent.CompletableFuture;
 
 public class EntrantDB {
 
-    FirebaseFirestore db;
-    CollectionReference entrantsRef;
+    private FirebaseFirestore db;
+    private CollectionReference entrantsRef;
 
     public EntrantDB() {
         db = FirebaseFirestore.getInstance();

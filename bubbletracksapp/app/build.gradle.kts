@@ -51,4 +51,6 @@ dependencies {
     implementation(libs.google.firebase.storage)
     implementation(libs.places)
     implementation(libs.picasso)
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.0.1")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.0.1")
 }
