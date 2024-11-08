@@ -38,7 +38,8 @@ public class AppUserEventScreenGenerator extends AppCompatActivity {
     private List<Event> waitlistEvents = new ArrayList<>();
     private List<Event> registeredEvents = new ArrayList<>();
     private Button accept, decline;
-    FirebaseFirestore firestore;
+    EntrantDB entrantDB = new EntrantDB();
+    EventDB eventDB = new EventDB();
     private List<String> otherOption = Arrays.asList("Waitlist", "Registered");
     private Spinner statusSpinner;
     private Entrant user;
@@ -57,9 +58,6 @@ public class AppUserEventScreenGenerator extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.event_lists);
-
-        // SETS UP DATABASE INSTANCE
-        firestore = FirebaseFirestore.getInstance();  // WOULD THIS CAUSE A MERGE
 
         // INITIALIZES DROP DOWN MENU/SPINNER
         statusSpinner = findViewById(R.id.listOptions);
@@ -187,37 +185,15 @@ public class AppUserEventScreenGenerator extends AppCompatActivity {
      *
      */
     private void displayList(String listType, Entrant user1) {
-        List<String> eventListString = new ArrayList<>();
-        List<Event> eventList =  new ArrayList<>();
         String regStatus = "unknown"; // Default status if no matching user is found
 
-        // Determine which list to display
-        if (listType.equals("Waitlist and Invited")) {
-            eventList.addAll(user1.getInvitedEvents());
-            eventList.addAll(user1.getWaitlistEvents());
-        } else if (listType.equals("Registered")) {
-            eventList.addAll(user1.getRegisteredEvents());
-        } else {
-            eventList = new ArrayList<>(); // Fallback to an empty list if listType is unexpected
-        }
+        eventDB.getEventList(user1.getEventsWaitlist()).thenAccept(events -> {
+            List<Event> eventList = events;
+            // Initialize the adapter with the event list and the determined registration status
+            eventAdapter = new AppEventAdapter(this, eventList, user1, null);
+            eventsplace.setAdapter(eventAdapter);
 
-        // Loop through events and set regStatus if user is found in the list
-        /*
-        for (Event event : eventList) {
-            //GETS ALL USERS
-            for (Entrant user : event.getAllUsers()) {
-                if (user1.getDevice_id()!= null && user1.getDevice_id().equals(user.getDevice_id())) {
-                    regStatus = user.getRegStatus(event); // Set regStatus if a matching user is found
-                    break; // Break out of the loop once we find a matching user
-                }
-            }
-        }
-
-       */
-
-        // Initialize the adapter with the event list and the determined registration status
-        eventAdapter = new AppEventAdapter(this, eventList, user1, null);
-        eventsplace.setAdapter(eventAdapter);
+        });
     }
 
 
