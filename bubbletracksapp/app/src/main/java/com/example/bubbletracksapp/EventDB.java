@@ -50,7 +50,6 @@ public class EventDB {
      */
     public void addEvent(Event event)
     {
-        //Maybe this should be in Entrant class INCOMPLETE
         Map<String, Object> newEvent = event.toMap();
 
         String docID = event.getId();
@@ -146,7 +145,7 @@ public class EventDB {
     }
 
     /**
-     * updates map to event
+     * updates the event within the given event map
      * @param newEventMap event map
      */
     public void updateEvent(Map<String, Object> newEventMap)
@@ -258,6 +257,5 @@ public class EventDB {
             }
         });
         return returnCode;
-
     }
 }
