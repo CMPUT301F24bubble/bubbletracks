@@ -38,6 +38,13 @@ public class OrganizerEditActivity extends AppCompatActivity {
 
     private LotteryMainBinding binding;
 
+    /**
+     * Set up creation of activity
+     * @param savedInstanceState If the activity is being re-initialized after
+     *     previously being shut down then this Bundle contains the data it most
+     *     recently supplied in {@link #onSaveInstanceState}.  <b><i>Note: Otherwise it is null.</i></b>
+     *
+     */
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -85,6 +92,10 @@ public class OrganizerEditActivity extends AppCompatActivity {
 
 
         binding.chooseFromWaitlistButton.setOnClickListener(new View.OnClickListener() {
+            /**
+             * set actions upon clicking on choosing from waitlist button
+             * @param view The view that was clicked.
+             */
             @Override
             public void onClick(View view) {
                 Spinner nSpin = binding.waitlistChooseCount;
@@ -98,6 +109,10 @@ public class OrganizerEditActivity extends AppCompatActivity {
 
 
         binding.backButton.setOnClickListener(new View.OnClickListener() {
+            /**
+             * Set actions upon clicking the back button
+             * @param view The view that was clicked.
+             */
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(OrganizerEditActivity.this, MainActivity.class);
@@ -127,7 +142,9 @@ public class OrganizerEditActivity extends AppCompatActivity {
         return true;
     }
 
-
+    /**
+     * Shows the lists
+     */
     private void startListActivity() {
         event.updateEventFirebase();
         Intent intent = new Intent(OrganizerEditActivity.this, OrganizerEntrantListActivity.class);
@@ -135,6 +152,9 @@ public class OrganizerEditActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    /**
+     * Updates event lists
+     */
     private void updateEventWithLists() {
         event.setWaitListWithEvents(waitList);
         event.setInvitedListWithEvents(invitedList);
