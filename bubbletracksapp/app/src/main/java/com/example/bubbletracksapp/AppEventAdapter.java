@@ -86,6 +86,7 @@ public class AppEventAdapter extends RecyclerView.Adapter<AppEventAdapter.EventV
     /**
      * Displays the event from the user's event list
      *
+     *  INCOMPLETE: NEEDS LOCATION/DATE/TIME/IMAGE DATA:)
      * @param holder The {@link ViewGroup} into which the new View will be added after
      *               it is bound to an adapter position.
      * @param position The view type of the new View. This parameter can be used to
