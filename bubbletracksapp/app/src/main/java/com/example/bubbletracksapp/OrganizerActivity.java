@@ -80,7 +80,7 @@ public class OrganizerActivity extends AppCompatActivity {
     /** button to create and save */
     private Button createButton;
     /** button for returning to homescreen **/
-    private Button backButton;
+    private ImageButton backButton;
 
 
     // declare date variables
@@ -210,8 +210,7 @@ public class OrganizerActivity extends AppCompatActivity {
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent backIntent = new Intent(OrganizerActivity.this, MainActivity.class);
-                startActivity(backIntent);
+                finish();
             }
         });
     }
