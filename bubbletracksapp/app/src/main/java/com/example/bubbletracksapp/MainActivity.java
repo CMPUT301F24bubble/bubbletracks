@@ -76,18 +76,23 @@ public class MainActivity extends AppCompatActivity {
         });
 
         Button eventsButton = binding.buttonEvents;
+        Button createEventButton = binding.buttonCreateEvents;
         Button scanButton = binding.buttonScan;
         Button ticketsButton = binding.buttonTickets;
         Button profileButton = binding.buttonProfile;
+        //Button userEventsButton = binding.buttonEvents;
 
-        Intent eventsIntent = new Intent(MainActivity.this, OrganizerActivity.class); //class where you are, then class where you wanan go
-        switchActivityButton(eventsButton, eventsIntent);
+        Intent createEventIntent = new Intent(MainActivity.this, OrganizerActivity.class); //class where you are, then class where you wanan go
+        switchActivityButton(createEventButton, createEventIntent);
 
         Intent scanIntent = new Intent(MainActivity.this, QRScanner.class);
         switchActivityButton(scanButton, scanIntent);
 
         Intent profileIntent = new Intent(MainActivity.this, EntrantEditActivity.class);
         switchActivityButton(profileButton, profileIntent);
+
+        /*Intent userEventsIntent = new Intent(MainActivity.this, AppUserEventScreenGeneratorActivity.class);
+        switchActivityButton(userEventsButton, userEventsIntent);*/
     }
 
     public void switchActivityButton(Button button, Intent intent){

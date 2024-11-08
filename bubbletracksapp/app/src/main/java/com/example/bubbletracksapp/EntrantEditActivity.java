@@ -84,17 +84,17 @@ public class EntrantEditActivity extends AppCompatActivity {
         db.getEntrant(ID).thenAccept(user -> {
             if(user != null){
                 currentUser = user;
-                if (currentUser.getNameAsString().isEmpty()) {
+                if (currentUser.getNameAsString().isBlank()) {
                     entrantNameInput.setText("Enter your name");
                 } else {
                 entrantNameInput.setText(currentUser.getNameAsString()); }
 
-                if (currentUser.getEmail().isEmpty()) {
+                if (currentUser.getEmail().isBlank()) {
                     entrantEmailInput.setText("Enter your email");
                 } else {
                     entrantEmailInput.setText(currentUser.getEmail()); }
 
-                if (currentUser.getPhone().isEmpty()) {
+                if (currentUser.getPhone().isBlank()) {
                     entrantPhoneInput.setText("Enter your phone number");
                 } else {
                     entrantPhoneInput.setText(currentUser.getPhone()); }
@@ -113,9 +113,7 @@ public class EntrantEditActivity extends AppCompatActivity {
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.d("h", "h");
-                Intent backIntent = new Intent(EntrantEditActivity.this, MainActivity.class);
-                startActivity(backIntent);
+                finish();
             }
         });
 
