@@ -12,7 +12,7 @@ public class AppUser {
     private List<AppEvent> waitlistEvents = new ArrayList<>();
     private List<AppEvent> invitedEvents = new ArrayList<>();
     private List<AppEvent> registeredEvents = new ArrayList<>();
-    private String regStatus = "WAITLISTED";
+    private String regStatus;
 
 
 
@@ -30,13 +30,6 @@ public class AppUser {
 
     public void setName(String name) {
         this.name = name;
-    }
-    public String getAppUserType() {
-        return appUserType;
-    }
-
-    public void setAppUserType(String appUserType) {
-        this.appUserType = appUserType;
     }
 
     public String getDevice_id() {
@@ -69,13 +62,31 @@ public class AppUser {
     public void setRegisteredEvents(List<AppEvent> registeredEvents) {
         this.registeredEvents = registeredEvents;
     }
-    // GETTERS AND SETTERS
-    public String getRegStatus() {
-        return regStatus;
+    public String getRegStatus(AppEvent event) {
+        if (waitlistEvents.contains(event)) {
+            return "WAITLISTED";
+        } else if (invitedEvents.contains(event)) {
+            return "INVITED";
+        } else if (registeredEvents.contains(event)) {
+            return "REGISTERED";
+        } else {
+            return "not in any user list";
+        }
     }
 
+    /*
     public void setRegStatus(String regStatus) {
         this.regStatus = regStatus;
+
+    }
+    */
+
+    public String getAppUserType() {
+        return appUserType;
+    }
+
+    public void setAppUserType(String appUserType) {
+        this.appUserType = appUserType;
     }
 
     // METHODS
@@ -88,6 +99,7 @@ public class AppUser {
 
     public void addInvtdEvent(AppEvent iEvent) {
         invitedEvents.add(iEvent);
+        waitlistEvents.remove(iEvent);
     }
     public void removeInvtdEvent(AppEvent iEvent) {
         invitedEvents.remove(iEvent);
@@ -95,22 +107,11 @@ public class AppUser {
 
     public void addRegEvent(AppEvent rEvent) {
         registeredEvents.add(rEvent);
+        invitedEvents.remove(rEvent);
     }
 
     public void removeRegEvent(AppEvent rEvent) {
         registeredEvents.remove(rEvent);
     }
 
-    // METHODS
-    public void acceptInvite(AppEvent event){
-        for (AppUser user : event.getInvited()) {
-            if (device_id.equals(user.getDevice_id())){
-                user.setRegStatus("accepted invite");
-                event.addToReg(user);
-                break;
-            }
-        }
-    }
-
 }
-

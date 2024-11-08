@@ -139,7 +139,6 @@ public class AppEvent {
 
 
     public synchronized void addToInvtd(AppUser u) {
-        u.setRegStatus("INVITED");
         if (!invited.contains(u)) {
             invited.add(u);
             u.addInvtdEvent(this);
@@ -159,8 +158,8 @@ public class AppEvent {
     }
 
     public void addToReg(AppUser u) {
-        if (invited.contains(u) && u.getRegStatus().equals("accepted invite")) {
-            u.setRegStatus("REGISTERED");
+        if (invited.contains(u) && u.getRegStatus(this).equals("accepted invite")) {
+
             if (!registered.contains(u)) {
                 registered.add(u);
                 u.addRegEvent(this);
@@ -184,7 +183,7 @@ public class AppEvent {
     public String getRegistrationStatus(String device_id) {
         for (AppUser user : allUsers) {
             if (user.getDevice_id().equals(device_id)) {
-                return user.getRegStatus();
+                return user.getRegStatus(this);
             }
         }
         return "unknown";
