@@ -13,39 +13,59 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
+/**
+ * Holds database for entrant
+ * @author Chester
+ */
 public class EntrantDB {
 
     FirebaseFirestore db;
     CollectionReference entrantsRef;
 
+    /**
+     * Retrieves entrant from firebase
+     */
     public EntrantDB() {
         db = FirebaseFirestore.getInstance();
         entrantsRef = db.collection("entrants");
     }
 
+    /**
+     * Adds entrant details to the database
+     * @param entrant entrant that organizer is holding
+     */
     public void addEntrant(Entrant entrant)
     {
-        //Maybe this should be in Entrant class INCOMPLETE
-        Map<String, Object> newEntrant = entrantToMap(entrant);
+        Map<String, Object> newEntrant = entrant.toMap();
 
         String docID = entrant.getID();
-
-
+        
         entrantsRef.document(docID)
                 .set(newEntrant)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    /**
+                     * Logs that entrant has been added
+                     * @param aVoid void
+                     */
                     @Override
                     public void onSuccess(Void aVoid) {
                         Log.d("addEntrant", "Entrant successfully added!");
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
+                    /**
+                     * Logs that there's been an error
+                     * @param e exception
+                     */
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         Log.w("addEntrant", "Error writing entrant", e);
@@ -53,6 +73,10 @@ public class EntrantDB {
                 });
     }
 
+    /**
+     * Deletes entrant from database
+     * @param entrant entrant that organizer holds
+     */
     public void deleteEntrant(Entrant entrant)
     {
         String docID = entrant.getID();
@@ -60,12 +84,20 @@ public class EntrantDB {
         entrantsRef.document(docID)
                 .delete()
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    /**
+                     * Logs that entrant has been deleted
+                     * @param aVoid void
+                     */
                     @Override
                     public void onSuccess(Void aVoid) {
                         Log.d("deleteWaitEntrant", "Entrant successfully deleted!");
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
+                    /**
+                     * Logs that there's been an error
+                     * @param e exception
+                     */
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         Log.w("deleteWaitEntrant", "Error deleting entrant", e);
@@ -73,22 +105,65 @@ public class EntrantDB {
                 });
     }
 
+    /**
+     * Updates entrant details to the database
+     * @param newEntrant new entrant details
+     */
     public void updateEntrant(Entrant newEntrant)
     {
-        //Maybe this should be in Entrant class INCOMPLETE
-        Map<String, Object> newEntrantMap = entrantToMap(newEntrant);
+        Map<String, Object> newEntrantMap = newEntrant.toMap();
 
         String docID = newEntrant.getID();
 
         entrantsRef.document(docID)
                 .update(newEntrantMap)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    /**
+                     * Logs that entrant has been deleted
+                     * @param aVoid void
+                     */
                     @Override
                     public void onSuccess(Void aVoid) {
                         Log.d("updateEntrant", "Entrant successfully updated!");
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
+                    /**
+                     * Logs that there's been an error
+                     * @param e exception
+                     */
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w("updateEntrant", "Error updating entrant", e);
+                    }
+                });
+    }
+
+    /**
+     * updates the entrant within the given entrant map
+     * @param newEntrantMap entrant map
+     */
+    public void updateEntrant(Map<String, Object> newEntrantMap)
+    {
+        String docID = newEntrantMap.get("ID").toString();
+
+        entrantsRef.document(docID)
+                .update(newEntrantMap)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    /**
+                     * Logs that entrant has been updated
+                     * @param aVoid void
+                     */
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d("updateEntrant", "Entrant successfully updated!");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    /**
+                     * Logs that entrant has been deleted
+                     * @param e exception
+                     */
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         Log.w("updateEntrant", "Error updating entrant", e);
@@ -97,24 +172,33 @@ public class EntrantDB {
     }
 
 
+    /**
+     * Allows to get entrant document from database
+     * @param ID entrant ID
+     * @return return code
+     */
     public CompletableFuture<Entrant> getEntrant(String ID)
     {
         CompletableFuture<Entrant> returnCode = new CompletableFuture<>();
         DocumentReference entrantRef = entrantsRef.document(ID);
 
         entrantRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            /**
+             * tries to retrieve entrant document from database
+             * @param task document snapshot
+             */
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
-                        Map<String, Object> newEntrantMap = document.getData();
-                        Entrant newEntrant = mapToEntrant(newEntrantMap);
+                        Entrant newEntrant = new Entrant(document);
 
                         returnCode.complete(newEntrant);
                         Log.d("EntrantDB", "DocumentSnapshot data: " + document.getData());
                     } else {
                         Log.d("EntrantDB", "No such document");
+                        returnCode.complete(null);
                     }
                 } else {
                     Log.d("EntrantDB", "get failed with ", task.getException());
@@ -124,32 +208,57 @@ public class EntrantDB {
         return returnCode;
     }
 
-    // These two should be in Entrant
-    //Update with required fields INCOMPLETE
-    private Map<String, Object> entrantToMap(Entrant entrant) {
-        Map<String, Object> newEntrant = new HashMap<>();
+    /**
+     * Allows to retrieve entrant list details
+     * @param IDs list of entrant ids
+     * @return
+     */
+    public CompletableFuture<ArrayList<Entrant>> getEntrantList(ArrayList<String> IDs)
+    {
+        CompletableFuture<ArrayList<Entrant>> returnCode = new CompletableFuture<>();
+        ArrayList<Entrant> entrants = new ArrayList<>();
 
-        newEntrant.put("name", entrant.getNameAsList());
-        newEntrant.put("email", entrant.getEmail());
-        newEntrant.put("phone", entrant.getPhone());
-        newEntrant.put("notification", entrant.getNotification());
+        if (IDs.isEmpty())
+        {
+            returnCode.complete(null);
+            return returnCode;
+        }
 
-        return newEntrant;
+        Query query = entrantsRef.whereIn("ID", IDs);
+
+        query.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            /**
+             * Indicates either that the document was found or not
+             * if it is, transform it to entrant and retrieve it
+             * @param querySnapshot query snapshot
+             */
+            public void onSuccess(QuerySnapshot querySnapshot) {
+                if (querySnapshot.isEmpty()) {
+                    Log.d("getEntrantList", "No documents found: " + IDs.toString());
+                    returnCode.complete(null);
+                    return;
+                }
+                // Go through each document and get the Entrant information.
+                for (QueryDocumentSnapshot document : querySnapshot) {
+                    Entrant newEntrant = new Entrant(document);
+
+                    entrants.add(newEntrant);
+                }
+                Log.d("getEntrantList", "Found Entrants: " + entrants.toString());
+
+                returnCode.complete(entrants);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            /**
+             * logs that there has been an error retrieving entrants list
+             */
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                // Error if it does not work
+                Log.d("Database error", "Error getting all entrants", e);
+            }
+        });
+        return returnCode;
     }
-
-    //Update with required fields INCOMPLETE
-    private static Entrant mapToEntrant(Map<String, Object> map) {
-        Entrant newEntrant = new Entrant();
-
-        ArrayList<String> name = (ArrayList<String>)map.get("name");
-
-        newEntrant.setName(name.get(0), name.get(1));
-        newEntrant.setEmail(map.get("email").toString());
-        newEntrant.setPhone(map.get("phone").toString());
-        newEntrant.setNotification((Boolean) map.get("notification"));
-
-        return newEntrant;
-    }
-
-
 }

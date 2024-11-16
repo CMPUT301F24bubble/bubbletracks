@@ -17,14 +17,21 @@ import java.util.ArrayList;
 
 /**
  * This is a class for the entrants' activities with events
+ * @author Erza
  */
 public class EntrantActivity extends AppCompatActivity {
     Event event = new Event();
     Boolean inWaitlist = false;
     Entrant entrant = new Entrant();
-    private final ArrayList<Entrant> entrantArrayList = event.getWaitList();
+    private final ArrayList<Entrant> entrantArrayList = new ArrayList<>();
 
-
+    /**
+     * Initializes entrantActivity activity
+     * @param savedInstanceState If the activity is being re-initialized after
+     *     previously being shut down then this Bundle contains the data it most
+     *     recently supplied in {@link #onSaveInstanceState}.  <b><i>Note: Otherwise it is null.</i></b>
+     *
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,7 +48,6 @@ public class EntrantActivity extends AppCompatActivity {
 
     /**
      * This modifies whether the entrant wants to join or leave the waitlist for an event
-     * @author Erza Tamon
      * @param waitlistButton
      *      adds/removes entrant from waitlist upon user click
      */
@@ -52,15 +58,29 @@ public class EntrantActivity extends AppCompatActivity {
                     .setTitle("Confirm Joining Waitlist")
                     .setMessage("Are you sure you want to join the waitlist for this event?")
                     .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                        /**
+                         * Action to confirm joining the waitlist
+                         * @param dialogInterface the dialog that received the click
+                         * @param i the button that was clicked (ex.
+                         *              {@link DialogInterface#BUTTON_POSITIVE}) or the position
+                         *              of the item clicked
+                         */
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            event.addToWaitList(entrant);
+                            event.addToWaitList(entrant.getID());
                             waitlistButton.setText(R.string.leave_waitlist);
                             inWaitlist = true;
                             dialogInterface.dismiss();
                         }
                     })
                     .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        /**
+                         * Action to cancel confirmation
+                         * @param dialogInterface the dialog that received the click
+                         * @param i the button that was clicked (ex.
+                         *              {@link DialogInterface#BUTTON_POSITIVE}) or the position
+                         *              of the item clicked
+                         */
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             dialogInterface.dismiss();
@@ -73,15 +93,29 @@ public class EntrantActivity extends AppCompatActivity {
                     .setTitle("Confirm Leaving Waitlist")
                     .setMessage("Are you sure you want to leave the waitlist for this event?")
                     .setPositiveButton("Leave", new DialogInterface.OnClickListener() {
+                        /**
+                         * Action to confirm leaving the waitlist
+                         * @param dialogInterface the dialog that received the click
+                         * @param i the button that was clicked (ex.
+                         *              {@link DialogInterface#BUTTON_POSITIVE}) or the position
+                         *              of the item clicked
+                         */
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            event.deleteFromWaitList(entrant);
+                            event.deleteFromWaitList(entrant.getID());
                             waitlistButton.setText(R.string.join_waitlist);
                             inWaitlist = false;
                             dialogInterface.dismiss();
                         }
                     })
                     .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        /**
+                         * Action to cancel confirmation
+                         * @param dialogInterface the dialog that received the click
+                         * @param i the button that was clicked (ex.
+                         *              {@link DialogInterface#BUTTON_POSITIVE}) or the position
+                         *              of the item clicked
+                         */
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             dialogInterface.dismiss();

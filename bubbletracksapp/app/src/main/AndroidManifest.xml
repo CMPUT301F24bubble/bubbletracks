@@ -6,11 +6,6 @@
     <uses-feature android:name="android.hardware.camera.autofocus" />
 
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-    <uses-permission android:name="android.permission.VIBRATE"/>
-    <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY"/>
-
-
-    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -20,7 +15,14 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Bubbletracksapp"
+        android:enableOnBackInvokedCallback="true"
         tools:targetApi="31">
+
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyBOt38qDT81Qj6jR0cmNHVGs3hPPw0XrZA" />
+
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -56,9 +58,8 @@
 
         <activity android:name=".OrganizerEntrantListActivity"/>
         <activity android:name=".OrganizerEditActivity"/>
-        <activity android:name=".EntrantEditActivity"/>
         <activity
-            android:name=".OrganizerNotificationActivity"
+            android:name=".EntrantEditActivity"
             android:exported="true"
             android:theme="@style/Theme.Bubbletracksapp">
             <intent-filter>
@@ -67,5 +68,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".OrganizerActivity" />
+        <activity android:name=".EntrantViewActivity" />
+        <activity android:name=".AppUserEventScreenGenerator" />
     </application>
+
 </manifest>

@@ -13,6 +13,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Database holding the waitlist
+ * @deprecated refer to EventDB for new database
+ */
 public class WaitlistDB extends Entrant{
     FirebaseFirestore db;
     CollectionReference waitlistRef;
@@ -47,7 +51,7 @@ public class WaitlistDB extends Entrant{
     }
     public void deleteWaitEntrant(Event event)
     {
-        String docID = event.getID();
+        String docID = event.getId();
 
         waitlistRef.document(docID)
                 .delete()

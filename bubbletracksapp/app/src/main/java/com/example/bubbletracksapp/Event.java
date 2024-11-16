@@ -1,175 +1,393 @@
 package com.example.bubbletracksapp;
 
-import android.location.Location;
-import android.media.Image;
+import android.os.Parcel;
+import android.os.Parcelable;
+import android.util.Log;
 
+import androidx.annotation.NonNull;
+
+import com.google.firebase.firestore.DocumentSnapshot;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.UUID;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Formatter;
 
-public class Event {
+public class Event implements Parcelable{
+    private String id;
     private String name;
+    private Date dateTime;
     private String description;
-    private Calendar date;
-    //QRCode should probably be another type of field INCOMPLETE
-    private String QRCode;
-    private Location geolocation;
-    private Image image;
+    private String geolocation;
+    private Date registrationOpen;
+    private Date registrationClose;
+    private int maxCapacity;
+    private int price;
+    private int WaitListLimit;
     private boolean needsGeolocation;
-    private ArrayList<Entrant> waitList = new ArrayList<>();
-    private ArrayList<Entrant> invitedList = new ArrayList<>();
-    private ArrayList<Entrant> cancelledList = new ArrayList<>();
-    private ArrayList<Entrant> rejectedList = new ArrayList<>();
+    private String image;
+    private String QRCode;
+    private ArrayList<String> waitList = new ArrayList<>();
+    private ArrayList<String> invitedList = new ArrayList<>();
+    private ArrayList<String> cancelledList = new ArrayList<>();
+    private ArrayList<String> rejectedList = new ArrayList<>();
+    private ArrayList<String> enrolledList = new ArrayList<>();
 
 
-    public String getName() {
-        return name;
+    public Event(){
+        Log.w("NewEvent", "Event has empty information.");
+
+        this.id = UUID.randomUUID().toString();
+        waitList = new ArrayList<>();
+        invitedList = new ArrayList<>();
+        cancelledList = new ArrayList<>();
+        rejectedList = new ArrayList<>();
+        enrolledList = new ArrayList<>();
     }
 
-    public void setName(String name) {
+    public Event(DocumentSnapshot document) {
+        this.id = document.getString("id");
+        this.name = document.getString("name");
+        this.dateTime = document.getTimestamp("dateTime").toDate();
+        this.description = document.getString("description");
+        this.geolocation=  document.getString("geolocation");
+        this.registrationOpen = document.getTimestamp("registrationOpen").toDate();
+        this.registrationClose = document.getTimestamp("registrationClose").toDate();
+        this.maxCapacity = document.getLong("maxCapacity").intValue();
+        this.price = document.getLong("price").intValue();
+        this.WaitListLimit =  document.getLong("waitListLimit").intValue();
+        this.needsGeolocation = document.getBoolean("needsGeolocation");
+        this.image = document.getString("image");
+        this.QRCode = document.getString("QRCode");
+        this.waitList = (ArrayList<String>)document.getData().get("wait");
+        this.invitedList = (ArrayList<String>)document.getData().get("invited");
+        this.cancelledList = (ArrayList<String>)document.getData().get("cancelled");
+        this.rejectedList = (ArrayList<String>)document.getData().get("rejected");
+        this.enrolledList = (ArrayList<String>)document.getData().get("enrolled");
+    }
+
+    public Event(String id, String name, Date dateTime, String description, String geolocation, Date registrationOpen, Date registrationClose, int maxCapacity, int price, int waitListLimit, boolean needsGeolocation, String image, String QRCode, ArrayList<String> waitList, ArrayList<String> invitedList, ArrayList<String> cancelledList, ArrayList<String> rejectedList, ArrayList<String> enrolledList) {
+        this.id = id;
         this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
+        this.dateTime = dateTime;
         this.description = description;
-    }
-
-    public Location getGeolocation() {
-        return geolocation;
-    }
-
-    public void setGeolocation(Location geolocation) {
         this.geolocation = geolocation;
-    }
-
-    public Image getImage() {
-        return image;
-    }
-
-    public void setImage(Image image) {
-        this.image = image;
-    }
-
-    public boolean isNeedsGeolocation() {
-        return needsGeolocation;
-    }
-
-    public void setNeedsGeolocation(boolean needsGeolocation) {
+        this.registrationOpen = registrationOpen;
+        this.registrationClose = registrationClose;
+        this.maxCapacity = maxCapacity;
+        this.price = price;
+        WaitListLimit = waitListLimit;
         this.needsGeolocation = needsGeolocation;
-    }
-
-    public String getQRCode() {
-        return QRCode;
-    }
-
-    public void setQRCode(String QRCode) {
+        this.image = image;
         this.QRCode = QRCode;
-    }
-
-    public String getID() {
-        return QRCode;
-    }
-
-    public Calendar getDate() {
-        return date;
-    }
-
-    public void setDate(Calendar date) {
-        this.date = date;
-    }
-
-    public String getMonth() {
-        Formatter format = new Formatter();
-        format.format("%tb", date);
-        return format.toString();
-
-    }
-
-    public String getDay() {
-        Formatter format = new Formatter();
-        format.format("%tm", date);
-        return format.toString();
-
-    }
-
-    public String getTime() {
-        Formatter format = new Formatter();
-        format.format("%tl:%tM", date, date);
-        return format.toString();
-
-    }
-
-    //Should return a specific address
-    public String getLocation() {
-        return "Ualberta 10001";
-
-    }
-
-    public ArrayList<Entrant> getWaitList() {
-        return waitList;
-    }
-
-    public ArrayList<Entrant> setWaitList(ArrayList<Entrant> waitList) {
         this.waitList = waitList;
+        this.invitedList = invitedList;
+        this.cancelledList = cancelledList;
+        this.rejectedList = rejectedList;
+        this.enrolledList = enrolledList;
+    }
+
+
+    protected Event(Parcel in) {
+        id = in.readString();
+        name = in.readString();
+        description = in.readString();
+        geolocation = in.readString();
+        maxCapacity = in.readInt();
+        price = in.readInt();
+        WaitListLimit = in.readInt();
+        needsGeolocation = in.readByte() != 0;
+        image = in.readString();
+        QRCode = in.readString();
+        waitList = in.createStringArrayList();
+        invitedList = in.createStringArrayList();
+        cancelledList = in.createStringArrayList();
+        rejectedList = in.createStringArrayList();
+        enrolledList = in.createStringArrayList();
+        dateTime = new Date(in.readLong());
+        registrationOpen = new Date(in.readLong());
+        registrationClose = new Date(in.readLong());
+    }
+
+    public static final Creator<Event> CREATOR = new Creator<Event>() {
+        @Override
+        public Event createFromParcel(Parcel in) {
+            return new Event(in);
+        }
+
+        @Override
+        public Event[] newArray(int size) {
+            return new Event[size];
+        }
+    };
+
+    public Map<String, Object> toMap() {
+        Map<String, Object> newMap = new HashMap<>();
+
+        newMap.put("id", id);
+        newMap.put("name", name);
+        newMap.put("dateTime", dateTime);
+        newMap.put("description", description);
+        newMap.put("geolocation", geolocation);
+        newMap.put("registrationOpen", registrationOpen);
+        newMap.put("registrationClose", registrationClose);
+        newMap.put("maxCapacity", maxCapacity);
+        newMap.put("price", price);
+        newMap.put("waitListLimit", WaitListLimit);
+        newMap.put("needsGeolocation", needsGeolocation);
+        newMap.put("image", image);
+        newMap.put("QRCode", QRCode);
+        newMap.put("wait", waitList);
+        newMap.put("invited", invitedList);
+        newMap.put("cancelled", cancelledList);
+        newMap.put("rejected", rejectedList);
+        newMap.put("enrolled", enrolledList);
+
+        return newMap;
+    }
+
+
+    public String getId() { return id; }
+
+    public void setId(String id) {this.id = id;}
+
+    public String getName() { return name; }
+
+    public void setName(String name) { this.name = name; }
+
+    public Date getDateTime() { return dateTime; }
+
+    public void setDateTime(Date dateTime) { this.dateTime = dateTime; }
+
+    public String getDescription() { return description; }
+
+    public void setDescription(String description) { this.description = description; }
+
+    public String getGeolocation() { return geolocation; }
+
+    public void setGeolocation(String geoLocation) {
+        this.geolocation = geoLocation;
+    }
+
+    public Date getRegistrationOpen() { return registrationOpen; }
+
+    public void setRegistrationOpen(Date registrationOpen) {
+        this.registrationOpen = registrationOpen;
+    }
+
+    public Date getRegistrationClose() { return registrationClose; }
+
+    public void setRegistrationClose(Date registrationClose) {
+        this.registrationClose = registrationClose;
+    }
+
+    public int getMaxCapacity() { return maxCapacity; }
+
+    public void setMaxCapacity(int maxCapacity) { this.maxCapacity = maxCapacity; }
+
+    public int getPrice() { return price; }
+
+    public void setPrice(int price) { this.price = price; }
+
+    public int getWaitListLimit() { return WaitListLimit;}
+
+    public void setWaitListLimit(int waitListLimit) { WaitListLimit = waitListLimit; }
+
+    public boolean getNeedsGeolocation() { return needsGeolocation; }
+
+    public void setNeedsGeolocation(boolean needsGeolocation) { this.needsGeolocation = needsGeolocation; }
+
+    public String getImage() { return image; }
+
+    public void setImage(String image) { this.image = image; }
+
+    public String getQRCode() { return QRCode; }
+
+    public void setQRCode(String QRCode) { this.QRCode = QRCode; }
+
+    public String getYear(Date date){
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy", Locale.getDefault());
+        return formatter.format(date);
+    }
+
+    public String getMonth(Date date) {
+        SimpleDateFormat formatter = new SimpleDateFormat("MMM", Locale.getDefault());
+        return formatter.format(date);
+    }
+
+    public String getDay(Date date) {
+        SimpleDateFormat formatter = new SimpleDateFormat("dd", Locale.getDefault());
+        return formatter.format(date);
+    }
+
+    public String getTime(Date date) {
+        SimpleDateFormat formatter = new SimpleDateFormat("HH:mm", Locale.getDefault());
+        return formatter.format(date);
+    }
+
+    public ArrayList<String> getWaitList() {
         return waitList;
     }
 
-    public void addToWaitList(Entrant entrant) {
+    public void setWaitList(ArrayList<String> waitList) {
+        this.waitList = waitList;
+    }
+
+    public void setWaitListWithEvents(ArrayList<Entrant> waitList) {
+        this.waitList = entrantListToStringList(waitList);
+    }
+
+    public void addToWaitList(String entrant) {
         this.waitList.add(entrant);
     }
 
-    public void deleteFromWaitList(Entrant entrant) {
+    public void deleteFromWaitList(String entrant) {
         this.waitList.remove(entrant);
     }
 
-    public ArrayList<Entrant> getInvitedList() {
+    public void clearWaitList() {
+        this.waitList.clear();
+    }
+
+    public ArrayList<String> getInvitedList() {
         return invitedList;
     }
 
-    public void setInvitedList(ArrayList<Entrant> invitedList) {
+    public void setInvitedList(ArrayList<String> invitedList) {
         this.invitedList = invitedList;
     }
 
-    public void addToInvitedList(Entrant entrant) {
+    public void setInvitedListWithEvents(ArrayList<Entrant> invitedList) {
+        this.invitedList = entrantListToStringList(invitedList);
+    }
+
+    public void addToInvitedList(String entrant) {
         this.invitedList.add(entrant);
     }
 
-    public void deleteFromInvitedList(Entrant entrant) {
+    public void deleteFromInvitedList(String entrant) {
         this.invitedList.remove(entrant);
     }
 
-    public ArrayList<Entrant> getCancelledList() {
+    public void clearInvitedList() {
+        this.invitedList.clear();
+    }
+
+    public ArrayList<String> getCancelledList() {
         return cancelledList;
     }
 
-    public void setCancelledList(ArrayList<Entrant> cancelledList) {
+    public void setCancelledList(ArrayList<String> cancelledList) {
         this.cancelledList = cancelledList;
     }
 
-    public void addToCancelledList(Entrant entrant) {
+    public void setCancelledListWithEvents(ArrayList<Entrant> cancelledList) {
+        this.cancelledList = entrantListToStringList(cancelledList);
+    }
+
+    public void addToCancelledList(String entrant) {
         this.cancelledList.add(entrant);
     }
 
-    public void deleteFromCancelledList(Entrant entrant) {
+    public void deleteFromCancelledList(String entrant) {
         this.cancelledList.remove(entrant);
     }
 
-    public ArrayList<Entrant> getRejectedList() {
+    public void clearCancelledList() {
+        this.cancelledList.clear();
+    }
+
+    public ArrayList<String> getRejectedList() {
         return rejectedList;
     }
 
-    public void setRejectedList(ArrayList<Entrant> rejectedList) {
+    public void setRejectedList(ArrayList<String> rejectedList) {
         this.rejectedList = rejectedList;
     }
-    public void addToRejectedList(Entrant entrant) {
+
+    public void setRejectedListWithEvents(ArrayList<Entrant> rejectedList) {
+        this.rejectedList = entrantListToStringList(rejectedList);
+    }
+
+    public void addToRejectedList(String entrant) {
         this.rejectedList.add(entrant);
     }
 
-    public void deleteFromRejectedList(Entrant entrant) {
+    public void deleteFromRejectedList(String entrant) {
         this.rejectedList.remove(entrant);
+    }
+
+    public void clearRejectedList() {
+        this.rejectedList.clear();
+    }
+
+    public ArrayList<String> getEnrolledList() {
+        return enrolledList;
+    }
+
+    public void setEnrolledList(ArrayList<String> enrolledList) {
+        this.enrolledList = enrolledList;
+    }
+
+    public void setEnrolledListWithEvents(ArrayList<Entrant> enrolledList) {
+        this.enrolledList = entrantListToStringList(enrolledList);
+    }
+
+    public void addToEnrolledList(String entrant) {
+        this.enrolledList.add(entrant);
+    }
+
+    public void deleteFromEnrolledList(String entrant) {
+        this.enrolledList.remove(entrant);
+    }
+
+    public void clearEnrolledList() {
+        this.enrolledList.clear();
+    }
+
+    public boolean isInEnrolledList(String entrant){
+        return this.enrolledList.contains(entrant);
+    }
+
+    public void updateEventFirebase() {
+        new EventDB().updateEvent(toMap());
+    }
+
+    private ArrayList<String> entrantListToStringList(ArrayList<Entrant> entrants){
+        ArrayList<String> IDs = new ArrayList<>();
+        for (Entrant entrant: entrants) {
+            IDs.add(entrant.getID());
+        }
+        return IDs;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(@NonNull Parcel parcel, int i) {
+        parcel.writeString(id);
+        parcel.writeString(name);
+        parcel.writeString(description);
+        parcel.writeString(geolocation);
+        parcel.writeInt(maxCapacity);
+        parcel.writeInt(price);
+        parcel.writeInt(WaitListLimit);
+        parcel.writeByte((byte) (needsGeolocation ? 1 : 0));
+        parcel.writeString(image);
+        parcel.writeString(QRCode);
+        parcel.writeStringList(waitList);
+        parcel.writeStringList(invitedList);
+        parcel.writeStringList(cancelledList);
+        parcel.writeStringList(rejectedList);
+        parcel.writeStringList(enrolledList);
+        parcel.writeLong(dateTime.getTime());
+        parcel.writeLong(registrationOpen.getTime());
+        parcel.writeLong(registrationClose.getTime());
     }
 }
