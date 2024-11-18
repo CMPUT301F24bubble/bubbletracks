@@ -31,9 +31,7 @@ public class OrganizerNotificationActivity extends AppCompatActivity {
     private static final Integer NON_SELECTED_NOTIFICATION_ID = 2;
     private static final Integer CONFIRMED_NOTIFICATION_ID = 3;
     private static final Integer CANCELLED_NOTIFICATION_ID = 4;
-
-
-
+    private Event event;
 
     private ActivityResultLauncher<String> requestPermissionLauncher;
 
@@ -53,7 +51,7 @@ public class OrganizerNotificationActivity extends AppCompatActivity {
 
         // Test notification on organizer
         // TODO: send notification to database of entrants in event
-        requestPermissionLauncher = registerForActivityResult(
+/*        requestPermissionLauncher = registerForActivityResult(
                 new ActivityResultContracts.RequestPermission(),
                 isGranted -> {
                     if (isGranted) {
@@ -64,7 +62,7 @@ public class OrganizerNotificationActivity extends AppCompatActivity {
                         Toast.makeText(this, "Notification permission is required", Toast.LENGTH_SHORT).show();
                     }
                 }
-        );
+        );*/
 
         CheckBox checkSelected = findViewById(R.id.checkbox_notify_selected);
         CheckBox checkNonSelected = findViewById(R.id.checkbox_notify_non_selected);
@@ -78,7 +76,7 @@ public class OrganizerNotificationActivity extends AppCompatActivity {
     private void createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             CharSequence name = "Entrant Notification Channel";
-            String description = "Notification channel for all entrants for event";
+            String description = "Notification channel for the entrant user to be notified about updates to their event";
             int importance = NotificationManager.IMPORTANCE_HIGH;
             NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
             channel.setDescription(description);
@@ -155,15 +153,19 @@ public class OrganizerNotificationActivity extends AppCompatActivity {
         try {
             // Attempt to post the notification
             if (checkSelected.isChecked()) {
+                event.getEnrolledList();
                 notificationManager.notify(SELECTED_NOTIFICATION_ID, selectedBuilder.build());
             }
             if (checkNonSelected.isChecked()) {
+                event.getRejectedList();
                 notificationManager.notify(NON_SELECTED_NOTIFICATION_ID, nonSelectedBuilder.build());
             }
             if (checkConfirmed.isChecked()) {
+                event.getInvitedList();
                 notificationManager.notify(CONFIRMED_NOTIFICATION_ID, confirmedBuilder.build());
             }
             if (checkCancelled.isChecked()) {
+                event.getCancelledList();
                 notificationManager.notify(CANCELLED_NOTIFICATION_ID, cancelledBuilder.build());
             }
         } catch (SecurityException e) {

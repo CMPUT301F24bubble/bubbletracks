@@ -4,9 +4,12 @@ import static java.util.UUID.randomUUID;
 
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 
 import com.example.bubbletracksapp.databinding.HomescreenBinding;
@@ -44,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
     private HomescreenBinding binding;
     public Entrant currentUser;
     private String currentDeviceID;
+    private final String channelID = "channel_id";
 
     /**
      * Set up creation of activity
@@ -106,6 +110,8 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
+        createNotificationChannel(); // Set notification channel for entrant user
     }
     /**
      * Generalized code for buttons that use start(Activity()
@@ -172,5 +178,20 @@ public class MainActivity extends AppCompatActivity {
             editor.apply();
         };
         return ID;
+    }
+
+    /**
+     * Sets notification channel for user to receive notifications while in the app
+     */
+    private void createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = "Entrant Notification Channel";
+            String description = "Notification channel for the entrant user to be notified about updates to their event";
+            int importance = NotificationManager.IMPORTANCE_HIGH;
+            NotificationChannel channel = new NotificationChannel(channelID, name, importance);
+            channel.setDescription(description);
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
     }
 }
