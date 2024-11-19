@@ -1,3 +1,9 @@
+/**
+ *
+ * @author Sarah, Chester
+ * @version 1.0
+ */
+
 package com.example.bubbletracksapp;
 
 import android.content.Context;
