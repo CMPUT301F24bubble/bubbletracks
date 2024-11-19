@@ -8,6 +8,7 @@ import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.firestore.DocumentSnapshot;
 
 import java.util.ArrayList;
@@ -425,4 +426,12 @@ public class Entrant implements Parcelable {
      * @param event string of waitlist
      */
     public void deleteFromEventsWaitlist(String event){ this.eventsWaitlist.remove(event); }
+
+    public LatLng getLocationPoint() {
+        return new LatLng(-33.852, 151.211);
+    }
+
+    public String getAddress() {
+        return "My home 6873";
+    }
 }
