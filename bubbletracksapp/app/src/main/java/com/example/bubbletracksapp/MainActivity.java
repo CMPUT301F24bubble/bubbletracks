@@ -80,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
         Button scanButton = binding.buttonScan;
         Button ticketsButton = binding.buttonTickets;
         Button profileButton = binding.buttonProfile;
-        //Button userEventsButton = binding.buttonEvents;
+        Button userEventsButton = binding.buttonEvents;
         Button eventHostButton = binding.buttonEventHost;
 
         Intent createEventIntent = new Intent(MainActivity.this, OrganizerActivity.class); //class where you are, then class where you wanan go
@@ -92,8 +92,8 @@ public class MainActivity extends AppCompatActivity {
         Intent profileIntent = new Intent(MainActivity.this, EntrantEditActivity.class);
         switchActivityButton(profileButton, profileIntent);
 
-        /*Intent userEventsIntent = new Intent(MainActivity.this, AppUserEventScreenGeneratorActivity.class);
-        switchActivityButton(userEventsButton, userEventsIntent);*/
+        Intent userEventsIntent = new Intent(MainActivity.this, AppUserEventScreenGenerator.class);
+        switchActivityButton(userEventsButton, userEventsIntent);
 
         eventHostButton.setOnClickListener(new View.OnClickListener() {
             @Override
