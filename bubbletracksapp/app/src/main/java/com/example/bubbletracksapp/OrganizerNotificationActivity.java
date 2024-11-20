@@ -13,16 +13,17 @@ import android.widget.CheckBox;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
 import android.Manifest; // For importing post notification permissions
 
+import java.util.ArrayList;
+
 /**
  * Organizer sends notifications to chosen entrants to sign up for events
- *
+ * @author Erza
  */
 public class OrganizerNotificationActivity extends AppCompatActivity {
 
@@ -41,6 +42,7 @@ public class OrganizerNotificationActivity extends AppCompatActivity {
      */
 
     @Override
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.notification_main);
@@ -64,15 +66,17 @@ public class OrganizerNotificationActivity extends AppCompatActivity {
                 }
         );*/
 
-        CheckBox checkSelected = findViewById(R.id.checkbox_notify_selected);
-        CheckBox checkNonSelected = findViewById(R.id.checkbox_notify_non_selected);
+        CheckBox checkInvited = findViewById(R.id.checkbox_notify_selected);
+        CheckBox checkRejected = findViewById(R.id.checkbox_notify_non_selected);
         CheckBox checkConfirmed = findViewById(R.id.checkbox_notify_confirmed_attendees);
         CheckBox checkCancelled = findViewById(R.id.checkbox_notify_cancelled);
         Button notif_button = findViewById(R.id.button_confirm);
-        notif_button.setOnClickListener(view -> checkNotificationPermission(checkSelected, checkNonSelected, checkConfirmed, checkCancelled));
+        notif_button.setOnClickListener(view -> checkNotificationPermission(checkInvited, checkRejected, checkConfirmed, checkCancelled));
     }
 
-
+    /**
+     * Create notification channel for user
+     */
     private void createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             CharSequence name = "Entrant Notification Channel";
@@ -85,22 +89,35 @@ public class OrganizerNotificationActivity extends AppCompatActivity {
         }
     }
 
-    private void checkNotificationPermission(CheckBox checkSelected, CheckBox checkNonSelected, CheckBox checkConfirmed, CheckBox checkCancelled) {
+    /**
+     * Check if there are notification permission for organizer to send a notification to the entrant
+     * @param checkInvited entrants invited to event
+     * @param checkRejected entrants not invited for event
+     * @param checkConfirmed entrants who confirmed registration for event
+     * @param checkCancelled entrants who cancelled invitation to event
+     */
+    private void checkNotificationPermission(CheckBox checkInvited, CheckBox checkRejected, CheckBox checkConfirmed, CheckBox checkCancelled) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             // Check if the notification permission is granted
             if (checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
-                showNotification(checkSelected, checkNonSelected, checkConfirmed, checkCancelled);
+                showNotification(checkInvited, checkRejected, checkConfirmed, checkCancelled);
             } else {
                 // Request the notification permission
                 requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS);
             }
         } else {
             // For API levels below 33, permission is not required
-            showNotification(checkSelected, checkNonSelected, checkConfirmed, checkCancelled);
+            showNotification(checkInvited, checkRejected, checkConfirmed, checkCancelled);
         }
     }
 
-    private void showNotification(CheckBox checkSelected, CheckBox checkNonSelected, CheckBox checkConfirmed, CheckBox checkCancelled) {
+    /**
+     * @param checkInvited entrants invited to event
+     * @param checkRejected entrants not invited for event
+     * @param checkConfirmed entrants who confirmed registration for event
+     * @param checkCancelled entrants who cancelled invitation to event
+     */
+    private void showNotification(CheckBox checkInvited, CheckBox checkRejected, CheckBox checkConfirmed, CheckBox checkCancelled) {
         Intent intent = new Intent(this, OrganizerNotificationActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
@@ -152,20 +169,22 @@ public class OrganizerNotificationActivity extends AppCompatActivity {
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
         try {
             // Attempt to post the notification
-            if (checkSelected.isChecked()) {
-                event.getEnrolledList();
-                notificationManager.notify(SELECTED_NOTIFICATION_ID, selectedBuilder.build());
+            if (checkInvited.isChecked()) {
+               // ArrayList<String> enrolledList = event.getInvitedList();
+                String testUserID = "9be104ee-e9e8-4df4-b93f-c3ec0aef750c";
+                int userHash = testUserID.hashCode();
+                notificationManager.notify(userHash, selectedBuilder.build()); // TODO: Notification id is the user id
             }
-            if (checkNonSelected.isChecked()) {
-                event.getRejectedList();
+            if (checkRejected.isChecked()) {
+                ArrayList<String> rejectedList = event.getRejectedList();
                 notificationManager.notify(NON_SELECTED_NOTIFICATION_ID, nonSelectedBuilder.build());
             }
             if (checkConfirmed.isChecked()) {
-                event.getInvitedList();
+                ArrayList<String> confirmedList = event.getEnrolledList();
                 notificationManager.notify(CONFIRMED_NOTIFICATION_ID, confirmedBuilder.build());
             }
             if (checkCancelled.isChecked()) {
-                event.getCancelledList();
+                ArrayList<String> cancelledListList = event.getCancelledList();
                 notificationManager.notify(CANCELLED_NOTIFICATION_ID, cancelledBuilder.build());
             }
         } catch (SecurityException e) {
