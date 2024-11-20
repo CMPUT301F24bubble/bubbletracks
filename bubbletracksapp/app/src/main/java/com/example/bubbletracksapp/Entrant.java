@@ -131,9 +131,9 @@ public class Entrant implements Parcelable {
         email = in.readString();
         phone = in.readString();
         deviceID = in.readString();
-        role = in.readString();
         byte tmpNotification = in.readByte();
         notification = tmpNotification == 0 ? null : tmpNotification == 1;
+        role = in.readString();
         eventsOrganized = in.createStringArrayList();
         eventsInvited = in.createStringArrayList();
         eventsEnrolled = in.createStringArrayList();
@@ -279,6 +279,13 @@ public class Entrant implements Parcelable {
         parcel.writeStringArray(name);
         parcel.writeString(email);
         parcel.writeString(phone);
+        parcel.writeString(deviceID);
+        parcel.writeByte((byte) (notification == null ? 0 : notification ? 1 : 2));
+        parcel.writeString(role);
+        parcel.writeStringList(eventsOrganized);
+        parcel.writeStringList(eventsInvited);
+        parcel.writeStringList(eventsEnrolled);
+        parcel.writeStringList(eventsWaitlist);
     }
 
     // Will need to be updated after changing the fields. May be easy to just use the device ID.\
