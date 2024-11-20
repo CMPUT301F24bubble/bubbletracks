@@ -36,6 +36,7 @@ public class Entrant implements Parcelable {
     private String phone;
     private String deviceID;
     private Boolean notification;
+    private LatLng geolocation;
     private String role;
     private ArrayList<String> eventsOrganized = new ArrayList<>();
     private ArrayList<String> eventsInvited = new ArrayList<>();
@@ -50,17 +51,19 @@ public class Entrant implements Parcelable {
      * @param deviceID Entrants device ID to determine who the entrant is
      * @param notification Entrants declaration of allowing notification
      * @param role Denotes role; takes on either 'admin', 'organizer', or ''
+     * @param geolocation Denotes the geolocation when the entrant last updated their profile
      * @param eventsOrganized events from the organizer
-     * @param eventsInvited evened entrant is invited to
-     * @param eventsEnrolled event entrant is enrolled in
-     * @param eventsWaitlist event entrant is in waitlist for
+     * @param eventsInvited events entrant is invited to
+     * @param eventsEnrolled events entrant is enrolled in
+     * @param eventsWaitlist events entrant is in waitlist for
      */
-    public Entrant(String[] name, String email, String phone, String deviceID, Boolean notification, String role, ArrayList<String> eventsOrganized, ArrayList<String> eventsInvited, ArrayList<String> eventsEnrolled, ArrayList<String> eventsWaitlist) {
+    public Entrant(String[] name, String email, String phone, String deviceID, Boolean notification, LatLng geolocation, String role, ArrayList<String> eventsOrganized, ArrayList<String> eventsInvited, ArrayList<String> eventsEnrolled, ArrayList<String> eventsWaitlist) {
         this.name = name;
         this.email = email;
         this.phone = phone;
         this.deviceID = deviceID;
         this.notification = notification;
+        this.geolocation = geolocation;
         this.role = role;
         this.eventsOrganized = eventsOrganized;
         this.eventsInvited = eventsInvited;
@@ -79,6 +82,7 @@ public class Entrant implements Parcelable {
         this.deviceID = newDeviceID;
         this.role = "";
         this.notification = false;
+        this.geolocation = new LatLng(0,0);
         this.eventsOrganized = new ArrayList<>();
         this.eventsInvited = new ArrayList<>();
         this.eventsEnrolled = new ArrayList<>();
@@ -96,6 +100,7 @@ public class Entrant implements Parcelable {
         this.deviceID = "";
         this.role = "";
         this.notification = false;
+        this.geolocation = new LatLng(0,0);
         this.eventsOrganized = new ArrayList<>();
         this.eventsInvited = new ArrayList<>();
         this.eventsEnrolled = new ArrayList<>();
@@ -114,6 +119,9 @@ public class Entrant implements Parcelable {
         this.phone = document.getString("phone");
         this.deviceID = document.getString("ID");
         this.notification = document.getBoolean("notification");
+        double lat = document.getGeoPoint("geolocation").getLatitude();
+        double lng = document.getGeoPoint("geolocation").getLongitude();
+        this.geolocation = new LatLng(lat, lng);
         this.role = document.getString("role");
         this.eventsOrganized = (ArrayList<String>)document.getData().get("organized");
         this.eventsInvited = (ArrayList<String>)document.getData().get("invited");
@@ -134,6 +142,7 @@ public class Entrant implements Parcelable {
         deviceID = in.readString();
         byte tmpNotification = in.readByte();
         notification = tmpNotification == 0 ? null : tmpNotification == 1;
+        geolocation = in.readParcelable(LatLng.class.getClassLoader());
         role = in.readString();
         eventsOrganized = in.createStringArrayList();
         eventsInvited = in.createStringArrayList();
@@ -282,6 +291,7 @@ public class Entrant implements Parcelable {
         parcel.writeString(phone);
         parcel.writeString(deviceID);
         parcel.writeByte((byte) (notification == null ? 0 : notification ? 1 : 2));
+        parcel.writeParcelable(geolocation, i);
         parcel.writeString(role);
         parcel.writeStringList(eventsOrganized);
         parcel.writeStringList(eventsInvited);
