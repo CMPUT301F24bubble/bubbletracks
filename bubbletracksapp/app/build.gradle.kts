@@ -56,5 +56,6 @@ dependencies {
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.0.1")
     androidTestImplementation("androidx.test.espresso:espresso-contrib:3.4.0")
     implementation("com.github.rubensousa:gravitysnaphelper:2.2.2")
+    implementation("com.google.android.gms:play-services-location:19.9.1")
     implementation("com.google.android.gms:play-services-maps:19.0.0")
 }
