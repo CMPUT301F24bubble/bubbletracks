@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -22,7 +23,13 @@ import androidx.core.app.NotificationManagerCompat;
 
 import com.example.bubbletracksapp.databinding.FragmentFirstBinding;
 import com.example.bubbletracksapp.databinding.ProfileManagementBinding;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.Priority;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.tasks.CancellationTokenSource;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 
 import android.Manifest; // For importing notification permissions
 import android.widget.Toast;
@@ -45,6 +52,7 @@ public class EntrantEditActivity extends AppCompatActivity {
     private ProfileManagementBinding binding;
     private Entrant currentUser;
     EntrantDB db = new EntrantDB();
+    FusedLocationProviderClient fusedLocationProviderClient;
 
     /**
      * Start up activity for entrant to edit their profile
@@ -76,6 +84,7 @@ public class EntrantEditActivity extends AppCompatActivity {
                     }
                 }
         );
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
 
         EditText entrantNameInput = binding.entrantNameInput;
@@ -136,6 +145,7 @@ public class EntrantEditActivity extends AppCompatActivity {
                 String newPhone = entrantPhoneInput.getText().toString();
                 boolean notificationPermission = entrantNotificationInput.isChecked();
 
+
                 db.getEntrant(ID).thenAccept(user -> {
                     if(user != null){
                         currentUser = user;
@@ -152,10 +162,32 @@ public class EntrantEditActivity extends AppCompatActivity {
                             checkNotificationPermission(currentUser);
 
                         }
+                        checkGeolocationPermission(currentUser);
 
-                        db.updateEntrant(currentUser);
+                        CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+                        fusedLocationProviderClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, cancellationTokenSource.getToken())
+                                .addOnSuccessListener(new OnSuccessListener<Location>() {
+                                    @Override
+                                    public void onSuccess(Location location) {
+                                        if (location != null) {
+                                            Log.d("TAG", "location: ");
+                                            double lat = location.getLatitude();
+                                            double lng = location.getLongitude();
+                                            LatLng newGeolocation = new LatLng(lat, lng);
+                                            currentUser.setGeolocation(newGeolocation);
+                                            db.updateEntrant(currentUser);
+                                        }
+                                        else
+                                        {
+                                            Log.d("TAG", " NO location: ");
 
-                        Log.d("New user name:", currentUser.getNameAsString());
+                                            db.updateEntrant(currentUser);
+
+                                            Log.w("EntrantEditActivity", "No location could be found. Location was not updated");
+                                        }
+                                        Log.d("New user name:", currentUser.getNameAsString());
+                                    }
+                                });
                     } else {
                         Log.d("User not found", "");
                     }
@@ -182,7 +214,20 @@ public class EntrantEditActivity extends AppCompatActivity {
                 requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS);
             }
         }
+    }
 
-
+    /**
+     * Launcher to ask user for geolocation permission
+     * @param currentUser entrant updating their profile
+     */
+    private void checkGeolocationPermission(Entrant currentUser) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            // Check if the geolocation permission is granted
+            if (checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                Log.d("Geolocation check","Geolocation permission done");
+            } else {
+                requestPermissionLauncher.launch(Manifest.permission.ACCESS_COARSE_LOCATION);
+            }
+        }
     }
 }

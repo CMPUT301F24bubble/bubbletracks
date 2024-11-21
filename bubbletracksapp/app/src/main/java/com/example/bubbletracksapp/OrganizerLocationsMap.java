@@ -83,8 +83,8 @@ public class OrganizerLocationsMap extends AppCompatActivity implements OnMapRea
         double latitudeSum = 0;
         double longitudeSum = 0;
         for(Entrant entrant : entrantList) {
-            latitudeSum += entrant.getLocationPoint().latitude;
-            longitudeSum += entrant.getLocationPoint().longitude;
+            latitudeSum += entrant.getGeolocation().latitude;
+            longitudeSum += entrant.getGeolocation().longitude;
             createMarker(googleMap, entrant);
         }
         int n = entrantList.size();
@@ -102,13 +102,12 @@ public class OrganizerLocationsMap extends AppCompatActivity implements OnMapRea
      * @author Chester
      */
     public void createMarker(GoogleMap googleMap, Entrant entrant) {
-        LatLng markerPoint = entrant.getLocationPoint();
+        LatLng markerPoint = entrant.getGeolocation();
         String entrantName = entrant.getNameAsString();
-        String address = entrant.getAddress();
         googleMap.addMarker(new MarkerOptions()
                 .position(markerPoint)
                 .title(entrantName)
-                .snippet(address)
+                .snippet(String.format("Location (%f,%f)", markerPoint.latitude, markerPoint.longitude))
         );
     }
 }
