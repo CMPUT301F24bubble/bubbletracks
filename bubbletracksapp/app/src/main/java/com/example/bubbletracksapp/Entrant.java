@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.GeoPoint;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -119,9 +120,7 @@ public class Entrant implements Parcelable {
         this.phone = document.getString("phone");
         this.deviceID = document.getString("ID");
         this.notification = document.getBoolean("notification");
-        double lat = document.getGeoPoint("geolocation").getLatitude();
-        double lng = document.getGeoPoint("geolocation").getLongitude();
-        this.geolocation = new LatLng(lat, lng);
+        this.geolocation = geoPointToLatLng(document.getGeoPoint("geolocation"));
         this.role = document.getString("role");
         this.eventsOrganized = (ArrayList<String>)document.getData().get("organized");
         this.eventsInvited = (ArrayList<String>)document.getData().get("invited");
@@ -181,6 +180,7 @@ public class Entrant implements Parcelable {
         map.put("email", email);
         map.put("phone", phone);
         map.put("role", role);
+        map.put("geolocation", latLngToGeoPoint(geolocation));
         map.put("notification", notification);
         map.put("ID", deviceID);
         map.put("organized", eventsOrganized);
@@ -452,11 +452,45 @@ public class Entrant implements Parcelable {
      */
     public void deleteFromEventsWaitlist(String event){ this.eventsWaitlist.remove(event); }
 
-    public LatLng getLocationPoint() {
-        return new LatLng(-33.852, 151.211);
+
+    /**
+     * Get the geolocation coordinates
+     * @return The latitude and longitude of the entrant
+     */
+    public LatLng getGeolocation() {
+        return geolocation;
     }
 
-    public String getAddress() {
-        return "My home 6873";
+    /**
+     * Set the geolocation coordinates
+     * @param geolocation the geolocation point in latitude and longitude
+     */
+    public void setGeolocation(LatLng geolocation) {
+        this.geolocation = geolocation;
     }
+
+    /**
+     * Transforms a LatLng point to a geoPoint
+     * Used to store in database
+     * @param geolocation LatLng point to be transformed
+     * @return geoPoint from the given LatLng point
+     */
+    private GeoPoint latLngToGeoPoint(LatLng geolocation) {
+        double lat = geolocation.latitude;
+        double lng = geolocation.longitude;
+        return new GeoPoint(lat,lng);
+    }
+
+    /**
+     * Transforms a geoPoint to a LatLng point
+     * Used to get from database
+     * @param geolocation geoPoint point to be transformed
+     * @return LatLng point from the given geoPoint
+     */
+    private LatLng geoPointToLatLng(GeoPoint geolocation) {
+        double lat = geolocation.getLatitude();
+        double lng = geolocation.getLongitude();
+        return new LatLng(lat,lng);
+    }
+
 }
