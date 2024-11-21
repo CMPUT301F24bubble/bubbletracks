@@ -1,5 +1,6 @@
 package com.example.bubbletracksapp;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
@@ -9,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -139,24 +141,41 @@ public class EventHostListAdapter extends ArrayAdapter<Event>{
     public void editEvent(Event event) {
 
     }
-    /**
-     * Allow to delete the event from the list
-     * @param position position of the event to be deleted
-     */
+
 // delete this later and put into admin
+    /**
+     * Allow to delete the event from the list and Firestore.
+     * @param position Position of the event to be deleted.
+     */
     public void deleteEvent(int position) {
         Event eventToDelete = getItem(position);
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        if (eventToDelete == null) {
+            return;
+        }
 
-        DocumentReference eventRef = db.collection("events").document(eventToDelete.getId()); // Replace 'getId()' with the actual method that retrieves the event's unique ID
-        eventRef.delete()
-                .addOnSuccessListener(aVoid -> {
-                    remove(eventToDelete);
-                    notifyDataSetChanged();
+        new AlertDialog.Builder(getContext())
+                .setTitle("Confirm Event Deletion")
+                .setMessage("Are you sure you want to delete this event? This action cannot be undone.")
+                .setPositiveButton("Delete", (dialog, which) -> {
+                    FirebaseFirestore db = FirebaseFirestore.getInstance();
+                    DocumentReference eventRef = db.collection("events").document(eventToDelete.getId());
+
+                    eventRef.delete()
+                            .addOnSuccessListener(aVoid -> {
+                                remove(eventToDelete);
+                                notifyDataSetChanged();
+                                Toast.makeText(getContext(), "Event deleted successfully", Toast.LENGTH_SHORT).show();
+                            })
+                            .addOnFailureListener(e -> {
+                                Log.e("DeleteEvent", "Error deleting event: ", e);
+                                Toast.makeText(getContext(), "Failed to delete event. Try again.", Toast.LENGTH_SHORT).show();
+                            });
+
+                    dialog.dismiss();
                 })
-                .addOnFailureListener(e -> {
-                    // Handle the error
-                    Log.e("DeleteEvent", "Error deleting event: ", e);
-                });
+                .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
+                .create()
+                .show();
     }
+
 }
