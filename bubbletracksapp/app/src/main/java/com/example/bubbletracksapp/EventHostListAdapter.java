@@ -18,15 +18,20 @@ import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.AppCompatImageButton;
 
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.WriteBatch;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Adapter between event host and the event list
  * @author
  */
-public class EventHostListAdapter extends ArrayAdapter<Event>{
+public class EventHostListAdapter extends ArrayAdapter<Event> {
 //    interface EventHostI {
 //        void viewWaitlist(Event event);
 //        void editEvent(Event event);
@@ -35,8 +40,9 @@ public class EventHostListAdapter extends ArrayAdapter<Event>{
 
     /**
      * Initialize the adapter with the list of events
+     *
      * @param context context of what adapter does
-     * @param events list of entrants
+     * @param events  list of entrants
      */
     public EventHostListAdapter(Context context, ArrayList<Event> events) {
         super(context, 0, events);
@@ -49,15 +55,16 @@ public class EventHostListAdapter extends ArrayAdapter<Event>{
 
     /**
      * Get the view of the event details
-     * @param position The position of the item within the adapter's data set of the item whose view
-     *        we want.
+     *
+     * @param position    The position of the item within the adapter's data set of the item whose view
+     *                    we want.
      * @param convertView The old view to reuse, if possible. Note: You should check that this view
-     *        is non-null and of an appropriate type before using. If it is not possible to convert
-     *        this view to display the correct data, this method can create a new view.
-     *        Heterogeneous lists can specify their number of view types, so that this View is
-     *        always of the right type (see {@link #getViewTypeCount()} and
-     *        {@link #getItemViewType(int)}).
-     * @param parent The parent that this view will eventually be attached to
+     *                    is non-null and of an appropriate type before using. If it is not possible to convert
+     *                    this view to display the correct data, this method can create a new view.
+     *                    Heterogeneous lists can specify their number of view types, so that this View is
+     *                    always of the right type (see {@link #getViewTypeCount()} and
+     *                    {@link #getItemViewType(int)}).
+     * @param parent      The parent that this view will eventually be attached to
      * @return view
      */
     @NonNull
@@ -113,7 +120,9 @@ public class EventHostListAdapter extends ArrayAdapter<Event>{
         // Move to admin adapter later
         deleteEventButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {deleteEvent(position); }
+            public void onClick(View view) {
+                deleteEvent(position);
+            }
         });
 
 
@@ -122,6 +131,7 @@ public class EventHostListAdapter extends ArrayAdapter<Event>{
 
     /**
      * Allow to view the waitlist of entrants
+     *
      * @param event event that event host holds
      */
     public void viewWaitlist(Event event) {
@@ -136,6 +146,7 @@ public class EventHostListAdapter extends ArrayAdapter<Event>{
 
     /**
      * Allow to edit event details
+     *
      * @param event event that event host holds
      */
     public void editEvent(Event event) {
@@ -143,11 +154,12 @@ public class EventHostListAdapter extends ArrayAdapter<Event>{
     }
 
 // delete this later and put into admin
+
     /**
      * Allow to delete the event from the list and Firestore.
+     *
      * @param position Position of the event to be deleted.
-     */
-    public void deleteEvent(int position) {
+     */public void deleteEvent(int position) {
         Event eventToDelete = getItem(position);
         if (eventToDelete == null) {
             return;
@@ -158,17 +170,52 @@ public class EventHostListAdapter extends ArrayAdapter<Event>{
                 .setMessage("Are you sure you want to delete this event? This action cannot be undone.")
                 .setPositiveButton("Delete", (dialog, which) -> {
                     FirebaseFirestore db = FirebaseFirestore.getInstance();
-                    DocumentReference eventRef = db.collection("events").document(eventToDelete.getId());
+                    String eventId = eventToDelete.getId();
 
-                    eventRef.delete()
-                            .addOnSuccessListener(aVoid -> {
-                                remove(eventToDelete);
-                                notifyDataSetChanged();
-                                Toast.makeText(getContext(), "Event deleted successfully", Toast.LENGTH_SHORT).show();
+                    // batch is a way to do multiple things without crashing everything. If one action fails, the other actions won't continue
+                    WriteBatch batch = db.batch();
+
+                    DocumentReference eventRef = db.collection("events").document(eventId);
+                    batch.delete(eventRef);
+
+                    List<String> subcategories = Arrays.asList("enrolled", "invited", "organized", "waitlist");
+
+                    db.collection("entrants")
+                            .get()
+                            .addOnSuccessListener(querySnapshot -> {
+                                for (DocumentSnapshot entrantDoc : querySnapshot.getDocuments()) {
+                                    DocumentReference entrantRef = entrantDoc.getReference();
+                                    Map<String, Object> entrantData = entrantDoc.getData();
+
+                                    if (entrantData != null) {
+                                        // go through each subcategory
+                                        for (String subcategory : subcategories) {
+                                            if (entrantData.containsKey(subcategory)) {
+                                                List<String> eventList = (List<String>) entrantData.get(subcategory);
+                                                if (eventList != null && eventList.contains(eventId)) {
+                                                    // Remove the event ID from the list
+                                                    eventList.remove(eventId);
+                                                    batch.update(entrantRef, subcategory, eventList);
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+
+                                batch.commit()
+                                        .addOnSuccessListener(aVoid -> {
+                                            remove(eventToDelete);
+                                            notifyDataSetChanged();
+                                            Toast.makeText(getContext(), "Event and references deleted successfully", Toast.LENGTH_SHORT).show();
+                                        })
+                                        .addOnFailureListener(e -> {
+                                            Log.e("DeleteEvent", "Error deleting event or references: ", e);
+                                            Toast.makeText(getContext(), "Failed to delete event. Try again.", Toast.LENGTH_SHORT).show();
+                                        });
                             })
                             .addOnFailureListener(e -> {
-                                Log.e("DeleteEvent", "Error deleting event: ", e);
-                                Toast.makeText(getContext(), "Failed to delete event. Try again.", Toast.LENGTH_SHORT).show();
+                                Log.e("DeleteEvent", "Error fetching entrant references: ", e);
+                                Toast.makeText(getContext(), "Failed to fetch related data. Try again.", Toast.LENGTH_SHORT).show();
                             });
 
                     dialog.dismiss();
@@ -177,5 +224,4 @@ public class EventHostListAdapter extends ArrayAdapter<Event>{
                 .create()
                 .show();
     }
-
 }
