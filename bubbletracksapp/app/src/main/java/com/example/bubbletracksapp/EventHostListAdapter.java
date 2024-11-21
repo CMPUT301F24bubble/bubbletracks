@@ -2,6 +2,7 @@ package com.example.bubbletracksapp;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.AppCompatImageButton;
+
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 
@@ -74,7 +78,7 @@ public class EventHostListAdapter extends ArrayAdapter<Event>{
 
         AppCompatImageButton seePeopleButton = view.findViewById(R.id.see_people_button);
         AppCompatImageButton editEventButton = view.findViewById(R.id.edit_event_button);
-
+        AppCompatImageButton deleteEventButton = view.findViewById(R.id.delete_button); // delete later for admin
 
         eventMonthText.setText(event.getMonth(event.getDateTime()));
         eventDateText.setText(event.getDay(event.getDateTime()));
@@ -104,6 +108,12 @@ public class EventHostListAdapter extends ArrayAdapter<Event>{
             }
         });
 
+        // Move to admin adapter later
+        deleteEventButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {deleteEvent(position); }
+        });
+
 
         return view;
     }
@@ -129,5 +139,24 @@ public class EventHostListAdapter extends ArrayAdapter<Event>{
     public void editEvent(Event event) {
 
     }
+    /**
+     * Allow to delete the event from the list
+     * @param position position of the event to be deleted
+     */
+// delete this later and put into admin
+    public void deleteEvent(int position) {
+        Event eventToDelete = getItem(position);
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
 
+        DocumentReference eventRef = db.collection("events").document(eventToDelete.getId()); // Replace 'getId()' with the actual method that retrieves the event's unique ID
+        eventRef.delete()
+                .addOnSuccessListener(aVoid -> {
+                    remove(eventToDelete);
+                    notifyDataSetChanged();
+                })
+                .addOnFailureListener(e -> {
+                    // Handle the error
+                    Log.e("DeleteEvent", "Error deleting event: ", e);
+                });
+    }
 }
