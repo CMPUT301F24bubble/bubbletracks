@@ -78,8 +78,6 @@ public class OrganizerLocationsMap extends AppCompatActivity implements OnMapRea
      */
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
-        entrantList.add(new Entrant());
-
         double latitudeSum = 0;
         double longitudeSum = 0;
         for(Entrant entrant : entrantList) {

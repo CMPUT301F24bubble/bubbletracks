@@ -124,7 +124,10 @@ public class OrganizerEntrantListActivity extends AppCompatActivity
         binding.viewAttendeeMapButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                UpdateListDisplay();
+                event.updateEventFirebase();
+                Intent intent = new Intent(OrganizerEntrantListActivity.this, OrganizerLocationsMap.class);
+                intent.putExtra("event", event);
+                startActivity(intent);
             }
         });
     }
