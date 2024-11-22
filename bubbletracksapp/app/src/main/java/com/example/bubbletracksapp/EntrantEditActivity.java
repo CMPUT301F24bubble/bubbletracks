@@ -93,20 +93,11 @@ public class EntrantEditActivity extends AppCompatActivity {
         db.getEntrant(ID).thenAccept(user -> {
             if(user != null){
                 currentUser = user;
-                if (currentUser.getNameAsString().isBlank()) {
-                    entrantNameInput.setText("Enter your name");
-                } else {
-                entrantNameInput.setText(currentUser.getNameAsString()); }
+                if (!currentUser.getNameAsString().isBlank()) {entrantNameInput.setText(currentUser.getNameAsString()); }
 
-                if (currentUser.getEmail().isBlank()) {
-                    entrantEmailInput.setText("Enter your email");
-                } else {
-                    entrantEmailInput.setText(currentUser.getEmail()); }
+                if (!currentUser.getEmail().isBlank()) {entrantEmailInput.setText(currentUser.getEmail()); }
 
-                if (currentUser.getPhone().isBlank()) {
-                    entrantPhoneInput.setText("Enter your phone number");
-                } else {
-                    entrantPhoneInput.setText(currentUser.getPhone()); }
+                if (!currentUser.getPhone().isBlank()) {entrantPhoneInput.setText(currentUser.getPhone()); }
 
                 entrantNotificationInput.setChecked(currentUser.getNotification());
             } else {
@@ -138,7 +129,8 @@ public class EntrantEditActivity extends AppCompatActivity {
             public void onClick(View view) {
                 checkNotificationPermission(currentUser);
 
-                String[] newFullName = entrantNameInput.getText().toString().split(" ");
+                String[] newFullName = {"",""};
+                newFullName = entrantNameInput.getText().toString().split(" ");
                 String newFirst = newFullName[0], newLast = newFullName[1];
                 String newEmail = entrantEmailInput.getText().toString();
                 String newPhone = entrantPhoneInput.getText().toString();
