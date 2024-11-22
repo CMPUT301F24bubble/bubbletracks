@@ -51,8 +51,8 @@ public class EntrantEditActivity extends AppCompatActivity {
     private ActivityResultLauncher<String> requestPermissionLauncher;
     private ProfileManagementBinding binding;
     private Entrant currentUser;
-    EntrantDB db = new EntrantDB();
-    FusedLocationProviderClient fusedLocationProviderClient;
+    private EntrantDB db = new EntrantDB();
+    private FusedLocationProviderClient fusedLocationProviderClient;
 
     /**
      * Start up activity for entrant to edit their profile
