@@ -349,6 +349,10 @@ public class Entrant implements Parcelable {
         this.eventsOrganized = eventsOrganized;
     }
 
+    /**
+     * set the role of the entrant; must be "entrant", "admin", or "organizer"
+     * @param role
+     */
     public void setRole(String role) {
         if (role.equalsIgnoreCase("entrant") || role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("organizer"))
         { this.role = role; } else {
