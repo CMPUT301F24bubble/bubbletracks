@@ -93,12 +93,15 @@ public class EntrantEditActivity extends AppCompatActivity {
         CheckBox entrantNotificationInput = binding.notificationToggle;
 
         TextView deviceIDNote = binding.deviceIDNote;
+        TextView locationNote = binding.locationNote;
 
         SharedPreferences localID = getSharedPreferences("LocalID", Context.MODE_PRIVATE);
         String ID = localID.getString("ID", "Device ID not found");
+        String tempLocation = "No last location found. Allow location and update your profile";
 
         // Displays the user's profile
         deviceIDNote.setText(ID);
+        locationNote.setText(tempLocation);
         db.getEntrant(ID).thenAccept(user -> {
             if(user != null){
                 currentUser = user;
@@ -109,6 +112,12 @@ public class EntrantEditActivity extends AppCompatActivity {
                 if (!currentUser.getPhone().isBlank()) {entrantPhoneInput.setText(currentUser.getPhone()); }
 
                 entrantNotificationInput.setChecked(currentUser.getNotification());
+
+                if(currentUser.getGeolocation() != new LatLng(0,0)) {
+                    LatLng location = currentUser.getGeolocation();
+                    String stringLocation = String.format("Your last location: (%f,%f)", location.latitude, location.longitude);
+                    locationNote.setText(stringLocation);
+                }
             } else {
                 Toast.makeText(EntrantEditActivity.this, "Could not load profile.", Toast.LENGTH_LONG).show();
             }
@@ -164,23 +173,29 @@ public class EntrantEditActivity extends AppCompatActivity {
                         }
                         checkGeolocationPermission(currentUser);
 
+                        // Gets the coarse location of the person and updates it.
+                        // If it cant find it, it does not update the location.
                         CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
                         fusedLocationProviderClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, cancellationTokenSource.getToken())
                                 .addOnSuccessListener(new OnSuccessListener<Location>() {
                                     @Override
                                     public void onSuccess(Location location) {
                                         if (location != null) {
-                                            Log.d("TAG", "location: ");
+                                            // Update the user's location
                                             double lat = location.getLatitude();
                                             double lng = location.getLongitude();
                                             LatLng newGeolocation = new LatLng(lat, lng);
                                             currentUser.setGeolocation(newGeolocation);
+
+                                            // Update the location node
+                                            String stringLocation = String.format("Your last location: (%f,%f)", lat, lng);
+                                            locationNote.setText(stringLocation);
+
                                             db.updateEntrant(currentUser);
+                                            Log.d("getCurrentLocation", newGeolocation.toString());
                                         }
                                         else
                                         {
-                                            Log.d("TAG", " NO location: ");
-
                                             db.updateEntrant(currentUser);
 
                                             Log.w("EntrantEditActivity", "No location could be found. Location was not updated");
