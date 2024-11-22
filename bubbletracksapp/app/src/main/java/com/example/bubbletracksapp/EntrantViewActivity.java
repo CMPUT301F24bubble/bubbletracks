@@ -159,7 +159,7 @@ public class EntrantViewActivity extends AppCompatActivity {
         if (!inWaitlist) { // Entrant wants to join waitlist
             String message = "";
             if(event.getNeedsGeolocation()){
-                message = "This waitlist requires information about your current location. Are you sure you want to join the waitlist for this event?";
+                message = "This waitlist will share information about your current location. Are you sure you want to join the waitlist for this event?";
             } else{
                 message = "Are you sure you want to join the waitlist for this event?";
             }
