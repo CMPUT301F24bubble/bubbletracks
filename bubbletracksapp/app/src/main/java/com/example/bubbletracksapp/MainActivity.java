@@ -2,24 +2,36 @@ package com.example.bubbletracksapp;
 
 import static java.util.UUID.randomUUID;
 
+import android.Manifest;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 
 import com.example.bubbletracksapp.databinding.HomescreenBinding;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QuerySnapshot;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.util.Log;
 import android.view.View;
 
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -28,6 +40,7 @@ import androidx.navigation.ui.NavigationUI;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.Toast;
 
 import java.util.UUID;
@@ -48,6 +61,11 @@ public class MainActivity extends AppCompatActivity {
     public Entrant currentUser;
     private String currentDeviceID;
     private final String channelID = "channel_id";
+
+    private Notifications notifications;
+    private NotificationDB notificationDB;
+    private ActivityResultLauncher<String> requestPermissionLauncher;
+
 
     /**
      * Set up creation of activity
@@ -78,6 +96,10 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(MainActivity.this, "Failed to load user: " + e.getMessage(), Toast.LENGTH_LONG).show();
             return null;
         });
+
+        notificationDB = new NotificationDB();
+        notificationDB.listenForNotifications(currentDeviceID, this);
+
 
         Button eventsButton = binding.buttonEvents;
         Button createEventButton = binding.buttonCreateEvents;
@@ -194,4 +216,91 @@ public class MainActivity extends AppCompatActivity {
             notificationManager.createNotificationChannel(channel);
         }
     }
+
+    private void checkNotificationPermission(CheckBox checkInvited, CheckBox checkRejected, CheckBox checkConfirmed, CheckBox checkCancelled) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            // Check if the notification permission is granted
+            if (checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
+                showNotification(notifications);
+            } else {
+                // Request the notification permission
+                requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS);
+            }
+        } else {
+            // For API levels below 33, permission is not required
+        }
+    }
+
+    public void listenForNotifications(String deviceId) {
+        NotificationDB.notifsRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException e) {
+                if (e != null) {
+                    Log.w("listenForNewNotifications", "Listen failed.", e);
+                    return;
+                }
+                for (DocumentChange dc :value.getDocumentChanges()) {
+                    switch (dc.getType()) {
+                        case ADDED:
+                            Notifications newNotification = dc.getDocument().toObject(Notifications.class);
+
+                            // Check if this notification is for the receiver
+                            if (newNotification.getRecipients().contains(currentUser.getID())) {
+                                Log.d("FirestoreListener", "New notification received: " + newNotification.getTitle());
+
+                                // Call a method to process or display the notification
+                                showNotification(newNotification);
+                            }
+                            break;
+
+                        case MODIFIED:
+                            Log.d("FirestoreListener", "Notification modified: " + dc.getDocument().getData());
+                            break;
+
+                        case REMOVED:
+                            Log.d("FirestoreListener", "Notification removed: " + dc.getDocument().getData());
+                            break;
+                    }
+                }
+            }
+        });
+    }
+
+    public void showNotification(Notifications newNotification) {
+        Intent intent = new Intent(this, OrganizerNotificationActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
+
+        NotificationCompat.Builder invitedBuilder = new NotificationCompat.Builder(this, channelID)
+                .setSmallIcon(R.drawable.baseline_notifications_24)
+                .setContentTitle(newNotification.getTitle())
+                .setContentText(newNotification.getSmallText())
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setStyle(new NotificationCompat.BigTextStyle()
+                        .bigText(newNotification.getBigText()))
+                // Set the intent that fires when the user taps the notification.
+                .setContentIntent(pendingIntent)
+                .setAutoCancel(true);
+
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+        try {
+            // Attempt to post the notification
+            // ArrayList<String> invitedList = event.getInvitedList();
+            String testUserID = "9be104ee-e9e8-4df4-b93f-c3ec0aef750c";
+            int userHash = testUserID.hashCode();
+            notificationManager.notify(userHash, invitedBuilder.build()); // TODO: Notification id is the user id
+        }catch (SecurityException e) {
+                // Log the exception or handle it if the notification couldn't be posted
+                Log.e("Notification", "Permission denied for posting notification: " + e.getMessage());
+        }
+    }
+
+
+
+/*    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }*/
+
+
 }

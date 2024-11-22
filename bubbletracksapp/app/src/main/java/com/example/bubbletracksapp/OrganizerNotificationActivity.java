@@ -1,5 +1,6 @@
 package com.example.bubbletracksapp;
 
+import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -19,6 +20,11 @@ import androidx.core.app.NotificationManagerCompat;
 
 import android.Manifest; // For importing post notification permissions
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ServerValue;
+
+
 import java.util.ArrayList;
 
 /**
@@ -33,6 +39,9 @@ public class OrganizerNotificationActivity extends AppCompatActivity {
     private static final Integer CONFIRMED_NOTIFICATION_ID = 3;
     private static final Integer CANCELLED_NOTIFICATION_ID = 4;
     private Event event;
+    NotificationDB db = new NotificationDB();
+    private String id;
+    Notifications notification;
 
     private ActivityResultLauncher<String> requestPermissionLauncher;
 
@@ -77,6 +86,7 @@ public class OrganizerNotificationActivity extends AppCompatActivity {
     /**
      * Create notification channel for user
      */
+    //TODO: for entrant
     private void createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             CharSequence name = "Entrant Notification Channel";
@@ -96,11 +106,13 @@ public class OrganizerNotificationActivity extends AppCompatActivity {
      * @param checkConfirmed entrants who confirmed registration for event
      * @param checkCancelled entrants who cancelled invitation to event
      */
+    //TODO: for entrants to check
     private void checkNotificationPermission(CheckBox checkInvited, CheckBox checkRejected, CheckBox checkConfirmed, CheckBox checkCancelled) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             // Check if the notification permission is granted
             if (checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
                 showNotification(checkInvited, checkRejected, checkConfirmed, checkCancelled);
+                sendNotification(checkInvited, checkRejected, checkConfirmed, checkCancelled);
             } else {
                 // Request the notification permission
                 requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS);
@@ -117,12 +129,13 @@ public class OrganizerNotificationActivity extends AppCompatActivity {
      * @param checkConfirmed entrants who confirmed registration for event
      * @param checkCancelled entrants who cancelled invitation to event
      */
+    //TODO: for entrant
     private void showNotification(CheckBox checkInvited, CheckBox checkRejected, CheckBox checkConfirmed, CheckBox checkCancelled) {
         Intent intent = new Intent(this, OrganizerNotificationActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
 
-        NotificationCompat.Builder selectedBuilder = new NotificationCompat.Builder(this, CHANNEL_ID)
+        NotificationCompat.Builder invitedBuilder = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setSmallIcon(R.drawable.baseline_notifications_24)
                 .setContentTitle("Bubble Tracks App")
                 .setContentText("You are sampled for the event!")
@@ -133,7 +146,7 @@ public class OrganizerNotificationActivity extends AppCompatActivity {
                 .setContentIntent(pendingIntent)
                 .setAutoCancel(true);
 
-        NotificationCompat.Builder nonSelectedBuilder = new NotificationCompat.Builder(this, CHANNEL_ID)
+        NotificationCompat.Builder rejectedBuilder = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setSmallIcon(R.drawable.baseline_notifications_24)
                 .setContentTitle("Bubble Tracks App")
                 .setContentText("Waitlist pending update")
@@ -170,17 +183,17 @@ public class OrganizerNotificationActivity extends AppCompatActivity {
         try {
             // Attempt to post the notification
             if (checkInvited.isChecked()) {
-               // ArrayList<String> enrolledList = event.getInvitedList();
+               // ArrayList<String> invitedList = event.getInvitedList();
                 String testUserID = "9be104ee-e9e8-4df4-b93f-c3ec0aef750c";
                 int userHash = testUserID.hashCode();
-                notificationManager.notify(userHash, selectedBuilder.build()); // TODO: Notification id is the user id
+                notificationManager.notify(userHash, invitedBuilder.build()); // TODO: Notification id is the user id
             }
             if (checkRejected.isChecked()) {
                 ArrayList<String> rejectedList = event.getRejectedList();
-                notificationManager.notify(NON_SELECTED_NOTIFICATION_ID, nonSelectedBuilder.build());
+                notificationManager.notify(NON_SELECTED_NOTIFICATION_ID, rejectedBuilder.build());
             }
             if (checkConfirmed.isChecked()) {
-                ArrayList<String> confirmedList = event.getEnrolledList();
+               // ArrayList<String> confirmedList = event.getEnrolledList();
                 notificationManager.notify(CONFIRMED_NOTIFICATION_ID, confirmedBuilder.build());
             }
             if (checkCancelled.isChecked()) {
@@ -192,6 +205,62 @@ public class OrganizerNotificationActivity extends AppCompatActivity {
             Log.e("Notification", "Permission denied for posting notification: " + e.getMessage());
             Toast.makeText(this, "Permission required to show notifications", Toast.LENGTH_SHORT).show();
         }
+    }
+
+
+    private void sendNotification(CheckBox checkInvited, CheckBox checkRejected, CheckBox checkConfirmed, CheckBox checkCancelled) {
+        ArrayList<String> testList = new ArrayList<String>();
+        testList.add("person1");
+        testList.add("person2");
+        testList.add("9be104ee-e9e8-4df4-b93f-c3ec0aef750c");
+
+        Object timestamp = System.currentTimeMillis();
+        Intent intent = getIntent();
+        //id = intent.getStringExtra("id");
+        // Send to confirmed entrants
+        if (checkConfirmed.isChecked()) {
+            //Toast.makeText(OrganizerNotificationActivity.this, "Failed to save notification: " , Toast.LENGTH_LONG).show();
+            Log.d("Notification", "This is notification db: ");
+            //***ArrayList<String> confirmedList = event.getEnrolledList();
+           // notificationManager.notify(CONFIRMED_NOTIFICATION_ID, confirmedBuilder.build());
+            Notifications notification = new Notifications(
+                    testList,
+                    "Bubble Tracks App",
+                    "Thank you for confirming your attendance to " + "!",
+                    "Mark your calendars for your event details.",
+                    //"Thank you for confirming your attendance to " + event.getName() + "!"
+                    "1000000"
+            );
+            db.addNotification(notification);
+            //DatabaseReference notificationsRef = FirebaseDatabase.getInstance().getReference("notifications");
+/*            notificationsRef.push().setValue(notifications)
+                    .addOnSuccessListener(aVoid -> {
+                        Toast.makeText(OrganizerNotificationActivity.this, "Notification sent and saved!", Toast.LENGTH_LONG).show();
+                    })
+                    .addOnFailureListener(e -> {
+                        Toast.makeText(OrganizerNotificationActivity.this, "Failed to save notification: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    });*/
+        }
+        //Toast.makeText(OrganizerNotificationActivity.this, "Notification sent!", Toast.LENGTH_LONG).show();
+/*        db.getNotification(id).thenAccept(notifications -> {
+            if(notifications != null){
+                this.notification = notifications;
+                ArrayList<String> recipients = notifications.getRecipients();
+                for(String entrant : waitList){
+                    if(entrant.equals(this.entrant.getID())){
+                        inWaitlist = true;
+                        joinButton.setText(R.string.leave_waitlist);
+                        break;
+                    }
+                }
+                setViews();
+            } else {
+                Toast.makeText(OrganizerNotificationActivity.this, "Notif does not exist", Toast.LENGTH_LONG).show();
+            }
+        }).exceptionally(e -> {
+            Toast.makeText(OrganizerNotificationActivity.this, "Failed to load notif: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            return null;
+        });*/
     }
 
 }

@@ -1,17 +1,27 @@
 package com.example.bubbletracksapp;
 
+import android.app.Notification;
+import android.app.PendingIntent;
+import android.content.Intent;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -26,17 +36,22 @@ import java.util.concurrent.CompletableFuture;
  */
 public class NotificationDB {
     FirebaseFirestore db;
-    CollectionReference notifsRef;
+    static CollectionReference notifsRef;
+    private Entrant entrant;
+    private final String channelID = "channel_id";
 
     public NotificationDB() {
         db = FirebaseFirestore.getInstance();
         notifsRef = db.collection("notifications");
     }
 
-    public void addNotification(Notification notification) {
-        Map<String, Object> newNotif = notification.toMap();
-        String docID = notification.getId();
-
+    public void addNotification(Notifications notifications) {
+        Map<String, Object> newNotif = notifications.toMap();
+        String docID = notifications.getId();
+        if (docID == null || docID.isEmpty()) {
+            Log.e("addNotification", "Document ID is null or empty, unable to add notification.");
+            return;  // Exit early if the ID is invalid
+        }
         notifsRef.document(docID)
                 .set(newNotif)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -63,11 +78,11 @@ public class NotificationDB {
 
     /**
      * Deletes notification from database
-     * @param notification notification made by organizer to entrant
+     * @param notifications notification made by organizer to entrant
      */
-    public void deleteNotification(Notification notification)
+    public void deleteNotification(Notifications notifications)
     {
-        String docID = notification.getId();
+        String docID = notifications.getId();
 
         notifsRef.document(docID)
                 .delete()
@@ -95,13 +110,13 @@ public class NotificationDB {
 
     /**
      * Updates notification details to the database
-     * @param newNotification new notification details
+     * @param newNotifications new notification details
      */
-    public void updateNotification(Notification newNotification)
+    public void updateNotification(Notifications newNotifications)
     {
-        Map<String, Object> newNotificationMap = newNotification.toMap();
+        Map<String, Object> newNotificationMap = newNotifications.toMap();
 
-        String docID = newNotification.getId();
+        String docID = newNotifications.getId();
 
         notifsRef.document(docID)
                 .update(newNotificationMap)
@@ -164,9 +179,9 @@ public class NotificationDB {
      * @param ID notification ID
      * @return return code
      */
-    public CompletableFuture<Notification> getNotification(String ID)
+    public CompletableFuture<Notifications> getNotification(String ID)
     {
-        CompletableFuture<Notification> returnCode = new CompletableFuture<>();
+        CompletableFuture<Notifications> returnCode = new CompletableFuture<>();
         DocumentReference notifRef = notifsRef.document(ID);
 
         notifRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -180,9 +195,9 @@ public class NotificationDB {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
 
-                        Notification newNotification = new Notification(document);
+                        Notifications newNotifications = new Notifications(document);
 
-                        returnCode.complete(newNotification);
+                        returnCode.complete(newNotifications);
                         Log.d("NotifDB", "DocumentSnapshot data: " + document.getData());
                     } else {
                         Log.d("NotifDB", "No such document");
@@ -200,10 +215,10 @@ public class NotificationDB {
      * @param IDs list of notification ids
      * @return return code
      */
-    public CompletableFuture<ArrayList<Notification>> getNotifList(ArrayList<String> IDs)
+    public CompletableFuture<ArrayList<Notifications>> getNotifList(ArrayList<String> IDs)
     {
-        CompletableFuture<ArrayList<Notification>> returnCode = new CompletableFuture<>();
-        ArrayList<Notification> notifications = new ArrayList<>();
+        CompletableFuture<ArrayList<Notifications>> returnCode = new CompletableFuture<>();
+        ArrayList<Notifications> notifications = new ArrayList<>();
 
         if (IDs.isEmpty()) {
             returnCode.complete(null);
@@ -227,9 +242,9 @@ public class NotificationDB {
                 }
                 // Go through each document and get the Notification information.
                 for (QueryDocumentSnapshot document : querySnapshot) {
-                    Notification newNotification = new Notification(document);
+                    Notifications newNotifications = new Notifications(document);
 
-                    notifications.add(newNotification);
+                    notifications.add(newNotifications);
                 }
                 Log.d("getNotifList", "Found Notifications: " + notifications.toString());
 
@@ -246,6 +261,51 @@ public class NotificationDB {
             }
         });
         return returnCode;
+    }
+    public void listenForNotifications(String deviceID, MainActivity mainActivity) {
+        notifsRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException e) {
+                if (e != null) {
+                    Log.w("listenForNewNotifications", "Listen failed.", e);
+                    return;
+                }
+                for (DocumentChange dc : value.getDocumentChanges()) {
+                    switch (dc.getType()) {
+                        case ADDED:
+                            Notifications newNotification = dc.getDocument().toObject(Notifications.class);
+
+                            // Check if this notification is for the receiver
+                            if (newNotification.getRecipients().contains(deviceID)) {
+                                Log.d("FirestoreListener", "New notification received: " + newNotification.getTitle());
+
+                                // Call the method from MainActivity
+                                mainActivity.showNotification(newNotification);
+                            }
+                            break;
+
+                        case MODIFIED:
+                            Log.d("FirestoreListener", "Notification modified: " + dc.getDocument().getData());
+                            break;
+
+                        case REMOVED:
+                            Log.d("FirestoreListener", "Notification removed: " + dc.getDocument().getData());
+                            break;
+                    }
+                }
+            }
+        });
+    }
+
+
+
+    private void notifyReceiver(Notifications notification) {
+        // Logic to notify the receiver, such as updating the UI or showing a local notification
+        // For example:
+        // 1. Update the UI (TextView, RecyclerView, etc.) with the new notification
+        // 2. Optionally, trigger a local notification using NotificationManager
+        // Example:
+        //Toast.makeText(NotificationDB.this, "New Notification: " , Toast.LENGTH_LONG).show();
     }
 
 }

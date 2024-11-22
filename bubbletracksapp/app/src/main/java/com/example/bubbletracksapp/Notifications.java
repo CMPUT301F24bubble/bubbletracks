@@ -1,8 +1,11 @@
 package com.example.bubbletracksapp;
 
+import android.app.Notification;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
+
+import androidx.annotation.NonNull;
 
 import com.google.firebase.firestore.DocumentSnapshot;
 
@@ -11,7 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class Notification {
+public class Notifications implements Parcelable{
 
     private String id;
 
@@ -21,15 +24,16 @@ public class Notification {
     private String title;
     private String smallText;
     private String bigText;
-    private String timestamp;
+    private Object timestamp;
 
-    public Notification() {
+    public Notifications() {
         Log.w("NewNotification", "Notification has empty information.");
         recipients = new ArrayList<>();
         this.id = UUID.randomUUID().toString();
     }
 
-    public Notification(DocumentSnapshot document) {
+    public Notifications(DocumentSnapshot document) {
+        this.recipients = (ArrayList<String>)document.getData().get("recipients");
         this.id = document.getString("id");
         this.title = document.getString("title");
         this.smallText = document.getString("smallText");
@@ -37,15 +41,17 @@ public class Notification {
         this.timestamp = document.getString("timestamp");
     }
 
-    public Notification(String title, String smallText, String bigText, String timestamp) {
-        this.id = id;
+    public Notifications(ArrayList<String> recipients, String title, String smallText, String bigText, String id) {
+        this.recipients = recipients;
         this.title = title;
         this.smallText = smallText;
         this.bigText = bigText;
         this.timestamp = timestamp;
+        this.id = generateUniqueId();
     }
 
-    protected Notification(Parcel in) {
+    protected Notifications(Parcel in) {
+        recipients = in.createStringArrayList();
         id = in.readString();
         title = in.readString();
         smallText = in.readString();
@@ -68,6 +74,7 @@ public class Notification {
     public Map<String, Object> toMap() {
         Map<String, Object> newMap = new HashMap<>();
 
+        newMap.put("recipients", recipients);
         newMap.put("id", id);
         newMap.put("title", title);
         newMap.put("smallText", smallText);
@@ -77,8 +84,27 @@ public class Notification {
         return newMap;
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(@NonNull Parcel parcel, int i) {
+        parcel.writeStringList(recipients);
+        parcel.writeString(id);
+        parcel.writeString(title);
+        parcel.writeString(smallText);
+        parcel.writeString(bigText);
+        parcel.writeString((String) timestamp);
+    }
+
     public String getId() {
         return id;
+    }
+
+    private String generateUniqueId() {
+        return String.valueOf(System.currentTimeMillis());  // Using the current time as an ID
     }
 
     public void setId(String id) {
@@ -117,7 +143,7 @@ public class Notification {
         this.bigText = bigText;
     }
 
-    public String getTimestamp() {
+    public Object getTimestamp() {
         return timestamp;
     }
 
