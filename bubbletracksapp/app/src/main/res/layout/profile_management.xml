@@ -42,7 +42,7 @@
             android:id="@+id/entrantEmailInput"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="TextView"
+            android:hint="Enter your email"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/entrantNameInput" />
@@ -51,7 +51,7 @@
             android:id="@+id/entrantPhoneInput"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="TextView"
+            android:hint="Enter your phone number"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/entrantEmailInput" />
