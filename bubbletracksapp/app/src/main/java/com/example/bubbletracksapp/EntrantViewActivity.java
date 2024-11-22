@@ -1,10 +1,12 @@
 package com.example.bubbletracksapp;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -13,11 +15,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.android.gms.maps.model.LatLng;
 import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Objects;
 
 public class EntrantViewActivity extends AppCompatActivity {
 
@@ -66,7 +71,15 @@ public class EntrantViewActivity extends AppCompatActivity {
         joinButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                addEntrant();
+                // If the event needs a geolocation, make sure the entrant has a geolocation
+                if(!event.getNeedsGeolocation() || !Objects.equals(entrant.getGeolocation(), new LatLng(0, 0)))
+                {
+                    addEntrant();
+                }
+                else {
+                    Toast.makeText(EntrantViewActivity.this, "Allow geolocation and update your profile" +
+                            " to join this waitlist", Toast.LENGTH_LONG).show();
+                }
             }
         });
 
