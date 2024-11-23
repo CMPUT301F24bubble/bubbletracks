@@ -86,16 +86,16 @@ public class OrganizerEntrantListActivity extends AppCompatActivity
 
 
         waitlistListView = binding.waitlistView;
-//        waitlistAdapter = new EntrantListAdapter(this, waitList);
-//        waitlistListView.setAdapter(waitlistAdapter);
+        waitlistAdapter = new EntrantListAdapter(this, waitList);
+        waitlistListView.setAdapter(waitlistAdapter);
 
         invitedListView = binding.invitedListView;
-//        invitedAdapter = new InvitedListAdapter(this, invitedList);
-//        invitedListView.setAdapter(invitedAdapter);
+        invitedAdapter = new InvitedListAdapter(this, invitedList);
+        invitedListView.setAdapter(invitedAdapter);
 
         cancelledListView = binding.cancelledListView;
-//        cancelledAdapter = new CancelledListAdapter(this, cancelledList);
-//        cancelledListView.setAdapter(cancelledAdapter);
+        cancelledAdapter = new CancelledListAdapter(this, cancelledList);
+        cancelledListView.setAdapter(cancelledAdapter);
 
         // Set up all lists from Firebase
         setEventLists();
@@ -108,12 +108,7 @@ public class OrganizerEntrantListActivity extends AppCompatActivity
              */
             @Override
             public void onClick(View view) {
-                event.setWaitListWithEvents(waitList);
-                event.setInvitedListWithEvents(invitedList);
-                event.setRejectedListWithEvents(rejectedList);
-                event.setCancelledListWithEvents(cancelledList);
-                event.setEnrolledListWithEvents(enrolledList);
-                event.updateEventFirebase();
+                updateEventWithLists();
 
                 Intent intent = new Intent(OrganizerEntrantListActivity.this, MainActivity.class);
                 intent.putExtra("event", event);
@@ -134,11 +129,8 @@ public class OrganizerEntrantListActivity extends AppCompatActivity
         entrantDB.getEntrantList(event.getWaitList()).thenAccept(entrants -> {
             if(entrants != null){
                 waitList = entrants;
-                waitlistAdapter = new EntrantListAdapter(this, waitList);
-                waitlistListView.setAdapter(waitlistAdapter);
-
                 Log.d("getWaitList", "WaitList loaded");
-//                UpdateListDisplay();
+                UpdateListDisplay();
             } else {
                 Log.d("getWaitList", "No entrants in waitlist");
             }
@@ -147,10 +139,7 @@ public class OrganizerEntrantListActivity extends AppCompatActivity
             if(entrants != null){
                 invitedList = entrants;
                 Log.d("getInvitedList", "invitedList loaded");
-                invitedAdapter = new InvitedListAdapter(this, invitedList);
-                invitedListView.setAdapter(invitedAdapter);
-
-//                UpdateListDisplay();
+                UpdateListDisplay();
             } else {
                 Log.d("getInvitedList", "No entrants in InvitedList");
             }
@@ -159,7 +148,7 @@ public class OrganizerEntrantListActivity extends AppCompatActivity
             if(entrants != null){
                 rejectedList = entrants;
                 Log.d("getRejectedList", "rejectedList loaded");
-//                UpdateListDisplay();
+                UpdateListDisplay();
             } else {
                 Log.d("getRejectedList", "No entrants in RejectedList");
             }
@@ -168,10 +157,7 @@ public class OrganizerEntrantListActivity extends AppCompatActivity
             if(entrants != null){
                 cancelledList = entrants;
                 Log.d("getCancelledList", "cancelledList loaded");
-                cancelledAdapter = new CancelledListAdapter(this, cancelledList);
-                cancelledListView.setAdapter(cancelledAdapter);
-
-//                UpdateListDisplay();
+                UpdateListDisplay();
             } else {
                 Log.d("getCancelledList", "No entrants in CancelledList");
             }
@@ -180,7 +166,7 @@ public class OrganizerEntrantListActivity extends AppCompatActivity
             if(entrants != null){
                 enrolledList = entrants;
                 Log.d("getEnrolledList", "enrolledList loaded");
-//                UpdateListDisplay();
+                UpdateListDisplay();
             } else {
                 Log.d("getEnrolledList", "No entrants in EnrolledList");
             }
@@ -214,6 +200,7 @@ public class OrganizerEntrantListActivity extends AppCompatActivity
         enrolledList.remove(entrant);
         cancelledList.add(entrant);
         UpdateListDisplay();
+        updateEventWithLists();
     }
 
     /**
@@ -223,7 +210,6 @@ public class OrganizerEntrantListActivity extends AppCompatActivity
      */
     @Override
     public boolean hasEntrantAccepted(Entrant entrant) {
-        // Should check if entant accepted invitation
         return enrolledList.contains(entrant);
     }
 
@@ -251,4 +237,17 @@ public class OrganizerEntrantListActivity extends AppCompatActivity
         invitedAdapter.notifyDataSetChanged();
         cancelledAdapter.notifyDataSetChanged();
     }
+
+    /**
+     * Updates event lists
+     */
+    private void updateEventWithLists() {
+        event.setWaitListWithEvents(waitList);
+        event.setInvitedListWithEvents(invitedList);
+        event.setRejectedListWithEvents(rejectedList);
+        event.setCancelledListWithEvents(cancelledList);
+        event.setEnrolledListWithEvents(enrolledList);
+        event.updateEventFirebase();
+    }
+
 }

@@ -66,12 +66,12 @@ public class OrganizerEditActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         waitlistListView = binding.reusableListView;
+        waitlistAdapter = new EntrantListAdapter(this, waitList);
+        waitlistListView.setAdapter(waitlistAdapter);
 
         entrantDB.getEntrantList(event.getWaitList()).thenAccept(entrants -> {
             if(entrants != null){
                 waitList = entrants;
-                waitlistAdapter = new EntrantListAdapter(this, waitList);
-                waitlistListView.setAdapter(waitlistAdapter);
 
                 Log.d("getWaitList", "WaitList loaded");
 
@@ -115,6 +115,7 @@ public class OrganizerEditActivity extends AppCompatActivity {
              */
             @Override
             public void onClick(View view) {
+                updateEventWithLists();
                 Intent intent = new Intent(OrganizerEditActivity.this, MainActivity.class);
                 intent.putExtra("event", event);
                 startActivity(intent);
@@ -138,7 +139,7 @@ public class OrganizerEditActivity extends AppCompatActivity {
         enrolledList.clear();
         invitedList.addAll(waitList.subList(0, n));
         rejectedList.addAll(waitList.subList(n, waitList.size()));
-
+        updateEventWithLists();
         return true;
     }
 
@@ -146,7 +147,6 @@ public class OrganizerEditActivity extends AppCompatActivity {
      * Shows the lists
      */
     private void startListActivity() {
-        event.updateEventFirebase();
         Intent intent = new Intent(OrganizerEditActivity.this, OrganizerEntrantListActivity.class);
         intent.putExtra("event", event);
         startActivity(intent);
@@ -161,6 +161,7 @@ public class OrganizerEditActivity extends AppCompatActivity {
         event.setRejectedListWithEvents(rejectedList);
         event.setCancelledListWithEvents(cancelledList);
         event.setEnrolledListWithEvents(enrolledList);
+        event.updateEventFirebase();
     }
 
 }
