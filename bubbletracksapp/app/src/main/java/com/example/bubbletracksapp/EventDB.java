@@ -264,4 +264,52 @@ public class EventDB {
         });
         return returnCode;
     }
+
+    /**
+     * Retrieves all events that exist in the database
+     * @return a completable future with a list of all the events or null if there are none
+     */
+    public CompletableFuture<ArrayList<Event>> getAllEvents()
+    {
+        CompletableFuture<ArrayList<Event>> returnCode = new CompletableFuture<>();
+        ArrayList<Event> events = new ArrayList<>();
+
+        eventsRef.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            /**
+             * Indicates either that the document was found or not
+             * @param querySnapshot query snapshot
+             */
+            @Override
+            public void onSuccess(QuerySnapshot querySnapshot) {
+                if (querySnapshot.isEmpty()) {
+                    Log.d("getAllEvents", "No events found in database");
+                    returnCode.complete(null);
+                    return;
+                }
+                // Go through each document and get the Event information.
+                for (QueryDocumentSnapshot document : querySnapshot) {
+                    try {
+                        Event newEvent = new Event(document);
+                        events.add(newEvent);
+                    } catch (Exception e) {
+                        Log.d("getAllEvents", "An event could not be added," +
+                                " check if all events contain the correct fields");
+                    }
+                }
+                Log.d("getAllEvents", "Found Events: " + events.toString());
+
+                returnCode.complete(events);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            /**
+             * logs that there has been an error retrieving events list
+             */
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                // Error if it does not work
+                Log.d("Database error", "Error getting all events", e);
+            }
+        });
+        return returnCode;
+    }
 }

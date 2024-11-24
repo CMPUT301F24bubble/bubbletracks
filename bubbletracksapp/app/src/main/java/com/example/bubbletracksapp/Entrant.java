@@ -172,6 +172,13 @@ public class Entrant implements Parcelable {
 
         return map;
     }
+
+    /**
+     * Retrieve role (organizer, admin, null) or entrant
+     * @return role of entrant as a string
+     */
+    public String getRole() { return role; }
+
     /**
      * Retrieve name of entrant
      * @return the name of the entrant
@@ -325,6 +332,17 @@ public class Entrant implements Parcelable {
      */
     public void setEventsOrganized(ArrayList<String> eventsOrganized) {
         this.eventsOrganized = eventsOrganized;
+    }
+
+    /**
+     * set the role of the entrant; must be "entrant", "admin", or "organizer"
+     * @param role
+     */
+    public void setRole(String role) {
+        if (role.equalsIgnoreCase("entrant") || role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("organizer"))
+        { this.role = role; } else {
+            throw new IllegalArgumentException("Entrant role must equal \"entrant\", \"admin\", or \"organizer\"");
+        }
     }
 
     /**
