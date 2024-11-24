@@ -137,6 +137,15 @@ public class OrganizerEditActivity extends AppCompatActivity {
             }
         });
 
+        binding.viewAttendeeMapButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(OrganizerEditActivity.this, OrganizerLocationsMap.class);
+                intent.putExtra("event", event);
+                startActivity(intent);
+            }
+        });
+
     }
 
     /**

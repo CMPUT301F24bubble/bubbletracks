@@ -8,7 +8,9 @@ import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.GeoPoint;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,6 +37,7 @@ public class Entrant implements Parcelable {
     private String phone;
     private String deviceID;
     private Boolean notification;
+    private LatLng geolocation;
     private String role;
     private ArrayList<String> eventsOrganized = new ArrayList<>();
     private ArrayList<String> eventsInvited = new ArrayList<>();
@@ -49,17 +52,19 @@ public class Entrant implements Parcelable {
      * @param deviceID Entrants device ID to determine who the entrant is
      * @param notification Entrants declaration of allowing notification
      * @param role Denotes role; takes on either 'admin', 'organizer', or ''
+     * @param geolocation Denotes the geolocation when the entrant last updated their profile
      * @param eventsOrganized events from the organizer
-     * @param eventsInvited evened entrant is invited to
-     * @param eventsEnrolled event entrant is enrolled in
-     * @param eventsWaitlist event entrant is in waitlist for
+     * @param eventsInvited events entrant is invited to
+     * @param eventsEnrolled events entrant is enrolled in
+     * @param eventsWaitlist events entrant is in waitlist for
      */
-    public Entrant(String[] name, String email, String phone, String deviceID, Boolean notification, String role, ArrayList<String> eventsOrganized, ArrayList<String> eventsInvited, ArrayList<String> eventsEnrolled, ArrayList<String> eventsWaitlist) {
+    public Entrant(String[] name, String email, String phone, String deviceID, Boolean notification, LatLng geolocation, String role, ArrayList<String> eventsOrganized, ArrayList<String> eventsInvited, ArrayList<String> eventsEnrolled, ArrayList<String> eventsWaitlist) {
         this.name = name;
         this.email = email;
         this.phone = phone;
         this.deviceID = deviceID;
         this.notification = notification;
+        this.geolocation = geolocation;
         this.role = role;
         this.eventsOrganized = eventsOrganized;
         this.eventsInvited = eventsInvited;
@@ -78,6 +83,7 @@ public class Entrant implements Parcelable {
         this.deviceID = newDeviceID;
         this.role = "";
         this.notification = false;
+        this.geolocation = new LatLng(0,0);
         this.eventsOrganized = new ArrayList<>();
         this.eventsInvited = new ArrayList<>();
         this.eventsEnrolled = new ArrayList<>();
@@ -95,6 +101,7 @@ public class Entrant implements Parcelable {
         this.deviceID = "";
         this.role = "";
         this.notification = false;
+        this.geolocation = new LatLng(0,0);
         this.eventsOrganized = new ArrayList<>();
         this.eventsInvited = new ArrayList<>();
         this.eventsEnrolled = new ArrayList<>();
@@ -113,6 +120,7 @@ public class Entrant implements Parcelable {
         this.phone = document.getString("phone");
         this.deviceID = document.getString("ID");
         this.notification = document.getBoolean("notification");
+        this.geolocation = geoPointToLatLng(document.getGeoPoint("geolocation"));
         this.role = document.getString("role");
         this.eventsOrganized = (ArrayList<String>)document.getData().get("organized");
         this.eventsInvited = (ArrayList<String>)document.getData().get("invited");
@@ -133,6 +141,7 @@ public class Entrant implements Parcelable {
         deviceID = in.readString();
         byte tmpNotification = in.readByte();
         notification = tmpNotification == 0 ? null : tmpNotification == 1;
+        geolocation = in.readParcelable(LatLng.class.getClassLoader());
         role = in.readString();
         eventsOrganized = in.createStringArrayList();
         eventsInvited = in.createStringArrayList();
@@ -171,6 +180,7 @@ public class Entrant implements Parcelable {
         map.put("email", email);
         map.put("phone", phone);
         map.put("role", role);
+        map.put("geolocation", latLngToGeoPoint(geolocation));
         map.put("notification", notification);
         map.put("ID", deviceID);
         map.put("organized", eventsOrganized);
@@ -288,6 +298,7 @@ public class Entrant implements Parcelable {
         parcel.writeString(phone);
         parcel.writeString(deviceID);
         parcel.writeByte((byte) (notification == null ? 0 : notification ? 1 : 2));
+        parcel.writeParcelable(geolocation, i);
         parcel.writeString(role);
         parcel.writeStringList(eventsOrganized);
         parcel.writeStringList(eventsInvited);
@@ -458,6 +469,48 @@ public class Entrant implements Parcelable {
      * @param event string of waitlist
      */
     public void deleteFromEventsWaitlist(String event){ this.eventsWaitlist.remove(event); }
+
+
+    /**
+     * Get the geolocation coordinates
+     * @return The latitude and longitude of the entrant
+     */
+    public LatLng getGeolocation() {
+        return geolocation;
+    }
+
+    /**
+     * Set the geolocation coordinates
+     * @param geolocation the geolocation point in latitude and longitude
+     */
+    public void setGeolocation(LatLng geolocation) {
+        this.geolocation = geolocation;
+    }
+
+    /**
+     * Transforms a LatLng point to a geoPoint
+     * Used to store in database
+     * @param geolocation LatLng point to be transformed
+     * @return geoPoint from the given LatLng point
+     */
+    private GeoPoint latLngToGeoPoint(LatLng geolocation) {
+        double lat = geolocation.latitude;
+        double lng = geolocation.longitude;
+        return new GeoPoint(lat,lng);
+    }
+
+    /**
+     * Transforms a geoPoint to a LatLng point
+     * Used to get from database
+     * @param geolocation geoPoint point to be transformed
+     * @return LatLng point from the given geoPoint
+     */
+    private LatLng geoPointToLatLng(GeoPoint geolocation) {
+        double lat = geolocation.getLatitude();
+        double lng = geolocation.getLongitude();
+        return new LatLng(lat,lng);
+    }
+
 
     public void rejectEvent(String event) {
         eventsWaitlist.remove(event);

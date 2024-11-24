@@ -261,4 +261,53 @@ public class EntrantDB {
         });
         return returnCode;
     }
+
+    /**
+     * Retrieves all entrants that exist in the database
+     * @return a completable future with a list of all the entrants or null if there are none
+     */
+    public CompletableFuture<ArrayList<Entrant>> getAllEntrants()
+    {
+        CompletableFuture<ArrayList<Entrant>> returnCode = new CompletableFuture<>();
+        ArrayList<Entrant> entrants = new ArrayList<>();
+
+        entrantsRef.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            /**
+             * Indicates either that the document was found or not
+             * if it is, transform it to entrant and retrieve it
+             * @param querySnapshot query snapshot
+             */
+            public void onSuccess(QuerySnapshot querySnapshot) {
+                if (querySnapshot.isEmpty()) {
+                    Log.d("getAllEntrants", "No entrants found in database");
+                    returnCode.complete(null);
+                    return;
+                }
+                // Go through each document and get the Entrant information.
+                for (QueryDocumentSnapshot document : querySnapshot) {
+                    try {
+                        Entrant newEntrant = new Entrant(document);
+                        entrants.add(newEntrant);
+                    } catch (Exception e) {
+                        Log.d("getAllEntrants", "An entrant could not be added," +
+                                " check if all entrants contain the correct fields");
+                    }
+                }
+                Log.d("getAllEntrants", "Found Entrants: " + entrants.toString());
+
+                returnCode.complete(entrants);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            /**
+             * logs that there has been an error retrieving entrants list
+             */
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                // Error if it does not work
+                Log.d("Database error", "Error getting all entrants", e);
+            }
+        });
+        return returnCode;
+    }
 }
