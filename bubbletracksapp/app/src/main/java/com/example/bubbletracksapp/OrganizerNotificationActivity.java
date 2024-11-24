@@ -26,7 +26,8 @@ import com.google.firebase.database.ServerValue;
 
 
 import java.util.ArrayList;
-
+import java.util.UUID;
+//TODO: add timestamp to remove notification in database after a set time
 /**
  * Organizer sends notifications to chosen entrants to sign up for events
  * @author Erza
@@ -62,18 +63,6 @@ public class OrganizerNotificationActivity extends AppCompatActivity {
 
         // Test notification on organizer
         // TODO: send notification to database of entrants in event
-/*        requestPermissionLauncher = registerForActivityResult(
-                new ActivityResultContracts.RequestPermission(),
-                isGranted -> {
-                    if (isGranted) {
-                        // Permission is granted, show notification
-                        Toast.makeText(this, "Notification permission!!", Toast.LENGTH_SHORT).show();
-
-                    } else {
-                        Toast.makeText(this, "Notification permission is required", Toast.LENGTH_SHORT).show();
-                    }
-                }
-        );*/
 
         CheckBox checkInvited = findViewById(R.id.checkbox_notify_selected);
         CheckBox checkRejected = findViewById(R.id.checkbox_notify_non_selected);
@@ -111,7 +100,7 @@ public class OrganizerNotificationActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             // Check if the notification permission is granted
             if (checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
-                showNotification(checkInvited, checkRejected, checkConfirmed, checkCancelled);
+                //showNotification(checkInvited, checkRejected, checkConfirmed, checkCancelled);
                 sendNotification(checkInvited, checkRejected, checkConfirmed, checkCancelled);
             } else {
                 // Request the notification permission
@@ -119,7 +108,7 @@ public class OrganizerNotificationActivity extends AppCompatActivity {
             }
         } else {
             // For API levels below 33, permission is not required
-            showNotification(checkInvited, checkRejected, checkConfirmed, checkCancelled);
+            //showNotification(checkInvited, checkRejected, checkConfirmed, checkCancelled);
         }
     }
 
@@ -129,13 +118,13 @@ public class OrganizerNotificationActivity extends AppCompatActivity {
      * @param checkConfirmed entrants who confirmed registration for event
      * @param checkCancelled entrants who cancelled invitation to event
      */
-    //TODO: for entrant
-    private void showNotification(CheckBox checkInvited, CheckBox checkRejected, CheckBox checkConfirmed, CheckBox checkCancelled) {
+    //TODO: for entrant --> remove after all 4 notifications are made
+/*    private void showNotification(CheckBox checkInvited, CheckBox checkRejected, CheckBox checkConfirmed, CheckBox checkCancelled) {
         Intent intent = new Intent(this, OrganizerNotificationActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
 
-        NotificationCompat.Builder invitedBuilder = new NotificationCompat.Builder(this, CHANNEL_ID)
+*//*        NotificationCompat.Builder invitedBuilder = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setSmallIcon(R.drawable.baseline_notifications_24)
                 .setContentTitle("Bubble Tracks App")
                 .setContentText("You are sampled for the event!")
@@ -177,7 +166,7 @@ public class OrganizerNotificationActivity extends AppCompatActivity {
                         .bigText("You have chosen to cancel your attendance for the event, but keep an eye out for new ones to come."))
                 // Set the intent that fires when the user taps the notification.
                 .setContentIntent(pendingIntent)
-                .setAutoCancel(true);
+                .setAutoCancel(true);*//*
 
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
         try {
@@ -205,7 +194,7 @@ public class OrganizerNotificationActivity extends AppCompatActivity {
             Log.e("Notification", "Permission denied for posting notification: " + e.getMessage());
             Toast.makeText(this, "Permission required to show notifications", Toast.LENGTH_SHORT).show();
         }
-    }
+    }*/
 
 
     private void sendNotification(CheckBox checkInvited, CheckBox checkRejected, CheckBox checkConfirmed, CheckBox checkCancelled) {
@@ -213,54 +202,71 @@ public class OrganizerNotificationActivity extends AppCompatActivity {
         testList.add("person1");
         testList.add("person2");
         testList.add("9be104ee-e9e8-4df4-b93f-c3ec0aef750c");
+        testList.add("c8d942fe-1319-4015-955a-c0b09964183d");
 
         Object timestamp = System.currentTimeMillis();
         Intent intent = getIntent();
-        //id = intent.getStringExtra("id");
-        // Send to confirmed entrants
-        if (checkConfirmed.isChecked()) {
-            //Toast.makeText(OrganizerNotificationActivity.this, "Failed to save notification: " , Toast.LENGTH_LONG).show();
-            Log.d("Notification", "This is notification db: ");
+
+        // add invited notification to database
+        if (checkInvited.isChecked()) {
+            Log.d("Notification(invited)", "This is invited action: ");
             //***ArrayList<String> confirmedList = event.getEnrolledList();
-           // notificationManager.notify(CONFIRMED_NOTIFICATION_ID, confirmedBuilder.build());
             Notifications notification = new Notifications(
                     testList,
-                    "Bubble Tracks App",
-                    "Thank you for confirming your attendance to " + "!",
-                    "Mark your calendars for your event details.",
+                    "You Are Invited!",
+                    "Congratulations, you are invited to the event!",
+                    "Accept your invitation to confirm your registration.",
                     //"Thank you for confirming your attendance to " + event.getName() + "!"
-                    "1000000"
+                    UUID.randomUUID().toString()
             );
             db.addNotification(notification);
-            //DatabaseReference notificationsRef = FirebaseDatabase.getInstance().getReference("notifications");
-/*            notificationsRef.push().setValue(notifications)
-                    .addOnSuccessListener(aVoid -> {
-                        Toast.makeText(OrganizerNotificationActivity.this, "Notification sent and saved!", Toast.LENGTH_LONG).show();
-                    })
-                    .addOnFailureListener(e -> {
-                        Toast.makeText(OrganizerNotificationActivity.this, "Failed to save notification: " + e.getMessage(), Toast.LENGTH_LONG).show();
-                    });*/
         }
-        //Toast.makeText(OrganizerNotificationActivity.this, "Notification sent!", Toast.LENGTH_LONG).show();
-/*        db.getNotification(id).thenAccept(notifications -> {
-            if(notifications != null){
-                this.notification = notifications;
-                ArrayList<String> recipients = notifications.getRecipients();
-                for(String entrant : waitList){
-                    if(entrant.equals(this.entrant.getID())){
-                        inWaitlist = true;
-                        joinButton.setText(R.string.leave_waitlist);
-                        break;
-                    }
-                }
-                setViews();
-            } else {
-                Toast.makeText(OrganizerNotificationActivity.this, "Notif does not exist", Toast.LENGTH_LONG).show();
-            }
-        }).exceptionally(e -> {
-            Toast.makeText(OrganizerNotificationActivity.this, "Failed to load notif: " + e.getMessage(), Toast.LENGTH_LONG).show();
-            return null;
-        });*/
+        // add rejected notification to database
+        if (checkRejected.isChecked()) {
+            Log.d("Notification(rejected)", "This is rejected action: ");
+            //***ArrayList<String> confirmedList = event.getEnrolledList();
+            Notifications notification = new Notifications(
+                    testList,
+                    "Event Waitlist Update",
+                    "",
+                    "Thank you for your participation in joining the waitlist, but unfortunately you have not been selected to join.",
+                    //"Thank you for confirming your attendance to " + event.getName() + "!"
+                    UUID.randomUUID().toString()
+            );
+            db.addNotification(notification);
+        }
+
+        // Send to confirmed entrants
+        if (checkConfirmed.isChecked()) {
+            Log.d("Notification(confirmed)", "This is confirmed action: ");
+            //***ArrayList<String> confirmedList = event.getEnrolledList();
+            Notifications notification = new Notifications(
+                    testList,
+                    "Thank you for confirming your attendance",
+                    "",
+                    "Mark your calendars for your event details.",
+                    //"Thank you for confirming your attendance to " + event.getName() + "!"
+                    UUID.randomUUID().toString()
+            );
+            db.addNotification(notification);
+        }
+
+        if (checkCancelled.isChecked()) {
+            Log.d("Notification(cancelled)", "This is cancelled action: ");
+            //***ArrayList<String> confirmedList = event.getEnrolledList();
+            Notifications notification = new Notifications(
+                    testList,
+                    "Registration Cancel Confirmation",
+                    "",
+                    "We appreciate your consideration for joining this event. Hope to see you in future ones!",
+                    UUID.randomUUID().toString()
+            );
+            db.addNotification(notification);
+        }
+
+
+        Toast.makeText(this, "Notifications sent!", Toast.LENGTH_LONG).show();
+
     }
 
 }

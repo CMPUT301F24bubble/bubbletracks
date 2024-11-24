@@ -47,7 +47,7 @@ public class Notifications implements Parcelable{
         this.smallText = smallText;
         this.bigText = bigText;
         this.timestamp = timestamp;
-        this.id = generateUniqueId();
+        this.id = UUID.randomUUID().toString();
     }
 
     protected Notifications(Parcel in) {
