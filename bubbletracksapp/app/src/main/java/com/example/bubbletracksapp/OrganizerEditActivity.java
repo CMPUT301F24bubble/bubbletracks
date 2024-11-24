@@ -59,6 +59,7 @@ public class OrganizerEditActivity extends AppCompatActivity {
         }
 
         //If the Event has been pooled already, just show the lists
+        // TODO change into correct way of doing it
         if(event.getInvitedList().size() > 0)
         {
             startListActivity();
@@ -73,7 +74,7 @@ public class OrganizerEditActivity extends AppCompatActivity {
 
         entrantDB.getEntrantList(event.getWaitList()).thenAccept(entrants -> {
             if(entrants != null){
-                waitList = entrants;
+                waitList.addAll(entrants);
                 waitlistAdapter.notifyDataSetChanged();
 
                 Log.d("getWaitList", "WaitList loaded");
@@ -133,12 +134,13 @@ public class OrganizerEditActivity extends AppCompatActivity {
      * @return true if successfully sampled entrants
      */
     public boolean drawEntrants(int n) {
-        Collections.shuffle(waitList);
+        ArrayList<Entrant> newWaitlist = new ArrayList<>(waitList);
+        Collections.shuffle(newWaitlist);
         invitedList.clear();
         rejectedList.clear();
         enrolledList.clear();
-        invitedList.addAll(waitList.subList(0, n));
-        rejectedList.addAll(waitList.subList(n, waitList.size()));
+        invitedList.addAll(newWaitlist.subList(0, n));
+        rejectedList.addAll(newWaitlist.subList(n, newWaitlist.size()));
         updateEventWithLists();
         return true;
     }
