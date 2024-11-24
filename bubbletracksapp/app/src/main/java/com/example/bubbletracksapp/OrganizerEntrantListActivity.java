@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -99,6 +100,9 @@ public class OrganizerEntrantListActivity extends AppCompatActivity
 
         // Set up all lists from Firebase
         setEventLists();
+
+        TextView waitListDescription = binding.waitListDescription;
+        waitListDescription.setText(getString(R.string.wait_list_text, event.getName()));
 
         binding.backButton.setOnClickListener(new View.OnClickListener() {
             /**

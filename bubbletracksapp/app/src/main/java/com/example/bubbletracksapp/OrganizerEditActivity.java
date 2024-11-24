@@ -7,6 +7,8 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -59,8 +61,7 @@ public class OrganizerEditActivity extends AppCompatActivity {
         }
 
         //If the Event has been pooled already, just show the lists
-        // TODO change into correct way of doing it
-        if(event.getInvitedList().size() > 0)
+        if(!event.getInvitedList().isEmpty() || !event.getRejectedList().isEmpty())
         {
             startListActivity();
         }
@@ -69,6 +70,9 @@ public class OrganizerEditActivity extends AppCompatActivity {
         waitlistListView = binding.reusableListView;
         waitlistAdapter = new EntrantListAdapter(this, waitList);
         waitlistListView.setAdapter(waitlistAdapter);
+
+        TextView waitListDescription = binding.waitListDescription;
+        waitListDescription.setText(getString(R.string.wait_list_text, event.getName()));
 
         Spinner nSpin = binding.waitlistChooseCount;
 
@@ -102,11 +106,16 @@ public class OrganizerEditActivity extends AppCompatActivity {
              */
             @Override
             public void onClick(View view) {
-                String nStr = nSpin.getSelectedItem().toString();
-                int n = Integer.parseInt(nStr);
-                drawEntrants(n);
-                updateEventWithLists();
-                startListActivity();
+                if(!waitList.isEmpty()) {
+                    String nStr = nSpin.getSelectedItem().toString();
+                    int n = Integer.parseInt(nStr);
+                    drawEntrants(n);
+                    updateEventWithLists();
+                    startListActivity();
+                }
+                else {
+                    Toast.makeText(OrganizerEditActivity.this, "No users in waitlist.", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
