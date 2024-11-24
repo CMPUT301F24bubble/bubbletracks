@@ -18,7 +18,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
@@ -85,7 +84,7 @@ public class AppEventAdapter extends RecyclerView.Adapter<AppEventAdapter.EventV
     @Override
     public EventViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(context);
-        View view = layoutInflater.inflate(R.layout.item_event, parent, false);
+        View view = layoutInflater.inflate(R.layout.horizontal_item_event, parent, false);
         return new EventViewHolder(view);
     }
 
