@@ -82,6 +82,7 @@ public class MainActivity extends AppCompatActivity {
         Button profileButton = binding.buttonProfile;
         Button userEventsButton = binding.buttonEvents;
         Button eventHostButton = binding.buttonEventHost;
+        Button adminProfileAccessButton = binding.buttonAdminProfiles;
 
         Intent createEventIntent = new Intent(MainActivity.this, OrganizerActivity.class); //class where you are, then class where you wanan go
         switchActivityButton(createEventButton, createEventIntent);
@@ -101,7 +102,19 @@ public class MainActivity extends AppCompatActivity {
                 if (savedInstanceState == null) {
                     getSupportFragmentManager().beginTransaction()
                             .setReorderingAllowed(true)
-                            .add(R.id.content_holder, OrganizerEventHosting.class, null)
+                            .replace(R.id.content_holder, OrganizerEventHosting.class, null) // Use replace instead of add
+                            .commit();
+                }
+            }
+        });
+
+        adminProfileAccessButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (savedInstanceState == null) {
+                    getSupportFragmentManager().beginTransaction()
+                            .setReorderingAllowed(true)
+                            .replace(R.id.content_holder, AdminProfileViews.class, null) // Use replace instead of add
                             .commit();
                 }
             }
