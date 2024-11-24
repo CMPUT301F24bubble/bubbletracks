@@ -71,3 +71,5 @@ public class AdminEntrantListAdapter extends ArrayAdapter<Entrant> {
         return convertView;
     }
 }
+
+
