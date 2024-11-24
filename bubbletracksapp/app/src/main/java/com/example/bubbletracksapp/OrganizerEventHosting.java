@@ -70,6 +70,7 @@ import java.util.Date;
  */
 public class OrganizerEventHosting extends Fragment{
     private ListsBinding binding;
+    private Admin admin;
 
     EventDB eventDB = new EventDB();
     ArrayList<Event> hostedEvents = new ArrayList<>();
@@ -123,7 +124,7 @@ public class OrganizerEventHosting extends Fragment{
             if(events != null){
                 Log.d("AHHHHHHHHHHHHHHHHHHHHHHHHHHHH", "events is not null");
                 hostedEvents = events;
-                eventListAdapter = new EventHostListAdapter(this.getContext(), hostedEvents);
+                eventListAdapter = new EventHostListAdapter(this.getContext(), hostedEvents, admin);
                 eventListView.setAdapter(eventListAdapter);
 
             } else {

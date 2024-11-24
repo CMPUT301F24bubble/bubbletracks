@@ -37,15 +37,16 @@ public class EventHostListAdapter extends ArrayAdapter<Event> {
 //        void editEvent(Event event);
 //    }
 //    private EventHostI listener;
-
+    private Admin admin;
     /**
      * Initialize the adapter with the list of events
      *
      * @param context context of what adapter does
      * @param events  list of entrants
      */
-    public EventHostListAdapter(Context context, ArrayList<Event> events) {
+    public EventHostListAdapter(Context context, ArrayList<Event> events, Admin admin) {
         super(context, 0, events);
+        this.admin = admin;
 //        if (context instanceof EventHostI) {
 //            listener = (EventHostI) context;
 //        } else {
@@ -117,15 +118,24 @@ public class EventHostListAdapter extends ArrayAdapter<Event> {
             }
         });
 
-        // Move to admin adapter later
         deleteEventButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                deleteEvent(position);
+                new AlertDialog.Builder(getContext())
+                        .setTitle("Delete Event")
+                        .setMessage("Are you sure you want to delete this event?")
+                        .setPositiveButton("Yes", (dialog, which) -> {
+                            admin.deleteEvent(getContext(), event);
+                            remove(event);
+                            notifyDataSetChanged();
+                        })
+                        .setNegativeButton("No", (dialog, which) -> {
+                            dialog.dismiss();
+                        })
+                        .create()
+                        .show();
             }
         });
-
-
         return view;
     }
 
@@ -151,77 +161,5 @@ public class EventHostListAdapter extends ArrayAdapter<Event> {
      */
     public void editEvent(Event event) {
 
-    }
-
-// delete this later and put into admin
-
-    /**
-     * Allow to delete the event from the list and Firestore.
-     *
-     * @param position Position of the event to be deleted.
-     */public void deleteEvent(int position) {
-        Event eventToDelete = getItem(position);
-        if (eventToDelete == null) {
-            return;
-        }
-
-        new AlertDialog.Builder(getContext())
-                .setTitle("Confirm Event Deletion")
-                .setMessage("Are you sure you want to delete this event? This action cannot be undone.")
-                .setPositiveButton("Delete", (dialog, which) -> {
-                    FirebaseFirestore db = FirebaseFirestore.getInstance();
-                    String eventId = eventToDelete.getId();
-
-                    // batch is a way to do multiple things without crashing everything. If one action fails, the other actions won't continue
-                    WriteBatch batch = db.batch();
-
-                    DocumentReference eventRef = db.collection("events").document(eventId);
-                    batch.delete(eventRef);
-
-                    List<String> subcategories = Arrays.asList("enrolled", "invited", "organized", "waitlist");
-
-                    db.collection("entrants")
-                            .get()
-                            .addOnSuccessListener(querySnapshot -> {
-                                for (DocumentSnapshot entrantDoc : querySnapshot.getDocuments()) {
-                                    DocumentReference entrantRef = entrantDoc.getReference();
-                                    Map<String, Object> entrantData = entrantDoc.getData();
-
-                                    if (entrantData != null) {
-                                        // go through each subcategory
-                                        for (String subcategory : subcategories) {
-                                            if (entrantData.containsKey(subcategory)) {
-                                                List<String> eventList = (List<String>) entrantData.get(subcategory);
-                                                if (eventList != null && eventList.contains(eventId)) {
-                                                    // Remove the event ID from the list
-                                                    eventList.remove(eventId);
-                                                    batch.update(entrantRef, subcategory, eventList);
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-
-                                batch.commit()
-                                        .addOnSuccessListener(aVoid -> {
-                                            remove(eventToDelete);
-                                            notifyDataSetChanged();
-                                            Toast.makeText(getContext(), "Event and references deleted successfully", Toast.LENGTH_SHORT).show();
-                                        })
-                                        .addOnFailureListener(e -> {
-                                            Log.e("DeleteEvent", "Error deleting event or references: ", e);
-                                            Toast.makeText(getContext(), "Failed to delete event. Try again.", Toast.LENGTH_SHORT).show();
-                                        });
-                            })
-                            .addOnFailureListener(e -> {
-                                Log.e("DeleteEvent", "Error fetching entrant references: ", e);
-                                Toast.makeText(getContext(), "Failed to fetch related data. Try again.", Toast.LENGTH_SHORT).show();
-                            });
-
-                    dialog.dismiss();
-                })
-                .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
-                .create()
-                .show();
     }
 }
