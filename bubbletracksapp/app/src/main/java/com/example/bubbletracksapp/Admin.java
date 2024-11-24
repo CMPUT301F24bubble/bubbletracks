@@ -24,6 +24,7 @@ public class Admin {
     public Admin(Context context){
         this.context = context;
     }
+
     /**
      * Allow to delete the event from the list and Firestore.
      *
@@ -35,55 +36,55 @@ public class Admin {
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         String eventId = eventToDelete.getId();
-
-        // batch is a way to do multiple things without crashing everything. If one action fails, the other actions won't continue
         WriteBatch batch = db.batch();
 
         DocumentReference eventRef = db.collection("events").document(eventId);
-        batch.delete(eventRef); // Add the delete operation for the event
+        batch.delete(eventRef);
 
+        // List of subcategories to check for each entrant
         List<String> subcategories = Arrays.asList("enrolled", "invited", "organized", "waitlist");
 
-        // Start querying the "entrants" collection
         db.collection("entrants")
                 .get()
                 .addOnSuccessListener(querySnapshot -> {
+                    // Iterate through all entrant documents
                     for (DocumentSnapshot entrantDoc : querySnapshot.getDocuments()) {
                         DocumentReference entrantRef = entrantDoc.getReference();
                         Map<String, Object> entrantData = entrantDoc.getData();
 
                         if (entrantData != null) {
-                            // go through each subcategory
+                            // Iterate over each subcategory to check for the event ID
                             for (String subcategory : subcategories) {
                                 if (entrantData.containsKey(subcategory)) {
                                     List<String> eventList = (List<String>) entrantData.get(subcategory);
                                     if (eventList != null && eventList.contains(eventId)) {
                                         // Remove the event ID from the list
                                         eventList.remove(eventId);
-                                        batch.update(entrantRef, subcategory, eventList); // Add update to batch
+                                        batch.update(entrantRef, subcategory, eventList); // Update the document with the modified list
+
                                     }
                                 }
                             }
                         }
                     }
 
+                    // Commit the batch operation after all updates are added
                     batch.commit()
                             .addOnSuccessListener(aVoid -> {
                                 Toast.makeText(context, "Event and references deleted successfully", Toast.LENGTH_SHORT).show();
                             })
                             .addOnFailureListener(e -> {
-                                Log.e("DeleteEvent", "Error deleting event or references: ", e);
+                                Log.e("DeleteEvent", "Error deleting event or updating references: ", e);
                                 Toast.makeText(context, "Failed to delete event. Try again.", Toast.LENGTH_SHORT).show();
                             });
 
                 })
                 .addOnFailureListener(e -> {
-                    Log.e("DeleteEvent", "Error fetching entrant references: ", e);
+                    Log.e("DeleteEvent", "Error fetching entrant data: ", e);
                     Toast.makeText(context, "Failed to fetch related data. Try again.", Toast.LENGTH_SHORT).show();
                 });
-
-
     }
+
 
 
     // **Profiles**
@@ -93,35 +94,31 @@ public class Admin {
         }
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        String profileId = entrantToDelete.getID();  // Profile ID to delete
-
-        // Initialize Firestore batch operation
+        String profileId = entrantToDelete.getID();
         WriteBatch batch = db.batch();
 
-        // Reference to the entrant profile document to delete
         DocumentReference profileRef = db.collection("entrants").document(profileId);
         batch.delete(profileRef);
 
         // List of subcategories where profile IDs might be referenced
         List<String> subcategories = Arrays.asList("cancelled", "enrolled", "invited", "rejected", "wait");
 
-        // Iterate over all documents in the "entrants" collection
-        db.collection("entrants")
+        db.collection("events")
                 .get()
                 .addOnSuccessListener(querySnapshot -> {
-                    for (DocumentSnapshot entrantDoc : querySnapshot.getDocuments()) {
-                        DocumentReference entrantRef = entrantDoc.getReference();
-                        Map<String, Object> entrantData = entrantDoc.getData();
+                    for (DocumentSnapshot eventDoc : querySnapshot.getDocuments()) {
+                        DocumentReference eventRef = eventDoc.getReference();
+                        Map<String, Object> eventData = eventDoc.getData();
 
-                        if (entrantData != null) {
+                        if (eventData != null) {
                             // Go through each subcategory to find and remove profile references
                             for (String subcategory : subcategories) {
-                                if (entrantData.containsKey(subcategory)) {
-                                    List<String> profileList = (List<String>) entrantData.get(subcategory);
+                                if (eventData.containsKey(subcategory)) {
+                                    List<String> profileList = (List<String>) eventData.get(subcategory);
                                     if (profileList != null && profileList.contains(profileId)) {
                                         // Remove the profile ID from the list of that subcategory
                                         profileList.remove(profileId);
-                                        batch.update(entrantRef, subcategory, profileList); // Update the document with the new list
+                                        batch.update(eventRef, subcategory, profileList); // Update the document with the new list
                                     }
                                 }
                             }
