@@ -31,7 +31,6 @@ public class OrganizerEntrantListActivity extends AppCompatActivity
 
     Event event;
     EntrantDB entrantDB = new EntrantDB();
-    //To be changed to waitlist class INCOMPLETE
     // waitList contains all the entrants that joined the waitlist
     // invitedList contains all the entrants that are invited to the event
     // cancelledList contains all the entrants that were invited but rejected the invitation
@@ -42,12 +41,6 @@ public class OrganizerEntrantListActivity extends AppCompatActivity
     ArrayList<Entrant> cancelledList = new ArrayList<>();
     ArrayList<Entrant> rejectedList = new ArrayList<>();
     ArrayList<Entrant> enrolledList = new ArrayList<>();
-
-//    ArrayList<String> waitListIDs= new ArrayList<>();
-//    ArrayList<String> invitedListIDs= new ArrayList<>();
-//    ArrayList<String> cancelledListIDs = new ArrayList<>();
-//    ArrayList<String> rejectedListIDs = new ArrayList<>();
-//    ArrayList<String> enrolledListIDs = new ArrayList<>();
 
     int maximumNumberOfEntrants;
     OrganizerEditActivity organizerEditActivity;
@@ -174,17 +167,20 @@ public class OrganizerEntrantListActivity extends AppCompatActivity
     }
 
 
-    // should return error if the list is empty INCOMPLETE
     /**
      * Allows the organizer to redraw an entrant.
-     * It requires previous sampling of entrants.
+     * It requires previous sampling of entrants and the rejected list to have entrants.
      * @author Chester
-     * @return The chosen entrant.
+     * @return The chosen entrant or null if the rejected list is empty.
      */
     public Entrant redrawEntrant() {
+        if (rejectedList.isEmpty()) {
+            Log.e("redrawEntrant", "The rejected list is empty");
+            return null;
+        }
         Collections.shuffle(rejectedList);
         Entrant chosenEntrant = rejectedList.get(0);
-        rejectedList.remove(0);
+        rejectedList.remove(chosenEntrant);
 
         return chosenEntrant;
     }
@@ -214,7 +210,6 @@ public class OrganizerEntrantListActivity extends AppCompatActivity
     }
 
 
-    // should return error if the list is empty INCOMPLETE
     /**
      * Allows the organizer to redraw an entrant from the people that were rejected.
      * It requires previous sampling of entrants.
@@ -223,10 +218,25 @@ public class OrganizerEntrantListActivity extends AppCompatActivity
      */
     public void redrawCancelledEntrant(Entrant entrant) {
         Entrant chosenEntrant = redrawEntrant();
+        if (chosenEntrant == null) {
+            Log.e("redrawCancelledEntrant", "Could not redraw entrant. " +
+                    "Check if there are entrants to redraw");
+            return;
+        }
+
         invitedList.add(chosenEntrant);
         UpdateListDisplay();
     }
 
+    /**
+     * Returns whether the rejected list is empty
+     * Used to check whether redrawing is possible
+     * @return the current Event
+     */
+    @Override
+    public boolean isRejectedListEmpty() {
+        return event.getRejectedList().isEmpty();
+    }
 
     /**
      * Updates the list view displays.

@@ -69,20 +69,23 @@ public class OrganizerEditActivity extends AppCompatActivity {
         waitlistAdapter = new EntrantListAdapter(this, waitList);
         waitlistListView.setAdapter(waitlistAdapter);
 
+        Spinner nSpin = binding.waitlistChooseCount;
+
         entrantDB.getEntrantList(event.getWaitList()).thenAccept(entrants -> {
             if(entrants != null){
                 waitList = entrants;
+                waitlistAdapter.notifyDataSetChanged();
 
                 Log.d("getWaitList", "WaitList loaded");
 
-                Spinner nSpinner = binding.waitlistChooseCount;
+
                 List<String> spinList = new ArrayList<String>();
                 for (int i=1; i<=waitList.size(); i++){
                     spinList.add(String.valueOf(i));
                 }
                 ArrayAdapter<String> spinAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, spinList);
                 spinAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                nSpinner.setAdapter(spinAdapter);
+                nSpin.setAdapter(spinAdapter);
 
 
             } else {
@@ -98,7 +101,6 @@ public class OrganizerEditActivity extends AppCompatActivity {
              */
             @Override
             public void onClick(View view) {
-                Spinner nSpin = binding.waitlistChooseCount;
                 String nStr = nSpin.getSelectedItem().toString();
                 int n = Integer.parseInt(nStr);
                 drawEntrants(n);
@@ -124,8 +126,6 @@ public class OrganizerEditActivity extends AppCompatActivity {
 
     }
 
-    // should return error if n is bigger than the size of waitlist INCOMPLETE
-    // Assuming it is the fist time it is called INCOMPLETE
     /**
      * Allows the organizer to draw n entrants from the waitlist.
      * @param n The number of entrants to sample.
