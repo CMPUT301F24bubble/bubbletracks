@@ -19,7 +19,7 @@ import java.util.ArrayList;
  */
 public class CancelledListAdapter extends ArrayAdapter<Entrant>{
     interface CancelledEntrantI {
-        void redrawCancelledEntrant(Entrant entrant);
+        void redrawCancelledEntrant();
         boolean isRejectedListEmpty();
     }
     private CancelledEntrantI listener;
@@ -71,7 +71,7 @@ public class CancelledListAdapter extends ArrayAdapter<Entrant>{
         redrawEntrant.setText("Redraw");
 
         if(listener.isRejectedListEmpty()) {
-            redrawEntrant.setVisibility(View.INVISIBLE);
+            redrawEntrant.setVisibility(View.GONE);
         }
 
         redrawEntrant.setOnClickListener(new View.OnClickListener() {
@@ -81,8 +81,8 @@ public class CancelledListAdapter extends ArrayAdapter<Entrant>{
              */
             @Override
             public void onClick(View view) {
-                listener.redrawCancelledEntrant(entrant);
-                redrawEntrant.setVisibility(View.INVISIBLE);
+                listener.redrawCancelledEntrant();
+                redrawEntrant.setVisibility(View.GONE);
             }
         });
 

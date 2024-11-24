@@ -35,6 +35,8 @@ public class OrganizerEditActivity extends AppCompatActivity {
     ArrayList<Entrant> cancelledList = new ArrayList<>();
     ArrayList<Entrant> enrolledList = new ArrayList<>();
 
+    List<String> spinList = new ArrayList<String>();
+
     ListView waitlistListView;
     EntrantListAdapter waitlistAdapter;
 
@@ -77,6 +79,9 @@ public class OrganizerEditActivity extends AppCompatActivity {
         waitListDescription.setText(getString(R.string.wait_list_text, event.getName()));
 
         Spinner nSpin = binding.waitlistChooseCount;
+        ArrayAdapter<String> spinAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, spinList);
+        spinAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        nSpin.setAdapter(spinAdapter);
 
         entrantDB.getEntrantList(event.getWaitList()).thenAccept(entrants -> {
             if(entrants != null){
@@ -85,15 +90,10 @@ public class OrganizerEditActivity extends AppCompatActivity {
 
                 Log.d("getWaitList", "WaitList loaded");
 
-
-                List<String> spinList = new ArrayList<String>();
                 for (int i=1; i<=waitList.size(); i++){
                     spinList.add(String.valueOf(i));
                 }
-                ArrayAdapter<String> spinAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, spinList);
-                spinAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                nSpin.setAdapter(spinAdapter);
-
+                spinAdapter.notifyDataSetChanged();
 
             } else {
                 Log.d("getWaitList", "No entrants in waitlist");
@@ -154,6 +154,7 @@ public class OrganizerEditActivity extends AppCompatActivity {
         invitedList.addAll(newWaitlist.subList(0, n));
         rejectedList.addAll(newWaitlist.subList(n, newWaitlist.size()));
         updateEventWithLists();
+        addEntrantsInvitations();
         return true;
     }
 
@@ -179,4 +180,13 @@ public class OrganizerEditActivity extends AppCompatActivity {
         event.updateEventFirebase();
     }
 
+    /**
+     * Updates the entrants that were invited with their invitations
+     */
+    private void addEntrantsInvitations() {
+        for (Entrant entrant: invitedList) {
+            entrant.addToEventsInvited(event.getId());
+            entrant.updateEntrantFirebase();
+        }
+    }
 }

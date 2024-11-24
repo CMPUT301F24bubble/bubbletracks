@@ -390,4 +390,13 @@ public class Event implements Parcelable{
         parcel.writeLong(registrationOpen.getTime());
         parcel.writeLong(registrationClose.getTime());
     }
+
+    public void cancelEntrant(String entrantID) {
+        waitList.remove(entrantID);
+        invitedList.remove(entrantID);
+        enrolledList.remove(entrantID);
+        rejectedList.remove(entrantID);
+        cancelledList.add(entrantID);
+        updateEventFirebase();
+    }
 }

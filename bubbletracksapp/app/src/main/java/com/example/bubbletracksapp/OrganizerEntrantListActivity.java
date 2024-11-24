@@ -207,6 +207,12 @@ public class OrganizerEntrantListActivity extends AppCompatActivity
         rejectedList.remove(entrant);
         enrolledList.remove(entrant);
         cancelledList.add(entrant);
+
+        entrant.deleteFromEventsWaitlist(event.getId());
+        entrant.deleteFromEventsInvited(event.getId());
+        entrant.deleteFromEventsEnrolled(event.getId());
+        entrant.updateEntrantFirebase();
+
         UpdateListDisplay();
         updateEventWithLists();
     }
@@ -221,13 +227,13 @@ public class OrganizerEntrantListActivity extends AppCompatActivity
         return enrolledList.contains(entrant);
     }
 
-
     /**
      * Allows the organizer to redraw an entrant from the people that were rejected.
      * It requires previous sampling of entrants.
      * @author Chester
      */
-    public void redrawCancelledEntrant(Entrant entrant) {
+    @Override
+    public void redrawCancelledEntrant() {
         Entrant chosenEntrant = redrawEntrant();
         if (chosenEntrant == null) {
             Log.e("redrawCancelledEntrant", "Could not redraw entrant. " +
@@ -237,6 +243,9 @@ public class OrganizerEntrantListActivity extends AppCompatActivity
 
         invitedList.add(chosenEntrant);
         UpdateListDisplay();
+
+        chosenEntrant.addToEventsInvited(event.getId());
+        chosenEntrant.updateEntrantFirebase();
     }
 
     /**
