@@ -26,6 +26,7 @@ import java.util.List;
  */
 public class OrganizerEditActivity extends AppCompatActivity {
     Event event;
+    Entrant currentUser;
     EntrantDB entrantDB = new EntrantDB();
 
     ArrayList<Entrant> waitList = new ArrayList<>();
@@ -55,6 +56,7 @@ public class OrganizerEditActivity extends AppCompatActivity {
         Intent in =  getIntent();
         try {
             event = in.getParcelableExtra("event");
+            currentUser = in.getParcelableExtra("user");
         } catch (Exception e) {
             Log.d("OrganizerEditActivity", "event extra was not passed correctly");
             throw new RuntimeException(e);
@@ -128,7 +130,8 @@ public class OrganizerEditActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 updateEventWithLists();
-                Intent intent = new Intent(OrganizerEditActivity.this, MainActivity.class);
+                Intent intent = new Intent(OrganizerEditActivity.this, OrganizerEventHosting.class);
+                intent.putExtra("user", currentUser);
                 intent.putExtra("event", event);
                 startActivity(intent);
             }
@@ -159,6 +162,7 @@ public class OrganizerEditActivity extends AppCompatActivity {
      */
     private void startListActivity() {
         Intent intent = new Intent(OrganizerEditActivity.this, OrganizerEntrantListActivity.class);
+        intent.putExtra("user", currentUser);
         intent.putExtra("event", event);
         startActivity(intent);
     }

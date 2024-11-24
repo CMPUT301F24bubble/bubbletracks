@@ -31,6 +31,7 @@ public class OrganizerEntrantListActivity extends AppCompatActivity
     private LotteryMainExtendBinding binding;
 
     Event event;
+    Entrant currentUser;
     EntrantDB entrantDB = new EntrantDB();
 
     /**
@@ -81,6 +82,7 @@ public class OrganizerEntrantListActivity extends AppCompatActivity
         Intent in =  getIntent();
         try {
             event = in.getParcelableExtra("event");
+            currentUser = in.getParcelableExtra("user");
         } catch (Exception e) {
             Log.d("OrganizerEntrantListActivity", "event extra was not passed correctly");
             throw new RuntimeException(e);
@@ -106,14 +108,15 @@ public class OrganizerEntrantListActivity extends AppCompatActivity
 
         binding.backButton.setOnClickListener(new View.OnClickListener() {
             /**
-             * set details of event lists
+             * Go back to the events hosting screen
              * @param view The view that was clicked.
              */
             @Override
             public void onClick(View view) {
                 updateEventWithLists();
 
-                Intent intent = new Intent(OrganizerEntrantListActivity.this, MainActivity.class);
+                Intent intent = new Intent(OrganizerEntrantListActivity.this, OrganizerEventHosting.class);
+                intent.putExtra("user", currentUser);
                 intent.putExtra("event", event);
                 startActivity(intent);
             }
