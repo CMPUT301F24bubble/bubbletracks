@@ -458,4 +458,17 @@ public class Entrant implements Parcelable {
      * @param event string of waitlist
      */
     public void deleteFromEventsWaitlist(String event){ this.eventsWaitlist.remove(event); }
+
+    public void rejectEvent(String event) {
+        eventsWaitlist.remove(event);
+        eventsInvited.remove(event);
+        eventsEnrolled.remove(event);
+        updateEntrantFirebase();
+    }
+
+    public void acceptEvent(String event) {
+        eventsEnrolled.add(event);
+        updateEntrantFirebase();
+    }
+
 }
