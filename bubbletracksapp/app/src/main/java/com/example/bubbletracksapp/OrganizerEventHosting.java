@@ -124,7 +124,7 @@ public class OrganizerEventHosting extends Fragment{
             if(events != null){
                 Log.d("AHHHHHHHHHHHHHHHHHHHHHHHHHHHH", "events is not null");
                 hostedEvents = events;
-                eventListAdapter = new EventHostListAdapter(this.getContext(), hostedEvents, admin);
+                eventListAdapter = new EventHostListAdapter(this.getContext(), hostedEvents);
                 eventListView.setAdapter(eventListAdapter);
 
             } else {

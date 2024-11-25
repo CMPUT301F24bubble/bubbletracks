@@ -1,8 +1,5 @@
 package com.example.bubbletracksapp;
 
-import static android.system.Os.remove;
-import static java.security.AccessController.getContext;
-
 import android.app.AlertDialog;
 import android.content.Context;
 import android.util.Log;
@@ -14,22 +11,35 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.WriteBatch;
 
 import java.util.Arrays;
-import java.util.ConcurrentModificationException;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Admin class to manage administrative actions like deleting events and profiles
+ * from Firestore and handling related updates for both events and profiles.
+ * @author Gwen
+ */
 public class Admin {
 
     private Context context;
+
+    /**
+     * Constructor to initialize the Admin class with the provided context.
+     *
+     * @param context The context where the Admin actions will take place (e.g., Activity or Application context).
+     */
     public Admin(Context context){
         this.context = context;
     }
 
     /**
-     * Allow to delete the event from the list and Firestore.
+     * Deletes an event from the "events" collection and removes references to the event
+     * from the corresponding lists in the "entrants" collection.
      *
-     * @param eventToDelete Event to be deleted.
-     */public void deleteEvent(Context context, Event eventToDelete) {
+     * @param context The context where the deletion is being performed.
+     * @param eventToDelete The event object that needs to be deleted.
+     */
+    public void deleteEvent(Context context, Event eventToDelete) {
         if (eventToDelete == null) {
             return;
         }
@@ -38,37 +48,37 @@ public class Admin {
         String eventId = eventToDelete.getId();
         WriteBatch batch = db.batch();
 
+        // Delete event from events collection
         DocumentReference eventRef = db.collection("events").document(eventId);
         batch.delete(eventRef);
 
-        // List of subcategories to check for each entrant
+        // List of subcategories to check in entrants' data
         List<String> subcategories = Arrays.asList("enrolled", "invited", "organized", "waitlist");
 
+        // Iterate through all entrant documents and update their lists by removing the event reference
         db.collection("entrants")
                 .get()
                 .addOnSuccessListener(querySnapshot -> {
-                    // Iterate through all entrant documents
+                    // Iterate through each entrant document
                     for (DocumentSnapshot entrantDoc : querySnapshot.getDocuments()) {
                         DocumentReference entrantRef = entrantDoc.getReference();
                         Map<String, Object> entrantData = entrantDoc.getData();
 
                         if (entrantData != null) {
-                            // Iterate over each subcategory to check for the event ID
+                            // Iterate over subcategories and remove the event from each list where it exists
                             for (String subcategory : subcategories) {
                                 if (entrantData.containsKey(subcategory)) {
                                     List<String> eventList = (List<String>) entrantData.get(subcategory);
                                     if (eventList != null && eventList.contains(eventId)) {
-                                        // Remove the event ID from the list
-                                        eventList.remove(eventId);
-                                        batch.update(entrantRef, subcategory, eventList); // Update the document with the modified list
-
+                                        eventList.remove(eventId); // Remove the event ID
+                                        batch.update(entrantRef, subcategory, eventList); // Update the document
                                     }
                                 }
                             }
                         }
                     }
 
-                    // Commit the batch operation after all updates are added
+                    // Commit the batch to delete the event and update all references
                     batch.commit()
                             .addOnSuccessListener(aVoid -> {
                                 Toast.makeText(context, "Event and references deleted successfully", Toast.LENGTH_SHORT).show();
@@ -85,9 +95,13 @@ public class Admin {
                 });
     }
 
-
-
-    // **Profiles**
+    /**
+     * Deletes an entrant's profile from the "entrants" collection and removes any
+     * references to the profile from the corresponding lists in the "events" collection.
+     *
+     * @param context The context where the deletion is being performed.
+     * @param entrantToDelete The entrant object whose profile needs to be deleted.
+     */
     public void deleteEntrant(Context context, Entrant entrantToDelete) {
         if (entrantToDelete == null) {
             return;
@@ -97,12 +111,14 @@ public class Admin {
         String profileId = entrantToDelete.getID();
         WriteBatch batch = db.batch();
 
+        // Delete entrant profile from entrants collection
         DocumentReference profileRef = db.collection("entrants").document(profileId);
         batch.delete(profileRef);
 
         // List of subcategories where profile IDs might be referenced
         List<String> subcategories = Arrays.asList("cancelled", "enrolled", "invited", "rejected", "wait");
 
+        // Iterate through all event documents and update their lists by removing the profile reference
         db.collection("events")
                 .get()
                 .addOnSuccessListener(querySnapshot -> {
@@ -111,34 +127,30 @@ public class Admin {
                         Map<String, Object> eventData = eventDoc.getData();
 
                         if (eventData != null) {
-                            // Go through each subcategory to find and remove profile references
+                            // Iterate over subcategories and remove the profile from each list where it exists
                             for (String subcategory : subcategories) {
                                 if (eventData.containsKey(subcategory)) {
                                     List<String> profileList = (List<String>) eventData.get(subcategory);
                                     if (profileList != null && profileList.contains(profileId)) {
-                                        // Remove the profile ID from the list of that subcategory
-                                        profileList.remove(profileId);
-                                        batch.update(eventRef, subcategory, profileList); // Update the document with the new list
+                                        profileList.remove(profileId); // Remove the profile ID
+                                        batch.update(eventRef, subcategory, profileList); // Update the document
                                     }
                                 }
                             }
                         }
                     }
 
-                    // Commit the batch operation (delete profile and update references)
+                    // Commit the batch to delete the profile and update all references
                     batch.commit()
                             .addOnSuccessListener(aVoid -> {
-                                // Successfully deleted the profile and updated references
                                 Toast.makeText(context, "Profile and references deleted successfully", Toast.LENGTH_SHORT).show();
                             })
                             .addOnFailureListener(e -> {
-                                // Handle error during batch commit
                                 Log.e("DeleteProfile", "Error deleting profile or references: ", e);
                                 Toast.makeText(context, "Failed to delete profile. Try again.", Toast.LENGTH_SHORT).show();
                             });
                 })
                 .addOnFailureListener(e -> {
-                    // Handle error fetching entrants
                     Log.e("DeleteProfile", "Error fetching entrant references: ", e);
                     Toast.makeText(context, "Failed to fetch related data. Try again.", Toast.LENGTH_SHORT).show();
                 });
@@ -146,6 +158,7 @@ public class Admin {
     }
 
 } // remove this bracket later when implemented profile pictures
+
 
 
 //

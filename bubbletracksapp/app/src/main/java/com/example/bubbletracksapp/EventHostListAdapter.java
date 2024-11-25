@@ -37,16 +37,14 @@ public class EventHostListAdapter extends ArrayAdapter<Event> {
 //        void editEvent(Event event);
 //    }
 //    private EventHostI listener;
-    private Admin admin;
     /**
      * Initialize the adapter with the list of events
      *
      * @param context context of what adapter does
      * @param events  list of entrants
      */
-    public EventHostListAdapter(Context context, ArrayList<Event> events, Admin admin) {
+    public EventHostListAdapter(Context context, ArrayList<Event> events) {
         super(context, 0, events);
-        this.admin = admin;
 //        if (context instanceof EventHostI) {
 //            listener = (EventHostI) context;
 //        } else {
@@ -88,7 +86,7 @@ public class EventHostListAdapter extends ArrayAdapter<Event> {
 
         AppCompatImageButton seePeopleButton = view.findViewById(R.id.see_people_button);
         AppCompatImageButton editEventButton = view.findViewById(R.id.edit_event_button);
-        AppCompatImageButton deleteEventButton = view.findViewById(R.id.delete_button); // delete later for admin
+        AppCompatImageButton deleteEventButton = view.findViewById(R.id.delete_button);
 
         eventMonthText.setText(event.getMonth(event.getDateTime()));
         eventDateText.setText(event.getDay(event.getDateTime()));
@@ -119,8 +117,13 @@ public class EventHostListAdapter extends ArrayAdapter<Event> {
         });
 
         deleteEventButton.setOnClickListener(new View.OnClickListener() {
+            /**
+             * Action to delete the event
+             * @param view The view that was clicked.
+             */
             @Override
             public void onClick(View view) {
+                Admin admin = new Admin(getContext());
                 new AlertDialog.Builder(getContext())
                         .setTitle("Delete Event")
                         .setMessage("Are you sure you want to delete this event?")
