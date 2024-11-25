@@ -37,19 +37,17 @@ public class Admin {
      * from the corresponding lists in the "entrants" collection.
      *
      * @param context The context where the deletion is being performed.
-     * @param eventToDelete The event object that needs to be deleted.
+     * @param eventRef The event that needs to be deleted.
      */
-    public void deleteEvent(Context context, Event eventToDelete) {
-        if (eventToDelete == null) {
+    public void deleteEvent(Context context, DocumentReference eventRef) {
+        if (eventRef == null) {
             return;
         }
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        String eventId = eventToDelete.getId();
+        String eventId = eventRef.getId();
         WriteBatch batch = db.batch();
 
-        // Delete event from events collection
-        DocumentReference eventRef = db.collection("events").document(eventId);
         batch.delete(eventRef);
 
         // List of subcategories to check in entrants' data
@@ -65,7 +63,6 @@ public class Admin {
                         Map<String, Object> entrantData = entrantDoc.getData();
 
                         if (entrantData != null) {
-                            // Iterate over subcategories and remove the event from each list where it exists
                             for (String subcategory : subcategories) {
                                 if (entrantData.containsKey(subcategory)) {
                                     List<String> eventList = (List<String>) entrantData.get(subcategory);
@@ -78,7 +75,6 @@ public class Admin {
                         }
                     }
 
-                    // Commit the batch to delete the event and update all references
                     batch.commit()
                             .addOnSuccessListener(aVoid -> {
                                 Toast.makeText(context, "Event and references deleted successfully", Toast.LENGTH_SHORT).show();
@@ -111,12 +107,22 @@ public class Admin {
         String profileId = entrantToDelete.getID();
         WriteBatch batch = db.batch();
 
-        // Delete entrant profile from entrants collection
         DocumentReference profileRef = db.collection("entrants").document(profileId);
         batch.delete(profileRef);
 
         // List of subcategories where profile IDs might be referenced
         List<String> subcategories = Arrays.asList("cancelled", "enrolled", "invited", "rejected", "wait");
+
+        // Check if the entrant has any events in the "organized" subcategory
+        if (entrantToDelete.getOrganized() != null && !entrantToDelete.getOrganized().isEmpty()) {
+            List<String> organizedEvents = entrantToDelete.getOrganized();
+
+            // Delete each organized event
+            for (String eventId : organizedEvents) {
+                DocumentReference eventRef = db.collection("events").document(eventId);
+                deleteEvent(context, eventRef);
+            }
+        }
 
         // Iterate through all event documents and update their lists by removing the profile reference
         db.collection("events")
@@ -140,7 +146,6 @@ public class Admin {
                         }
                     }
 
-                    // Commit the batch to delete the profile and update all references
                     batch.commit()
                             .addOnSuccessListener(aVoid -> {
                                 Toast.makeText(context, "Profile and references deleted successfully", Toast.LENGTH_SHORT).show();
@@ -155,7 +160,7 @@ public class Admin {
                     Toast.makeText(context, "Failed to fetch related data. Try again.", Toast.LENGTH_SHORT).show();
                 });
 
-    }
+}
 
 } // remove this bracket later when implemented profile pictures
 

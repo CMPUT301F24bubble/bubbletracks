@@ -266,6 +266,10 @@ public class Entrant implements Parcelable {
         this.notification = notification;
     }
 
+    public ArrayList<String> getOrganized() {
+        return eventsOrganized;
+    }
+
     /**
      * describes the content of the entrant
      * @return 0

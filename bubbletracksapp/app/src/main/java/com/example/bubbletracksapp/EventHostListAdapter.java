@@ -123,12 +123,14 @@ public class EventHostListAdapter extends ArrayAdapter<Event> {
              */
             @Override
             public void onClick(View view) {
+                FirebaseFirestore db = FirebaseFirestore.getInstance();
                 Admin admin = new Admin(getContext());
                 new AlertDialog.Builder(getContext())
                         .setTitle("Delete Event")
                         .setMessage("Are you sure you want to delete this event?")
                         .setPositiveButton("Yes", (dialog, which) -> {
-                            admin.deleteEvent(getContext(), event);
+                            DocumentReference eventRef = db.collection("events").document(event.getId());
+                            admin.deleteEvent(getContext(), eventRef);
                             remove(event);
                             notifyDataSetChanged();
                         })
