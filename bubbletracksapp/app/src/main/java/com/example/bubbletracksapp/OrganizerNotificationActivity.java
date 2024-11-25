@@ -1,28 +1,26 @@
 package com.example.bubbletracksapp;
 
-import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
 
 import android.Manifest; // For importing post notification permissions
 
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ServerValue;
+import com.example.bubbletracksapp.databinding.LotteryMainExtendBinding;
+import com.example.bubbletracksapp.databinding.NotificationMainBinding;
 
 
 import java.util.ArrayList;
@@ -34,17 +32,29 @@ import java.util.UUID;
  */
 public class OrganizerNotificationActivity extends AppCompatActivity {
 
+    private NotificationMainBinding binding;
     private static final String CHANNEL_ID = "notify_entrants";
-    private static final Integer SELECTED_NOTIFICATION_ID = 1;
-    private static final Integer NON_SELECTED_NOTIFICATION_ID = 2;
-    private static final Integer CONFIRMED_NOTIFICATION_ID = 3;
-    private static final Integer CANCELLED_NOTIFICATION_ID = 4;
-    private Event event;
+    private Entrant user;
+    Event event;
+    EventDB eventDB = new EventDB();
+    EntrantDB entrantDB = new EntrantDB();
+
+    ArrayList<Entrant> waitList = new ArrayList<>();
+    ArrayList<Entrant> invitedList = new ArrayList<>();
+    ArrayList<Entrant> rejectedList = new ArrayList<>();
+    ArrayList<Entrant> cancelledList = new ArrayList<>();
+    ArrayList<Entrant> enrolledList = new ArrayList<>();
+
     NotificationDB db = new NotificationDB();
     private String id;
     Notifications notification;
 
     private ActivityResultLauncher<String> requestPermissionLauncher;
+
+    //private NotificationMainBinding binding;
+
+
+
 
     /*
      * TODO: access the firebase to notify specific entrants based on checkboxes/permissions
@@ -53,11 +63,35 @@ public class OrganizerNotificationActivity extends AppCompatActivity {
 
     @Override
 
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.notification_main);
+        binding = NotificationMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
-       // View view = getLayoutInflater().inflate(R.layout.notification_main, null);;
+        Intent in = getIntent();
+        try {
+            event = in.getParcelableExtra("event");
+        } catch (Exception e) {
+            Log.d("OrganizerEditActivity", "event extra was not passed correctly");
+            throw new RuntimeException(e);
+        }
+        setContentView(binding.getRoot());
+
+/*        if(event.getWaitList().size() > 0)
+        {
+            startListActivity();
+        }*/
+
+/*        entrantDB.getEntrantList(event.getWaitList()).thenAccept(entrants -> {
+            if(entrants != null) {
+                waitList = entrants;
+                Log.d("getWaitList", "WaitList loaded" + waitList);
+            }
+        });*/
+        //eventDB.getEventList(user.get()).thenAccept(events -> {}
+
+
+        // View view = getLayoutInflater().inflate(R.layout.notification_main, null);;
 
         createNotificationChannel();
 
@@ -68,8 +102,33 @@ public class OrganizerNotificationActivity extends AppCompatActivity {
         CheckBox checkRejected = findViewById(R.id.checkbox_notify_non_selected);
         CheckBox checkConfirmed = findViewById(R.id.checkbox_notify_confirmed_attendees);
         CheckBox checkCancelled = findViewById(R.id.checkbox_notify_cancelled);
-        Button notif_button = findViewById(R.id.button_confirm);
-        notif_button.setOnClickListener(view -> checkNotificationPermission(checkInvited, checkRejected, checkConfirmed, checkCancelled));
+        Button notifButton = findViewById(R.id.button_confirm);
+        ImageButton backButton = findViewById(R.id.back_button);
+        ;
+        notifButton.setOnClickListener(view -> checkNotificationPermission(checkInvited, checkRejected, checkConfirmed, checkCancelled));
+
+        binding.backButton.setOnClickListener(new View.OnClickListener()
+
+        {
+            /**
+             * set details of event lists
+             * @param view The view that was clicked.
+             */
+            @Override
+            public void onClick(View view){
+                Intent intent = new Intent(OrganizerNotificationActivity.this, MainActivity.class);
+                intent.putExtra("event", event);
+
+                startActivity(intent);
+            }
+        });
+    }
+
+    private void startListActivity() {
+        event.updateEventFirebase();
+        Intent intent = new Intent(OrganizerNotificationActivity.this, OrganizerNotificationActivity.class);
+        intent.putExtra("event", event);
+        startActivity(intent);
     }
 
     /**
@@ -90,8 +149,9 @@ public class OrganizerNotificationActivity extends AppCompatActivity {
 
     /**
      * Check if there are notification permission for organizer to send a notification to the entrant
-     * @param checkInvited entrants invited to event
-     * @param checkRejected entrants not invited for event
+     *
+     * @param checkInvited   entrants invited to event
+     * @param checkRejected  entrants not invited for event
      * @param checkConfirmed entrants who confirmed registration for event
      * @param checkCancelled entrants who cancelled invitation to event
      */
@@ -113,8 +173,8 @@ public class OrganizerNotificationActivity extends AppCompatActivity {
     }
 
     /**
-     * @param checkInvited entrants invited to event
-     * @param checkRejected entrants not invited for event
+     * @param checkInvited   entrants invited to event
+     * @param checkRejected  entrants not invited for event
      * @param checkConfirmed entrants who confirmed registration for event
      * @param checkCancelled entrants who cancelled invitation to event
      */
@@ -195,78 +255,100 @@ public class OrganizerNotificationActivity extends AppCompatActivity {
             Toast.makeText(this, "Permission required to show notifications", Toast.LENGTH_SHORT).show();
         }
     }*/
-
-
     private void sendNotification(CheckBox checkInvited, CheckBox checkRejected, CheckBox checkConfirmed, CheckBox checkCancelled) {
         ArrayList<String> testList = new ArrayList<String>();
         testList.add("person1");
         testList.add("person2");
         testList.add("9be104ee-e9e8-4df4-b93f-c3ec0aef750c");
-        testList.add("c8d942fe-1319-4015-955a-c0b09964183d");
+        //testList.add("c8d942fe-1319-4015-955a-c0b09964183d");
 
         Object timestamp = System.currentTimeMillis();
         Intent intent = getIntent();
 
+        //TODO: check for null lists
         // add invited notification to database
         if (checkInvited.isChecked()) {
             Log.d("Notification(invited)", "This is invited action: ");
-            //***ArrayList<String> confirmedList = event.getEnrolledList();
-            Notifications notification = new Notifications(
-                    testList,
-                    "You Are Invited!",
-                    "Congratulations, you are invited to the event!",
-                    "Accept your invitation to confirm your registration.",
-                    //"Thank you for confirming your attendance to " + event.getName() + "!"
-                    UUID.randomUUID().toString()
-            );
-            db.addNotification(notification);
+            ArrayList<String> invitedList = event.getInvitedList();
+            if (invitedList != null) {
+                Notifications notification = new Notifications(
+                        invitedList,
+                        "You Are Invited!",
+                        "Congratulations, you are invited to the event!",
+                        "Accept your invitation to confirm your registration.",
+                        //"Thank you for confirming your attendance to " + event.getName() + "!"
+                        UUID.randomUUID().toString()
+                );
+                db.addNotification(notification);
+            } else {
+                Toast.makeText(this, "There are no invited entrants in your event!", Toast.LENGTH_LONG).show();
+            }
         }
         // add rejected notification to database
         if (checkRejected.isChecked()) {
             Log.d("Notification(rejected)", "This is rejected action: ");
-            //***ArrayList<String> confirmedList = event.getEnrolledList();
-            Notifications notification = new Notifications(
-                    testList,
-                    "Event Waitlist Update",
-                    "",
-                    "Thank you for your participation in joining the waitlist, but unfortunately you have not been selected to join.",
-                    //"Thank you for confirming your attendance to " + event.getName() + "!"
-                    UUID.randomUUID().toString()
-            );
-            db.addNotification(notification);
+            //Log.d("Notification(rejected)", "Event object: " + event);
+            //entrantDB.getEntrantList(event.getWaitList()).thenAccept(entrants -> {
+            ArrayList<String> invitedList = event.getInvitedList();
+            Log.d("Notification(rejected)", "Event object: " + event);
+            if (invitedList != null) {
+                Notifications notification = new Notifications(
+                        invitedList,
+                        "Event Waitlist Update",
+                        "",
+                        "Thank you for your participation in joining the waitlist!.",
+                        //"Thank you for confirming your attendance to " + event.getName() + "!"
+                        UUID.randomUUID().toString()
+                );
+                db.addNotification(notification);
+            } else {
+                Toast.makeText(this, "There are no entrants in your event waitlist!", Toast.LENGTH_LONG).show();
+            }
+            //});
+
         }
 
         // Send to confirmed entrants
         if (checkConfirmed.isChecked()) {
             Log.d("Notification(confirmed)", "This is confirmed action: ");
-            //***ArrayList<String> confirmedList = event.getEnrolledList();
-            Notifications notification = new Notifications(
-                    testList,
-                    "Thank you for confirming your attendance",
-                    "",
-                    "Mark your calendars for your event details.",
-                    //"Thank you for confirming your attendance to " + event.getName() + "!"
-                    UUID.randomUUID().toString()
-            );
-            db.addNotification(notification);
+            ArrayList<String> confirmedList = event.getEnrolledList();
+            if (confirmedList != null) {
+                Notifications notification = new Notifications(
+                        confirmedList,
+                        "Thank you for confirming your attendance",
+                        "",
+                        "Mark your calendars for your event details.",
+                        //"Thank you for confirming your attendance to " + event.getName() + "!"
+                        UUID.randomUUID().toString()
+                );
+                db.addNotification(notification);
+            } else {
+                Toast.makeText(this, "There are no confirmed entrants in your event!", Toast.LENGTH_LONG).show();
+            }
+
         }
 
         if (checkCancelled.isChecked()) {
             Log.d("Notification(cancelled)", "This is cancelled action: ");
-            //***ArrayList<String> confirmedList = event.getEnrolledList();
-            Notifications notification = new Notifications(
-                    testList,
-                    "Registration Cancel Confirmation",
-                    "",
-                    "We appreciate your consideration for joining this event. Hope to see you in future ones!",
-                    UUID.randomUUID().toString()
-            );
-            db.addNotification(notification);
+            ArrayList<String> cancelledList = event.getCancelledList();
+            if (cancelledList != null) {
+                Notifications notification = new Notifications(
+                        cancelledList,
+                        "Registration Cancel Confirmation",
+                        "",
+                        "We appreciate your consideration for joining this event. Hope to see you in future ones!",
+                        UUID.randomUUID().toString()
+                );
+                db.addNotification(notification);
+            } else {
+                Toast.makeText(this, "There are no entrants that have cancelled your event!", Toast.LENGTH_LONG).show();
+            }
         }
 
 
         Toast.makeText(this, "Notifications sent!", Toast.LENGTH_LONG).show();
 
     }
+
 
 }

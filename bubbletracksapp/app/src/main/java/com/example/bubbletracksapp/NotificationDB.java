@@ -271,41 +271,21 @@ public class NotificationDB {
                     return;
                 }
                 for (DocumentChange dc : value.getDocumentChanges()) {
-                    switch (dc.getType()) {
-                        case ADDED:
-                            Notifications newNotification = dc.getDocument().toObject(Notifications.class);
+                    if (dc.getType() == DocumentChange.Type.ADDED) {
+                        Notifications newNotification = dc.getDocument().toObject(Notifications.class);
 
-                            // Check if this notification is for the receiver
-                            if (newNotification.getRecipients().contains(deviceID)) {
-                                Log.d("FirestoreListener", "New notification received: " + newNotification.getTitle());
+                        // Check if this notification is for the receiver
+                        if (newNotification.getRecipients().contains(deviceID)) {
+                            Log.d("FirestoreListener", "New notification received: " + newNotification.getTitle());
 
-                                // Call the method from MainActivity
-                                mainActivity.showNotification(newNotification);
-                            }
-                            break;
-
-                        case MODIFIED:
-                            Log.d("FirestoreListener", "Notification modified: " + dc.getDocument().getData());
-                            break;
-
-                        case REMOVED:
-                            Log.d("FirestoreListener", "Notification removed: " + dc.getDocument().getData());
-                            break;
+                            // Call the method from MainActivity
+                            mainActivity.showNotification(newNotification);
+                        }
                     }
                 }
             }
         });
     }
 
-
-
-    private void notifyReceiver(Notifications notification) {
-        // Logic to notify the receiver, such as updating the UI or showing a local notification
-        // For example:
-        // 1. Update the UI (TextView, RecyclerView, etc.) with the new notification
-        // 2. Optionally, trigger a local notification using NotificationManager
-        // Example:
-        //Toast.makeText(NotificationDB.this, "New Notification: " , Toast.LENGTH_LONG).show();
-    }
 
 }

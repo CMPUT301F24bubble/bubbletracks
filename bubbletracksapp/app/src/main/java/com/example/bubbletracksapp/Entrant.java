@@ -177,7 +177,7 @@ public class Entrant implements Parcelable {
      * Retrieve role (organizer, admin, null) or entrant
      * @return role of entrant as a string
      */
-    public String getRole() { return role; }
+    //public String getRole() { return role; }
 
     /**
      * Retrieve name of entrant
@@ -338,7 +338,7 @@ public class Entrant implements Parcelable {
      * set the role of the entrant; must be "entrant", "admin", or "organizer"
      * @param role
      */
-    public void setRole(String role) {
+   public void setRole(String role) {
         if (role.equalsIgnoreCase("entrant") || role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("organizer"))
         { this.role = role; } else {
             throw new IllegalArgumentException("Entrant role must equal \"entrant\", \"admin\", or \"organizer\"");

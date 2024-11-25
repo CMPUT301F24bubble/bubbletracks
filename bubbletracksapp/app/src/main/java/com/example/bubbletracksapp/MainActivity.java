@@ -217,7 +217,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void checkNotificationPermission(CheckBox checkInvited, CheckBox checkRejected, CheckBox checkConfirmed, CheckBox checkCancelled) {
+/*    private void checkNotificationPermission(CheckBox checkInvited, CheckBox checkRejected, CheckBox checkConfirmed, CheckBox checkCancelled) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             // Check if the notification permission is granted
             if (checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
@@ -229,42 +229,7 @@ public class MainActivity extends AppCompatActivity {
         } else {
             // For API levels below 33, permission is not required
         }
-    }
-
-    public void listenForNotifications(String deviceId) {
-        NotificationDB.notifsRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException e) {
-                if (e != null) {
-                    Log.w("listenForNewNotifications", "Listen failed.", e);
-                    return;
-                }
-                for (DocumentChange dc :value.getDocumentChanges()) {
-                    switch (dc.getType()) {
-                        case ADDED:
-                            Notifications newNotification = dc.getDocument().toObject(Notifications.class);
-
-                            // Check if this notification is for the receiver
-                            if (newNotification.getRecipients().contains(currentUser.getID())) {
-                                Log.d("FirestoreListener", "New notification received: " + newNotification.getTitle());
-
-                                // Call a method to process or display the notification
-                                showNotification(newNotification);
-                            }
-                            break;
-
-                        case MODIFIED:
-                            Log.d("FirestoreListener", "Notification modified: " + dc.getDocument().getData());
-                            break;
-
-                        case REMOVED:
-                            Log.d("FirestoreListener", "Notification removed: " + dc.getDocument().getData());
-                            break;
-                    }
-                }
-            }
-        });
-    }
+    }*/
 
     public void showNotification(Notifications newNotification) {
         Intent intent = new Intent(this, OrganizerNotificationActivity.class);
@@ -297,10 +262,10 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-/*    @Override
+    @Override
     protected void onDestroy() {
         super.onDestroy();
-    }*/
+    }
 
 
 }
