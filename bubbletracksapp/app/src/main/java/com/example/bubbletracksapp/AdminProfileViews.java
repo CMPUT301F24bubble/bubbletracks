@@ -3,69 +3,53 @@ package com.example.bubbletracksapp;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-
-import com.example.bubbletracksapp.databinding.ListsBinding;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.ArrayList;
 
-public class AdminProfileViews extends Fragment {
-    private ListsBinding binding;
+/**
+ * AdminProfileViews is an activity that displays a list of user profiles in a ListView.
+ * The activity fetches user profiles from the database and displays them using an adapter.
+ * @author Gwen
+ */
+public class AdminProfileViews extends AppCompatActivity {
+    private ArrayList<Entrant> entrantsProfiles = new ArrayList<>(); // List of user profiles to be displayed
+    private AdminEntrantListAdapter profileAdapter; // Adapter to manage the list of profiles
+    private EntrantDB entrantDB = new EntrantDB(); // Database handler for retrieving entrant data
+    private ListView profileListView; // ListView for displaying the user profiles
 
-    EntrantDB entrantDB = new EntrantDB();
-    ArrayList<Entrant> entrantsProfiles = new ArrayList<>();
-
-    Context context;
-    ListView profileListView;
-    AdminEntrantListAdapter profileAdapter;
-
+    /**
+     * Sets up the UI and fetches the list of user profiles for Admins.
+     */
+    @Nullable
     @Override
-    public View onCreateView(
-            @NonNull LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState
-    ) {
-        binding = ListsBinding.inflate(inflater, container, false);
-        return binding.getRoot();
-    }
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.profile_viewer);
 
-    @Override
-    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
+        profileListView = findViewById(R.id.profileListView);
+        ImageButton backButton = findViewById(R.id.back_button);
 
-        context = getContext();
-
-        profileListView = binding.reusableListView;
-
-        // Fetch profiles using getAllEntrants()
         entrantDB.getAllEntrants().thenAccept(entrants -> {
             if (entrants != null && !entrants.isEmpty()) {
-                entrantsProfiles = entrants;
-
-                // Set up adapter
-                profileAdapter = new AdminEntrantListAdapter(context, entrantsProfiles);
+                entrantsProfiles = new ArrayList<>(entrants);
+                profileAdapter = new AdminEntrantListAdapter(this, entrantsProfiles);
                 profileListView.setAdapter(profileAdapter);
             } else {
-                Toast.makeText(context, "No user profiles found", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "No user profiles found", Toast.LENGTH_LONG).show();
             }
         }).exceptionally(e -> {
-            Log.e("ProfileManagement", "Error fetching profiles", e);
-            Toast.makeText(context, "Failed to fetch profiles", Toast.LENGTH_LONG).show();
+            Log.e("AdminProfileViews", "Error fetching profiles", e);
+            Toast.makeText(this, "Failed to fetch profiles", Toast.LENGTH_LONG).show();
             return null;
         });
-    }
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        binding = null;
+        backButton.setOnClickListener(v -> finish());
     }
 }
-
-

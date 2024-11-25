@@ -96,6 +96,9 @@ public class MainActivity extends AppCompatActivity {
         Intent userEventsIntent = new Intent(MainActivity.this, AppUserEventScreenGenerator.class);
         switchActivityButton(userEventsButton, userEventsIntent);
 
+        Intent adminProfileIntent = new Intent(MainActivity.this, AdminProfileViews.class);
+        switchActivityButton(adminProfileAccessButton, adminProfileIntent);
+
         eventHostButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -108,17 +111,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        adminProfileAccessButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (savedInstanceState == null) {
-                    getSupportFragmentManager().beginTransaction()
-                            .setReorderingAllowed(true)
-                            .replace(R.id.content_holder, AdminProfileViews.class, null) // Use replace instead of add
-                            .commit();
-                }
-            }
-        });
     }
     /**
      * Generalized code for buttons that use start(Activity()
