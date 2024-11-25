@@ -17,6 +17,7 @@ import com.example.bubbletracksapp.databinding.LotteryMainBinding;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -65,7 +66,8 @@ public class OrganizerEditActivity extends AppCompatActivity {
         }
 
         //If the Event has been pooled already, just show the lists
-        if(!event.getInvitedList().isEmpty() || !event.getRejectedList().isEmpty())
+        if(!event.getInvitedList().isEmpty() || !event.getRejectedList().isEmpty()
+                || !event.getCancelledList().isEmpty() || !event.getEnrolledList().isEmpty())
         {
             startListActivity();
         }
@@ -108,15 +110,21 @@ public class OrganizerEditActivity extends AppCompatActivity {
              */
             @Override
             public void onClick(View view) {
-                if(!waitList.isEmpty()) {
-                    String nStr = nSpin.getSelectedItem().toString();
-                    int n = Integer.parseInt(nStr);
-                    drawEntrants(n);
-                    updateEventWithLists();
-                    startListActivity();
+                // You can only draw entrants if the registration date passed and there are users in waitlist.
+                if(!event.getRegistrationClose().after(new Date())) {
+                    if(!waitList.isEmpty()) {
+                        String nStr = nSpin.getSelectedItem().toString();
+                        int n = Integer.parseInt(nStr);
+                        drawEntrants(n);
+                        updateEventWithLists();
+                        startListActivity();
+                    }
+                    else {
+                        Toast.makeText(OrganizerEditActivity.this, "No users in waitlist.", Toast.LENGTH_SHORT).show();
+                    }
                 }
                 else {
-                    Toast.makeText(OrganizerEditActivity.this, "No users in waitlist.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(OrganizerEditActivity.this, "Registration date is still open. Wait until it closes.", Toast.LENGTH_SHORT).show();
                 }
             }
         });
