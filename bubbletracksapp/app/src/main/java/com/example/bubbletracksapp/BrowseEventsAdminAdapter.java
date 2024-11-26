@@ -111,21 +111,18 @@ public class BrowseEventsAdminAdapter extends RecyclerView.Adapter<BrowseEventsA
 
         // CREATES ON CLICK LISTENER FOR OVERFLOW MENU
         popupMenu.setOnMenuItemClickListener(item -> {
-            switch (item.getItemId()) {
-                case R.id.action_delete_event:
-                    // HANDLE DELETE EVENT
-                    handleDeleteEventAction(event);
-                    return true;
-                case R.id.action_cancel_event:
-                    // HANDLE CANCEL EVENT
-                    handleCancelEventAction(event);
-                    return true;
-                case R.id.action_delete_poster:
-                    // HANDLE DELETE POSTER
-                    handleDeletePosterAction(event);
-                    return true;
-                default:
-                    return false;
+            int id = item.getItemId();
+            if (id == R.id.action_delete_event) {
+                handleDeleteEventAction(event);
+                return true;
+            } else if (id == R.id.action_cancel_event) {
+                handleCancelEventAction(event);
+                return true;
+            } else if (id == R.id.action_delete_poster) {
+                handleDeletePosterAction(event);
+                return true;
+            } else {
+                return false;
             }
         });
 
