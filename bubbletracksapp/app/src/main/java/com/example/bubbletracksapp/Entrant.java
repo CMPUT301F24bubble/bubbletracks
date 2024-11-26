@@ -120,6 +120,7 @@ public class Entrant implements Parcelable {
         this.phone = document.getString("phone");
         this.deviceID = document.getString("ID");
         this.notification = document.getBoolean("notification");
+        this.role = document.getString("role");
         this.geolocation = geoPointToLatLng(document.getGeoPoint("geolocation"));
         this.role = document.getString("role");
         this.eventsOrganized = (ArrayList<String>)document.getData().get("organized");
