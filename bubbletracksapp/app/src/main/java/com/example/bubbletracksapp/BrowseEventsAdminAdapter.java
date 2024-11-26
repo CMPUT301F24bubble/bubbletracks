@@ -30,6 +30,7 @@ public class BrowseEventsAdminAdapter extends RecyclerView.Adapter<BrowseEventsA
     // ATTRIBUTES (gets all event images from the database)
     Context context;
     List<Event> eventDatabase;
+    Integer eventPicInteger;
 
 
     // CONSTRUCTOR
@@ -105,29 +106,32 @@ public class BrowseEventsAdminAdapter extends RecyclerView.Adapter<BrowseEventsA
         // SETS EVENT FATE
         // INCOMPLETE
 
-        // SETS UP OVERFLOW MENU
-        PopupMenu popupMenu = new PopupMenu(context, holder.overflowImageButton);
-        popupMenu.inflate(R.menu.overflow_admin_search_menu);
-
         // CREATES ON CLICK LISTENER FOR OVERFLOW MENU
-        popupMenu.setOnMenuItemClickListener(item -> {
-            int id = item.getItemId();
-            if (id == R.id.action_delete_event) {
-                handleDeleteEventAction(event);
-                return true;
-            } else if (id == R.id.action_cancel_event) {
-                handleCancelEventAction(event);
-                return true;
-            } else if (id == R.id.action_delete_poster) {
-                handleDeletePosterAction(event);
-                return true;
-            } else {
-                return false;
-            }
+        holder.overflowImageButton.setOnClickListener(v -> {
+            PopupMenu popupMenu = new PopupMenu(context, holder.overflowImageButton);
+            popupMenu.inflate(R.menu.overflow_admin_search_menu);
+
+            // CREATES ON CLICK LISTENER FOR OVERFLOW MENU
+            popupMenu.setOnMenuItemClickListener(item -> {
+                int id = item.getItemId();
+                if (id == R.id.action_delete_event) {
+                    handleDeleteEventAction(event);
+                    return true;
+                } else if (id == R.id.action_cancel_event) {
+                    handleCancelEventAction(event);
+                    return true;
+                } else if (id == R.id.action_delete_poster) {
+                    handleDeletePosterAction(event);
+                    return true;
+                } else {
+                    return false;
+                }
+            });
+
+            // SHOWS THE MENU
+            popupMenu.show();
         });
 
-        // Show the menu
-        popupMenu.show();
 
     }
 
