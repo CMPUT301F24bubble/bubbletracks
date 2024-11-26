@@ -1,9 +1,13 @@
 package com.example.bubbletracksapp;
 
+import org.junit.Assert;
 import org.junit.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 import android.util.Log;
+
+import com.google.android.gms.maps.model.LatLng;
+import com.google.firebase.firestore.GeoPoint;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +22,8 @@ public class EntrantTest {
         String phone = "8253302549";
         String deviceID = "TheID tested";
         Boolean notification = false;
+        LatLng geolocation = new LatLng(0,0);
+        String role = "";
         ArrayList<String> eventsOrganized = new ArrayList<>();
         eventsOrganized.add("Event1");
         eventsOrganized.add("Event2");
@@ -31,7 +37,7 @@ public class EntrantTest {
         eventsWaitlist.add("Event6");
         eventsWaitlist.add("Event7");
 
-        Entrant newEntrant = new Entrant(name, email, phone, deviceID, notification,
+        Entrant newEntrant = new Entrant(name, email, phone, deviceID, notification, geolocation, role,
                 eventsOrganized, eventsInvited, eventsEnrolled, eventsWaitlist);
         return newEntrant;
     }
@@ -54,6 +60,8 @@ public class EntrantTest {
         String phone = "8253302549";
         String deviceID = "TheID tested";
         Boolean notification = false;
+        LatLng geolocation = new LatLng(0,0);
+        String role = "";
         ArrayList<String> eventsOrganized = new ArrayList<>();
         eventsOrganized.add("Event1");
         eventsOrganized.add("Event2");
@@ -70,6 +78,10 @@ public class EntrantTest {
         assertEquals(map.get("name"), entrant.getNameAsList());
         assertEquals(map.get("email"), email);
         assertEquals(map.get("phone"), phone);
+        assertEquals(map.get("notification"), notification);
+        GeoPoint location = (GeoPoint) map.get("geolocation");
+        assertTrue(location.getClass() == GeoPoint.class);
+        assertEquals(new LatLng(location.getLatitude(), location.getLongitude()), geolocation);
         assertEquals(map.get("notification"), notification);
         assertEquals(map.get("ID"), deviceID);
         assertEquals(map.get("organized"), eventsOrganized);
@@ -373,5 +385,28 @@ public class EntrantTest {
     public void deleteFromEventsWaitlistTest() {
         entrant = mockEntrant();
 
+    }
+
+    /**
+     * Make new geolocation as the mock one.
+     * Make sure it is equal.
+     */
+    @Test
+    public void getGeolocation() {
+        entrant = mockEntrant();
+        Assert.assertEquals(entrant.getGeolocation(), new LatLng(0,0));
+    }
+
+    /**
+     * Make new geolocation.
+     * Set it in the mock entrant
+     * Make sure it is equal.
+     */
+    @Test
+    public void setGeolocation() {
+        entrant = mockEntrant();
+        LatLng sydneyLocation = new LatLng(-33.852,151.211);
+        entrant.setGeolocation(sydneyLocation);
+        Assert.assertEquals(entrant.getGeolocation(), new LatLng(-33.852,151.211));
     }
 }
