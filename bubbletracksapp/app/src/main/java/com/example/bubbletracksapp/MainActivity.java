@@ -79,6 +79,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             } else {
                 currentUser = new Entrant(currentDeviceID);
+                switchActivityButton(createFacilityButton, createFacilityIntent);
                 db.addEntrant(currentUser);
                 Log.d("Added new Entrant",currentUser.getID());}
         }).exceptionally(e -> {
