@@ -231,6 +231,10 @@ public class MainActivity extends AppCompatActivity {
         }
     }*/
 
+    /**
+     * Show the notification for user to be given
+     * @param newNotification notification details from database
+     */
     public void showNotification(Notifications newNotification) {
         Intent intent = new Intent(this, OrganizerNotificationActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
