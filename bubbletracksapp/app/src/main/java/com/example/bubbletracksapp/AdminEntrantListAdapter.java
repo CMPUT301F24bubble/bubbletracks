@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -74,6 +75,9 @@ public class AdminEntrantListAdapter extends ArrayAdapter<Entrant> {
         entrantNameText.setText(String.join(" ", entrant.getNameAsList()));
         entrantDeviceText.setText(entrant.getID());
 
+        // Set click listener for the profile name to show profile details
+        entrantNameText.setOnClickListener(v -> showProfileDetailsDialog(entrant));
+
         // deleting an entrant
         deleteEntrantButton.setOnClickListener(view -> {
             new AlertDialog.Builder(getContext())
@@ -93,4 +97,50 @@ public class AdminEntrantListAdapter extends ArrayAdapter<Entrant> {
 
         return convertView;
     }
-}
+
+    // Method to show the profile details dialog
+    private void showProfileDetailsDialog(Entrant entrant) {
+        // Create the dialog
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        View dialogView = LayoutInflater.from(getContext()).inflate(R.layout.extra_profile_info, null);
+        builder.setView(dialogView);
+
+        // Initialize views in the dialog
+        TextView nameTextView = dialogView.findViewById(R.id.dialog_name);
+        TextView userIdTextView = dialogView.findViewById(R.id.dialog_user_id);
+        TextView phoneTextView = dialogView.findViewById(R.id.dialog_phone);
+        TextView emailTextView = dialogView.findViewById(R.id.dialog_email);
+        TextView roleTextView = dialogView.findViewById(R.id.dialog_role);
+        TextView eventsTextView = dialogView.findViewById(R.id.organized);
+
+        nameTextView.setText(String.join(" ", entrant.getNameAsList()));
+        userIdTextView.setText("User ID: " + entrant.getID());
+        phoneTextView.setText("Phone: " + entrant.getPhone());
+        emailTextView.setText("Email: " + entrant.getEmail());
+        roleTextView.setText("Role: " + entrant.getRole());
+
+        ArrayList<String> organizedEvents = entrant.getOrganized();
+        if (organizedEvents != null && !organizedEvents.isEmpty()) {
+            StringBuilder eventsString = new StringBuilder();
+            for (String event : organizedEvents) {
+                eventsString.append("• ").append(event).append("\n");
+            }
+            eventsTextView.setText(eventsString.toString());  // Set the event details as bullet points
+        } else {
+            eventsTextView.setText("No events organized.");  // If no events, show this message
+        }
+
+        // Build the dialog
+        AlertDialog dialog = builder.create();
+
+        // Show the dialog
+        dialog.show();
+
+        // Make sure the "Close" button dismisses the dialog, not the activity
+        Button closeButton = dialogView.findViewById(R.id.close_button); // Assuming you have a close button
+        if (closeButton != null) {
+            closeButton.setOnClickListener(v -> {
+                dialog.dismiss();  // This will only close the dialog, not the activity
+            });
+        }
+    }}
