@@ -133,5 +133,14 @@
             android:src="@drawable/qr_ex"
             />
 
+        <Button
+            android:id="@+id/update_poster_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Update Poster"
+            android:textSize="12sp"
+            android:backgroundTint="@color/home_blue"
+            android:layout_marginTop="8dp" />
+
     </LinearLayout>
 </LinearLayout>

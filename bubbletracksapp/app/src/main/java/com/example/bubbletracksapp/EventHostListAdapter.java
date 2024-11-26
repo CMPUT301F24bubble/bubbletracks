@@ -8,12 +8,9 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.AppCompatImageButton;
-
 import java.util.ArrayList;
 
 /**
@@ -26,14 +23,16 @@ public class EventHostListAdapter extends ArrayAdapter<Event>{
 //        void editEvent(Event event);
 //    }
 //    private EventHostI listener;
+    private OrganizerEventHosting fragment;
 
     /**
      * Initialize the adapter with the list of events
      * @param context context of what adapter does
      * @param events list of entrants
      */
-    public EventHostListAdapter(Context context, ArrayList<Event> events) {
+    public EventHostListAdapter(Context context, ArrayList<Event> events, OrganizerEventHosting fragment) {
         super(context, 0, events);
+        this.fragment = fragment;
 //        if (context instanceof EventHostI) {
 //            listener = (EventHostI) context;
 //        } else {
@@ -74,6 +73,7 @@ public class EventHostListAdapter extends ArrayAdapter<Event>{
 
         AppCompatImageButton seePeopleButton = view.findViewById(R.id.see_people_button);
         AppCompatImageButton editEventButton = view.findViewById(R.id.edit_event_button);
+        Button updatePosterButton = view.findViewById(R.id.update_poster_button);
 
 
         eventMonthText.setText(event.getMonth(event.getDateTime()));
@@ -101,6 +101,13 @@ public class EventHostListAdapter extends ArrayAdapter<Event>{
             @Override
             public void onClick(View view) {
                 editEvent(event);
+            }
+        });
+
+        updatePosterButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                fragment.updatePoster(event);
             }
         });
 
