@@ -24,6 +24,7 @@ import com.example.bubbletracksapp.databinding.NotificationMainBinding;
 
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.UUID;
 //TODO: add timestamp to remove notification in database after a set time
 /**
@@ -34,24 +35,12 @@ public class OrganizerNotificationActivity extends AppCompatActivity {
 
     private NotificationMainBinding binding;
     private static final String CHANNEL_ID = "notify_entrants";
-    private Entrant user;
     Event event;
-    EventDB eventDB = new EventDB();
-    EntrantDB entrantDB = new EntrantDB();
-
-    ArrayList<Entrant> waitList = new ArrayList<>();
-    ArrayList<Entrant> invitedList = new ArrayList<>();
-    ArrayList<Entrant> rejectedList = new ArrayList<>();
-    ArrayList<Entrant> cancelledList = new ArrayList<>();
-    ArrayList<Entrant> enrolledList = new ArrayList<>();
 
     NotificationDB db = new NotificationDB();
-    private String id;
-    Notifications notification;
 
     private ActivityResultLauncher<String> requestPermissionLauncher;
 
-    //private NotificationMainBinding binding;
 
     /**
      * Create organizer notification activity
@@ -75,25 +64,6 @@ public class OrganizerNotificationActivity extends AppCompatActivity {
         }
         setContentView(binding.getRoot());
 
-/*        if(event.getWaitList().size() > 0)
-        {
-            startListActivity();
-        }*/
-
-/*        entrantDB.getEntrantList(event.getWaitList()).thenAccept(entrants -> {
-            if(entrants != null) {
-                waitList = entrants;
-                Log.d("getWaitList", "WaitList loaded" + waitList);
-            }
-        });*/
-        //eventDB.getEventList(user.get()).thenAccept(events -> {}
-
-
-        // View view = getLayoutInflater().inflate(R.layout.notification_main, null);;
-
-        //createNotificationChannel();
-
-        // Test notification on organizer
         // TODO: send notification to database of entrants in event
 
         CheckBox checkInvited = findViewById(R.id.checkbox_notify_selected);
@@ -101,8 +71,6 @@ public class OrganizerNotificationActivity extends AppCompatActivity {
         CheckBox checkConfirmed = findViewById(R.id.checkbox_notify_confirmed_attendees);
         CheckBox checkCancelled = findViewById(R.id.checkbox_notify_cancelled);
         Button notifButton = findViewById(R.id.button_confirm);
-        ImageButton backButton = findViewById(R.id.back_button);
-        ;
         notifButton.setOnClickListener(view -> sendNotification(checkInvited, checkRejected, checkConfirmed, checkCancelled));
 
         binding.backButton.setOnClickListener(new View.OnClickListener()
@@ -121,31 +89,6 @@ public class OrganizerNotificationActivity extends AppCompatActivity {
             }
         });
     }
-
-/*
-    private void startListActivity() {
-        event.updateEventFirebase();
-        Intent intent = new Intent(OrganizerNotificationActivity.this, OrganizerNotificationActivity.class);
-        intent.putExtra("event", event);
-        startActivity(intent);
-    }
-*/
-
-    /**
-     *
-     */
-/*    //TODO: for entrant
-    private void createNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            CharSequence name = "Entrant Notification Channel";
-            String description = "Notification channel for the entrant user to be notified about updates to their event";
-            int importance = NotificationManager.IMPORTANCE_HIGH;
-            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
-            channel.setDescription(description);
-            NotificationManager notificationManager = getSystemService(NotificationManager.class);
-            notificationManager.createNotificationChannel(channel);
-        }
-    }*/
 
     /**
      * Check if there are notification permission for organizer to send a notification to the entrant
@@ -178,83 +121,6 @@ public class OrganizerNotificationActivity extends AppCompatActivity {
      * @param checkConfirmed entrants who confirmed registration for event
      * @param checkCancelled entrants who cancelled invitation to event
      */
-    //TODO: for entrant --> remove after all 4 notifications are made
-/*    private void showNotification(CheckBox checkInvited, CheckBox checkRejected, CheckBox checkConfirmed, CheckBox checkCancelled) {
-        Intent intent = new Intent(this, OrganizerNotificationActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
-
-*//*        NotificationCompat.Builder invitedBuilder = new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setSmallIcon(R.drawable.baseline_notifications_24)
-                .setContentTitle("Bubble Tracks App")
-                .setContentText("You are sampled for the event!")
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                .setStyle(new NotificationCompat.BigTextStyle()
-                        .bigText("Mark your calendars, because you have been chosen to participate in this event. Thank you for signing up for this events' waitlist. "))
-                // Set the intent that fires when the user taps the notification.
-                .setContentIntent(pendingIntent)
-                .setAutoCancel(true);
-
-        NotificationCompat.Builder rejectedBuilder = new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setSmallIcon(R.drawable.baseline_notifications_24)
-                .setContentTitle("Bubble Tracks App")
-                .setContentText("Waitlist pending update")
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                .setStyle(new NotificationCompat.BigTextStyle()
-                        .bigText("Thank you for joining the waitlist, but unfortunately you have not been selected for the event. Thanks for your cooperation!"))
-                // Set the intent that fires when the user taps the notification.
-                .setContentIntent(pendingIntent)
-                .setAutoCancel(true);
-
-        NotificationCompat.Builder confirmedBuilder = new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setSmallIcon(R.drawable.baseline_notifications_24)
-                .setContentTitle("Bubble Tracks App")
-                .setContentText("Thank you for confirming your attendance for this event!")
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                .setStyle(new NotificationCompat.BigTextStyle()
-                        .bigText("Keep an eye out for event updates."))
-                // Set the intent that fires when the user taps the notification.
-                .setContentIntent(pendingIntent)
-                .setAutoCancel(true);
-
-        NotificationCompat.Builder cancelledBuilder = new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setSmallIcon(R.drawable.baseline_notifications_24)
-                .setContentTitle("Bubble Tracks App")
-                .setContentText("We hate to see you go!")
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                .setStyle(new NotificationCompat.BigTextStyle()
-                        .bigText("You have chosen to cancel your attendance for the event, but keep an eye out for new ones to come."))
-                // Set the intent that fires when the user taps the notification.
-                .setContentIntent(pendingIntent)
-                .setAutoCancel(true);*//*
-
-        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
-        try {
-            // Attempt to post the notification
-            if (checkInvited.isChecked()) {
-               // ArrayList<String> invitedList = event.getInvitedList();
-                String testUserID = "9be104ee-e9e8-4df4-b93f-c3ec0aef750c";
-                int userHash = testUserID.hashCode();
-                notificationManager.notify(userHash, invitedBuilder.build()); // TODO: Notification id is the user id
-            }
-            if (checkRejected.isChecked()) {
-                ArrayList<String> rejectedList = event.getRejectedList();
-                notificationManager.notify(NON_SELECTED_NOTIFICATION_ID, rejectedBuilder.build());
-            }
-            if (checkConfirmed.isChecked()) {
-               // ArrayList<String> confirmedList = event.getEnrolledList();
-                notificationManager.notify(CONFIRMED_NOTIFICATION_ID, confirmedBuilder.build());
-            }
-            if (checkCancelled.isChecked()) {
-                ArrayList<String> cancelledListList = event.getCancelledList();
-                notificationManager.notify(CANCELLED_NOTIFICATION_ID, cancelledBuilder.build());
-            }
-        } catch (SecurityException e) {
-            // Log the exception or handle it if the notification couldn't be posted
-            Log.e("Notification", "Permission denied for posting notification: " + e.getMessage());
-            Toast.makeText(this, "Permission required to show notifications", Toast.LENGTH_SHORT).show();
-        }
-    }*/
     private void sendNotification(CheckBox checkInvited, CheckBox checkRejected, CheckBox checkConfirmed, CheckBox checkCancelled) {
         ArrayList<String> testList = new ArrayList<String>();
         testList.add("person1");
@@ -262,7 +128,7 @@ public class OrganizerNotificationActivity extends AppCompatActivity {
         testList.add("9be104ee-e9e8-4df4-b93f-c3ec0aef750c");
         //testList.add("c8d942fe-1319-4015-955a-c0b09964183d");
 
-        Object timestamp = System.currentTimeMillis();
+        Date timestamp = new Date();
         Intent intent = getIntent();
 
         //TODO: check for null lists
@@ -277,7 +143,8 @@ public class OrganizerNotificationActivity extends AppCompatActivity {
                         "Congratulations, you are invited to the event!",
                         "Accept your invitation to confirm your registration.",
                         //"Thank you for confirming your attendance to " + event.getName() + "!"
-                        UUID.randomUUID().toString()
+                        UUID.randomUUID().toString(),
+                        timestamp
                 );
                 db.addNotification(notification);
             } else {
@@ -298,7 +165,8 @@ public class OrganizerNotificationActivity extends AppCompatActivity {
                         "",
                         "Thank you for your participation in joining the waitlist!.",
                         //"Thank you for confirming your attendance to " + event.getName() + "!"
-                        UUID.randomUUID().toString()
+                        UUID.randomUUID().toString(),
+                        timestamp
                 );
                 db.addNotification(notification);
             } else {
@@ -319,7 +187,8 @@ public class OrganizerNotificationActivity extends AppCompatActivity {
                         "Mark your calendars for your event details.",
                         "",
                         //"Thank you for confirming your attendance to " + event.getName() + "!"
-                        UUID.randomUUID().toString()
+                        UUID.randomUUID().toString(),
+                        timestamp
                 );
                 db.addNotification(notification);
             } else {
@@ -337,7 +206,8 @@ public class OrganizerNotificationActivity extends AppCompatActivity {
                         "Registration Cancel Confirmation",
                         "We appreciate your consideration for joining this event. Hope to see you in future ones!",
                         "",
-                        UUID.randomUUID().toString()
+                        UUID.randomUUID().toString(),
+                        timestamp
                 );
                 db.addNotification(notification);
             } else {

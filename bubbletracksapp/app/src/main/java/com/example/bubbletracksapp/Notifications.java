@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import com.google.firebase.firestore.DocumentSnapshot;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -29,7 +30,7 @@ public class Notifications implements Parcelable{
     private String title;
     private String smallText;
     private String bigText;
-    private Object timestamp;
+    private Date timestamp;
 
     /**
      * For initializing notifications
@@ -50,7 +51,7 @@ public class Notifications implements Parcelable{
         this.title = document.getString("title");
         this.smallText = document.getString("smallText");
         this.bigText = document.getString("bigText");
-        this.timestamp = document.getString("timestamp");
+        this.timestamp = document.getDate("timestamp");
     }
 
     /**
@@ -61,13 +62,13 @@ public class Notifications implements Parcelable{
      * @param bigText text for when user uses arrow for more notification details
      * @param id id of notification
      */
-    public Notifications(ArrayList<String> recipients, String title, String smallText, String bigText, String id) {
+    public Notifications(ArrayList<String> recipients, String title, String smallText, String bigText, String id, Date timestamp) {
         this.recipients = recipients;
         this.title = title;
         this.smallText = smallText;
         this.bigText = bigText;
-        this.timestamp = timestamp;
         this.id = UUID.randomUUID().toString();
+        this.timestamp = timestamp != null ? timestamp : new Date();
     }
 
     /**
@@ -80,8 +81,8 @@ public class Notifications implements Parcelable{
         title = in.readString();
         smallText = in.readString();
         bigText = in.readString();
-        timestamp = in.readString();
-    }
+        long timeMillis = in.readLong();
+        timestamp = timeMillis != -1 ? new Date(timeMillis) : null;     }
 
 
     public static final Parcelable.Creator<Notification> CREATOR = new Parcelable.Creator<Notification>() {
@@ -145,7 +146,7 @@ public class Notifications implements Parcelable{
         parcel.writeString(title);
         parcel.writeString(smallText);
         parcel.writeString(bigText);
-        parcel.writeString((String) timestamp);
+        parcel.writeLong(timestamp != null ? timestamp.getTime() : -1);
     }
 
     /**
@@ -232,7 +233,7 @@ public class Notifications implements Parcelable{
      * get timestamp of when organizer sent out notification to database
      * @return timestamp of notification sent to database
      */
-    public Object getTimestamp() {
+    public Date getTimestamp() {
         return timestamp;
     }
 
@@ -240,7 +241,7 @@ public class Notifications implements Parcelable{
      * set timestamp of when organizer sent out notification to database
      * @param timestamp timestamp of notification sent to database
      */
-    public void setTimestamp(String timestamp) {
+    public void setTimestamp(Date timestamp) {
         this.timestamp = timestamp;
     }
 }

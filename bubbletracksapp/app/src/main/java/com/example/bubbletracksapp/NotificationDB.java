@@ -20,6 +20,7 @@ import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
@@ -28,6 +29,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -211,6 +213,23 @@ public class NotificationDB {
     }
 
     /**
+     * Recipient will be removed from notification document to ensure the notificaiton won't pop up again
+     * @param ID id of notification
+     * @param currentUserId id of user
+     */
+    public void markNotificationAsDelivered(String ID, String currentUserId) {
+        // Get the document reference for the notification
+        notifsRef.document(ID)
+                .update("recipients", FieldValue.arrayRemove(currentUserId))  // Remove the current user from the recipients list
+                .addOnSuccessListener(aVoid -> {
+                    Log.d("Firestore", "Recipient " + currentUserId + " removed from notification");
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("Firestore", "Error removing recipient" + ID, e);
+                });
+    }
+
+    /**
      * Allows to retrieve notification list details
      * @param IDs list of notification ids
      * @return return code
@@ -262,6 +281,12 @@ public class NotificationDB {
         });
         return returnCode;
     }
+
+    /**
+     * Listen for any new notification to be sent to entrant
+     * @param deviceID id of entrant
+     * @param mainActivity activity of entrant
+     */
     public void listenForNotifications(String deviceID, MainActivity mainActivity) {
         notifsRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override

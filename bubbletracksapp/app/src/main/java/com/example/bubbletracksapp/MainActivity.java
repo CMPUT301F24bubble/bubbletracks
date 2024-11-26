@@ -19,7 +19,9 @@ import com.example.bubbletracksapp.databinding.HomescreenBinding;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -217,20 +219,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-/*    private void checkNotificationPermission(CheckBox checkInvited, CheckBox checkRejected, CheckBox checkConfirmed, CheckBox checkCancelled) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            // Check if the notification permission is granted
-            if (checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
-                showNotification(notifications);
-            } else {
-                // Request the notification permission
-                requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS);
-            }
-        } else {
-            // For API levels below 33, permission is not required
-        }
-    }*/
-
     /**
      * Show the notification for user to be given
      * @param newNotification notification details from database
@@ -253,11 +241,10 @@ public class MainActivity extends AppCompatActivity {
 
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
         try {
-            // Attempt to post the notification
-            // ArrayList<String> invitedList = event.getInvitedList();
-            String testUserID = "9be104ee-e9e8-4df4-b93f-c3ec0aef750c";
-            int userHash = testUserID.hashCode();
-            notificationManager.notify(userHash, invitedBuilder.build()); // TODO: Notification id is the user id
+            long timestamp = System.currentTimeMillis();
+            int notificationID = (currentDeviceID + timestamp).hashCode();
+            notificationManager.notify(notificationID, invitedBuilder.build()); // TODO: Notification id is the user id
+            notificationDB.markNotificationAsDelivered(newNotification.getId(), currentDeviceID);
         }catch (SecurityException e) {
                 // Log the exception or handle it if the notification couldn't be posted
                 Log.e("Notification", "Permission denied for posting notification: " + e.getMessage());
