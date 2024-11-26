@@ -44,7 +44,7 @@ public class OrganizerFacilityActivity extends AppCompatActivity {
         // initialize the places API
         Places.initialize(getApplicationContext(), "AIzaSyBOt38qDT81Qj6jR0cmNHVGs3hPPw0XrZA");
 
-        // set the layout to the create event page
+        // set the layout to the create facility page
         setContentView(R.layout.create_facility);
 
         // find all the views using their ids
@@ -98,13 +98,13 @@ public class OrganizerFacilityActivity extends AppCompatActivity {
 
         String nameString = nameText.getText().toString().trim();
         String locationString = locationText.getText().toString().trim();
-        if(nameString.isEmpty() || locationString.isEmpty()){
+        if(nameString.isEmpty() || locationString.equals("Location not set") ){
             Toast.makeText(OrganizerFacilityActivity.this, "Sorry, a facility needs" +
                     " to have a name and a location", Toast.LENGTH_LONG).show();
         } else {
             facility.setName(nameString);
             facility.setLocation(locationString);
-
+            updateOrganizer();
         }
 
     }
@@ -120,13 +120,21 @@ public class OrganizerFacilityActivity extends AppCompatActivity {
 
                 // update facility's organizer to current entrant
                 facility.setOrganizer(user.getID());
+                user.setFacility(facility.getId());
+                entrantDB.updateEntrant(user);
 
+                FacilityDB facilityDB = new FacilityDB();
+                facilityDB.addFacility(facility);
+
+                Intent intent = new Intent(OrganizerFacilityActivity.this, OrganizerManageActivity.class);
+                intent.putExtra("id", facility.getId());
+                startActivity(intent);
 
             } else {
-                Toast.makeText(OrganizerActivity.this, "Could not load profile.", Toast.LENGTH_LONG).show();
+                Toast.makeText(OrganizerFacilityActivity.this, "Could not load profile.", Toast.LENGTH_LONG).show();
             }
         }).exceptionally(e -> {
-            Toast.makeText(OrganizerActivity.this, "Failed to load profile: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            Toast.makeText(OrganizerFacilityActivity.this, "Failed to load profile: " + e.getMessage(), Toast.LENGTH_LONG).show();
             return null;
         });
     }
