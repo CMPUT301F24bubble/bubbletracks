@@ -44,6 +44,8 @@ public class OrganizerActivity extends AppCompatActivity {
 
     private Event event = new Event();
 
+    private Date curDate = new Date();
+
     // declare all views necessary
     private EditText nameText, descriptionText, maxCapacityText, priceText, waitListLimitText;
     private ImageButton dateTimeButton, registrationOpenButton, registrationCloseButton;
@@ -57,13 +59,14 @@ public class OrganizerActivity extends AppCompatActivity {
     // declare calendar variables
     private Date dateTime, registrationClose;
     private Date registrationOpen = new Date();
-    private Date curDate = new Date();
 
     // Declares an ActivityResultLauncher that will handle the result of an image upload action
     private ActivityResultLauncher<String> uploadImageLauncher;
 
     // declare uri variable
     private Uri posterUri;
+
+    private String facility, location;
 
     /**
      * sets the layout, assigns all the views declared and sets up all the on click listeners
@@ -75,6 +78,23 @@ public class OrganizerActivity extends AppCompatActivity {
 
         // set the layout to the create event page
         setContentView(R.layout.create_event);
+
+        Intent intent = getIntent();
+        facility = intent.getStringExtra("id");
+        location = intent.getStringExtra("location");
+
+        FacilityDB facilityDB = new FacilityDB();
+        facilityDB.getFacility(facility).thenAccept(curFacility -> {
+            if(curFacility != null){
+                curFacility.addToEventList(event.getId());
+                facilityDB.updateFacility(curFacility);
+            } else {
+                Toast.makeText(OrganizerActivity.this, "Could not find your facility.", Toast.LENGTH_LONG).show();
+            }
+        }).exceptionally(e -> {
+            Toast.makeText(OrganizerActivity.this, "Could not load your profile: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            return null;
+        });
 
         // find all the views using their ids
         nameText = findViewById(R.id.textName);
@@ -333,6 +353,9 @@ public class OrganizerActivity extends AppCompatActivity {
 
             event.setDateTime(dateTime);
             event.setRegistrationClose(registrationClose);
+
+            event.setFacility(facility);
+            event.setGeolocation(location);
 
             try {
                 event.setMaxCapacity(Integer.parseInt(maxCapacity));

@@ -13,7 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 public class OrganizerManageActivity extends AppCompatActivity {
 
     private Facility facility;
-    private String id;
+    private String id, location;
 
     private ImageButton backButton;
     private TextView nameText, locationText;
@@ -48,6 +48,7 @@ public class OrganizerManageActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent createEventIntent = new Intent(OrganizerManageActivity.this, OrganizerActivity.class);
                 createEventIntent.putExtra("id", id);
+                createEventIntent.putExtra("location", location);
                 startActivity(createEventIntent);
             }
         });
@@ -59,6 +60,7 @@ public class OrganizerManageActivity extends AppCompatActivity {
         facilityDB.getFacility(id).thenAccept(curFacility -> {
             if(curFacility != null){
                 facility = curFacility;
+                location = curFacility.getLocation();
                 setViews();
             } else {
                 Toast.makeText(OrganizerManageActivity.this, "Could not find your facility.", Toast.LENGTH_LONG).show();
