@@ -63,9 +63,20 @@ public class MainActivity extends AppCompatActivity {
         currentDeviceID = getDeviceID();
         Log.d("DeviceID:",currentDeviceID);
 
+        Button createFacilityButton = binding.buttonCreateManageFacility;
+        Intent createFacilityIntent = new Intent(MainActivity.this, OrganizerFacilityActivity.class); //class where you are, then class where you wanan go
+        Intent manageFacilityIntent = new Intent(MainActivity.this, OrganizerManageActivity.class);
+
         db.getEntrant(currentDeviceID).thenAccept(user -> {
             if(user != null){
                 currentUser = user;
+                if(!user.getFacility().isEmpty()){
+                    manageFacilityIntent.putExtra("id", user.getFacility());
+                    switchActivityButton(createFacilityButton, manageFacilityIntent);
+                    createFacilityButton.setText("MANAGE FACILITY");
+                } else {
+                    switchActivityButton(createFacilityButton, createFacilityIntent);
+                }
             } else {
                 currentUser = new Entrant(currentDeviceID);
                 db.addEntrant(currentUser);
@@ -76,16 +87,12 @@ public class MainActivity extends AppCompatActivity {
         });
 
         Button eventsButton = binding.buttonEvents;
-        Button createEventButton = binding.buttonCreateEvents;
         Button scanButton = binding.buttonScan;
         Button ticketsButton = binding.buttonTickets;
         Button profileButton = binding.buttonProfile;
         Button userEventsButton = binding.buttonEvents;
         Button eventHostButton = binding.buttonEventHost;
         Button adminProfileAccessButton = binding.buttonAdminProfiles;
-
-        Intent createEventIntent = new Intent(MainActivity.this, OrganizerActivity.class); //class where you are, then class where you wanan go
-        switchActivityButton(createEventButton, createEventIntent);
 
         Intent scanIntent = new Intent(MainActivity.this, QRScanner.class);
         switchActivityButton(scanButton, scanIntent);

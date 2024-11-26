@@ -76,7 +76,7 @@
                 android:text="Profile" />
 
             <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/button_createEvents"
+                android:id="@+id/button_createManageFacility"
                 style="@style/HomeButtons"
                 android:layout_width="wrap_content"
                 android:layout_height="60dp"
@@ -85,7 +85,7 @@
                 android:drawableTop="@drawable/baseline_image_search_24"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
-                android:text="Create Event" />
+                android:text="Create Facility" />
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/button_eventHost"

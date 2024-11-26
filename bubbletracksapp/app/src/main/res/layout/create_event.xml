@@ -115,43 +115,6 @@
             android:minLines="3"
             android:layout_marginTop="16dp" />
 
-        <!--button to open a dialogue to select the location-->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Location"
-            android:gravity="center_vertical"
-            android:paddingStart="8dp"
-            android:paddingEnd="8dp"/>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <!--image button to open an overlay to select the location-->
-            <ImageButton
-                android:id="@+id/buttonLocation"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Select Location"
-                android:layout_marginTop="16dp"
-                android:src="@drawable/baseline_location_on_24"
-                android:backgroundTint="@color/white"
-                app:tint = "@color/black"/>
-
-            <!--text view to show selected location-->
-            <TextView
-                android:id="@+id/textLocation"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Location not set"
-                android:background="@drawable/round_event"
-                android:backgroundTint="#EEEEEE"
-                android:layout_marginTop="8dp" />
-
-        </LinearLayout>
-
         <!--text view to indicate registration open date-->
         <TextView
             android:layout_width="match_parent"
