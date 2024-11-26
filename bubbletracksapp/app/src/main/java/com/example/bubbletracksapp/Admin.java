@@ -162,6 +162,65 @@ public class Admin {
 
 }
 
+    /**
+     * Deletes a facility from the "facilities" collection and performs cascading deletions:
+     * - Deletes all events associated with the facility.
+     * - Clears the facility reference from the organizer's document.
+     * - Updates the organizer's role to "entrant".
+     *
+     * @param context The context where the deletion is being performed.
+     * @param facilityRef The DocumentReference to the facility that needs to be deleted.
+     */
+    public void deleteFacility(Context context, DocumentReference facilityRef) {
+        if (facilityRef == null) {
+            return;
+        }
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        WriteBatch batch = db.batch();
+
+        facilityRef.get().addOnSuccessListener(facilityDoc -> {
+            if (facilityDoc.exists()) {
+                Map<String, Object> facilityData = facilityDoc.getData();
+
+                if (facilityData != null) {
+                    List<String> eventIds = (List<String>) facilityData.get("events");
+                    String organizerId = (String) facilityData.get("organizer");
+
+                    // delete events in facility
+                    if (eventIds != null && !eventIds.isEmpty()) {
+                        for (String eventId : eventIds) {
+                            DocumentReference eventRef = db.collection("events").document(eventId);
+                            deleteEvent(context, eventRef);
+                        }
+                    }
+
+                    if (organizerId != null) {
+                        DocumentReference organizerRef = db.collection("entrants").document(organizerId);
+                        batch.update(organizerRef, "facility", null);
+                        batch.update(organizerRef, "role", "entrant"); // turn role to entrant
+                    }
+                }
+
+                batch.delete(facilityRef);
+
+                batch.commit().addOnSuccessListener(aVoid -> {
+                    Toast.makeText(context, "Facility and related data deleted successfully", Toast.LENGTH_SHORT).show();
+                }).addOnFailureListener(e -> {
+                    Log.e("DeleteFacility", "Error deleting facility or related data: ", e);
+                    Toast.makeText(context, "Failed to delete facility. Try again.", Toast.LENGTH_SHORT).show();
+                });
+
+            } else {
+                Toast.makeText(context, "Facility not found!", Toast.LENGTH_SHORT).show();
+            }
+        }).addOnFailureListener(e -> {
+            Log.e("DeleteFacility", "Error fetching facility data: ", e);
+            Toast.makeText(context, "Failed to fetch facility data. Try again.", Toast.LENGTH_SHORT).show();
+        });
+    }
+
+
 } // remove this bracket later when implemented profile pictures
 
 
