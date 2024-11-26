@@ -37,7 +37,7 @@ public class AdminEntrantListAdapter extends ArrayAdapter<Entrant> {
     /**
      * Constructs a new adapter for the list of entrants.
      *
-     * @param context The context in where the adapter is used.
+     * @param context  The context in where the adapter is used.
      * @param entrants The list of entrants to be displayed in the adapter.
      */
     public AdminEntrantListAdapter(Context context, ArrayList<Entrant> entrants) {
@@ -46,19 +46,6 @@ public class AdminEntrantListAdapter extends ArrayAdapter<Entrant> {
         this.admin = new Admin(context);
     }
 
-    /**
-     * Returns a view for a list item at the specified position in the list.
-     * @param position The position of the item within the adapter's data set of the item whose view
-     *        we want.
-     * @param convertView The old view to reuse, if possible. Note: You should check that this view
-     *        is non-null and of an appropriate type before using. If it is not possible to convert
-     *        this view to display the correct data, this method can create a new view.
-     *        Heterogeneous lists can specify their number of view types, so that this View is
-     *        always of the right type (see {@link #getViewTypeCount()} and
-     *        {@link #getItemViewType(int)}).
-     * @param parent The parent that this view will eventually be attached to
-     * @return
-     */
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
@@ -75,8 +62,7 @@ public class AdminEntrantListAdapter extends ArrayAdapter<Entrant> {
         entrantNameText.setText(String.join(" ", entrant.getNameAsList()));
         entrantDeviceText.setText(entrant.getID());
 
-        // Set click listener for the profile name to show profile details
-        entrantNameText.setOnClickListener(v -> showProfileDetailsDialog(entrant));
+        convertView.setOnClickListener(v -> showProfileDetailsDialog(entrant));
 
         // deleting an entrant
         deleteEntrantButton.setOnClickListener(view -> {
@@ -88,9 +74,7 @@ public class AdminEntrantListAdapter extends ArrayAdapter<Entrant> {
                         remove(entrant);
                         notifyDataSetChanged();
                     })
-                    .setNegativeButton("No", (dialog, which) -> {
-                        dialog.dismiss();
-                    })
+                    .setNegativeButton("No", (dialog, which) -> dialog.dismiss())
                     .create()
                     .show();
         });
@@ -98,14 +82,19 @@ public class AdminEntrantListAdapter extends ArrayAdapter<Entrant> {
         return convertView;
     }
 
-    // Method to show the profile details dialog
+    /**
+     * Shows the extra information of each entrant as a dialog, including facility details and delete functionality.
+     *
+     * @param entrant The entrant whose profile is to be displayed.
+     */
     private void showProfileDetailsDialog(Entrant entrant) {
-        // Create the dialog
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         View dialogView = LayoutInflater.from(getContext()).inflate(R.layout.extra_profile_info, null);
         builder.setView(dialogView);
 
-        // Initialize views in the dialog
+        AlertDialog dialog = builder.create();
+
+        // entrant info
         TextView nameTextView = dialogView.findViewById(R.id.dialog_name);
         TextView userIdTextView = dialogView.findViewById(R.id.dialog_user_id);
         TextView phoneTextView = dialogView.findViewById(R.id.dialog_phone);
@@ -125,22 +114,78 @@ public class AdminEntrantListAdapter extends ArrayAdapter<Entrant> {
             for (String event : organizedEvents) {
                 eventsString.append("• ").append(event).append("\n");
             }
-            eventsTextView.setText(eventsString.toString());  // Set the event details as bullet points
+            eventsTextView.setText(eventsString.toString());
         } else {
-            eventsTextView.setText("No events organized.");  // If no events, show this message
+            eventsTextView.setText("No events organized.");
         }
 
-        // Build the dialog
-        AlertDialog dialog = builder.create();
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        // Show the dialog
-        dialog.show();
+        // facility info
+        TextView facilityNameTextView = dialogView.findViewById(R.id.facility_name);
+        TextView facilityIdTextView = dialogView.findViewById(R.id.facility_id);
+        TextView facilityLocationTextView = dialogView.findViewById(R.id.facility_location);
 
-        // Make sure the "Close" button dismisses the dialog, not the activity
-        Button closeButton = dialogView.findViewById(R.id.close_button); // Assuming you have a close button
-        if (closeButton != null) {
-            closeButton.setOnClickListener(v -> {
-                dialog.dismiss();  // This will only close the dialog, not the activity
+        String facilityId = entrant.getFacility();
+
+        if (facilityId != null) {
+            DocumentReference facilityRef = db.collection("facilities").document(facilityId);
+
+            facilityRef.get().addOnSuccessListener(documentSnapshot -> {
+                if (documentSnapshot.exists()) {
+                    String facilityName = documentSnapshot.getString("name");
+                    String facilityLocation = documentSnapshot.getString("location");
+
+                    facilityNameTextView.setText("Facility Name: " + (facilityName != null ? facilityName : "N/A"));
+                    facilityIdTextView.setText("Facility ID: " + facilityId);
+                    facilityLocationTextView.setText("Facility Location: " + (facilityLocation != null ? facilityLocation : "N/A"));
+                } else {
+                    facilityNameTextView.setText("Facility Name: N/A");
+                    facilityIdTextView.setText("Facility ID: N/A");
+                    facilityLocationTextView.setText("Facility Location: N/A");
+                }
+            }).addOnFailureListener(e -> {
+                // Handle errors
+                facilityNameTextView.setText("Facility Name: Error");
+                facilityIdTextView.setText("Facility ID: Error");
+                facilityLocationTextView.setText("Facility Location: Error");
+                Log.e("FacilityFetchError", "Error fetching facility details", e);
+            });
+        } else {
+            // No facility associated with the entrant
+            facilityNameTextView.setText("Facility Name: N/A");
+            facilityIdTextView.setText("Facility ID: N/A");
+            facilityLocationTextView.setText("Facility Location: N/A");
+        }
+
+        // delete facility button
+        Button deleteFacilityButton = dialogView.findViewById(R.id.delete_facility_button);
+        if (deleteFacilityButton != null) {
+            deleteFacilityButton.setOnClickListener(v -> {
+                if (facilityId != null) {
+                    // delete facility
+                    DocumentReference facilityRef = db.collection("facilities").document(facilityId);
+                    facilityRef.delete().addOnSuccessListener(aVoid -> {
+                        entrant.setFacility(null);
+                        facilityNameTextView.setText("Facility Name: N/A");
+                        facilityIdTextView.setText("Facility ID: N/A");
+                        facilityLocationTextView.setText("Facility Location: N/A");
+                        Toast.makeText(getContext(), "Facility deleted successfully", Toast.LENGTH_SHORT).show();
+                    }).addOnFailureListener(e -> {
+                        Toast.makeText(getContext(), "Failed to delete facility", Toast.LENGTH_SHORT).show();
+                        Log.e("FacilityDeleteError", "Error deleting facility", e);
+                    });
+                } else {
+                    Toast.makeText(getContext(), "No facility associated with this entrant", Toast.LENGTH_SHORT).show();
+                }
             });
         }
-    }}
+
+        Button closeButton = dialogView.findViewById(R.id.close_button);
+        if (closeButton != null) {
+            closeButton.setOnClickListener(v -> dialog.dismiss());
+        }
+
+        dialog.show();
+    }
+}

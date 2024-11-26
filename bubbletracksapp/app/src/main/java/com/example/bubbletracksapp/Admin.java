@@ -50,14 +50,13 @@ public class Admin {
 
         batch.delete(eventRef);
 
-        // List of subcategories to check in entrants' data
+        // subcategories to check in entrants' data
         List<String> subcategories = Arrays.asList("enrolled", "invited", "organized", "waitlist");
 
-        // Iterate through all entrant documents and update their lists by removing the event reference
+        // event reference from entrants' lists
         db.collection("entrants")
                 .get()
                 .addOnSuccessListener(querySnapshot -> {
-                    // Iterate through each entrant document
                     for (DocumentSnapshot entrantDoc : querySnapshot.getDocuments()) {
                         DocumentReference entrantRef = entrantDoc.getReference();
                         Map<String, Object> entrantData = entrantDoc.getData();
@@ -67,23 +66,62 @@ public class Admin {
                                 if (entrantData.containsKey(subcategory)) {
                                     List<String> eventList = (List<String>) entrantData.get(subcategory);
                                     if (eventList != null && eventList.contains(eventId)) {
-                                        eventList.remove(eventId); // Remove the event ID
-                                        batch.update(entrantRef, subcategory, eventList); // Update the document
+                                        eventList.remove(eventId);
+                                        batch.update(entrantRef, subcategory, eventList);
                                     }
                                 }
                             }
                         }
                     }
 
-                    batch.commit()
-                            .addOnSuccessListener(aVoid -> {
-                                Toast.makeText(context, "Event and references deleted successfully", Toast.LENGTH_SHORT).show();
+                    // remove event reference from facility
+                    eventRef.get()
+                            .addOnSuccessListener(eventSnapshot -> {
+                                if (eventSnapshot.exists()) {
+                                    String facilityId = eventSnapshot.getString("facility");
+                                    if (facilityId != null) {
+                                        DocumentReference facilityRef = db.collection("facilities").document(facilityId);
+
+                                        facilityRef.get()
+                                                .addOnSuccessListener(facilitySnapshot -> {
+                                                    if (facilitySnapshot.exists()) {
+                                                        List<String> facilityEvents = (List<String>) facilitySnapshot.get("events");
+                                                        if (facilityEvents != null && facilityEvents.contains(eventId)) {
+                                                            facilityEvents.remove(eventId);
+                                                            batch.update(facilityRef, "events", facilityEvents);
+                                                        }
+                                                    }
+
+                                                    batch.commit()
+                                                            .addOnSuccessListener(aVoid -> {
+                                                                Toast.makeText(context, "Event and references deleted successfully", Toast.LENGTH_SHORT).show();
+                                                            })
+                                                            .addOnFailureListener(e -> {
+                                                                Log.e("DeleteEvent", "Error deleting event or updating references: ", e);
+                                                                Toast.makeText(context, "Failed to delete event. Try again.", Toast.LENGTH_SHORT).show();
+                                                            });
+                                                })
+                                                .addOnFailureListener(e -> {
+                                                    Log.e("DeleteEvent", "Error fetching facility data: ", e);
+                                                    Toast.makeText(context, "Failed to fetch facility data. Try again.", Toast.LENGTH_SHORT).show();
+                                                });
+                                    } else {
+                                        // facility
+                                        batch.commit()
+                                                .addOnSuccessListener(aVoid -> {
+                                                    Toast.makeText(context, "Event and references deleted successfully", Toast.LENGTH_SHORT).show();
+                                                })
+                                                .addOnFailureListener(e -> {
+                                                    Log.e("DeleteEvent", "Error deleting event or updating references: ", e);
+                                                    Toast.makeText(context, "Failed to delete event. Try again.", Toast.LENGTH_SHORT).show();
+                                                });
+                                    }
+                                }
                             })
                             .addOnFailureListener(e -> {
-                                Log.e("DeleteEvent", "Error deleting event or updating references: ", e);
-                                Toast.makeText(context, "Failed to delete event. Try again.", Toast.LENGTH_SHORT).show();
+                                Log.e("DeleteEvent", "Error fetching event data: ", e);
+                                Toast.makeText(context, "Failed to fetch event data. Try again.", Toast.LENGTH_SHORT).show();
                             });
-
                 })
                 .addOnFailureListener(e -> {
                     Log.e("DeleteEvent", "Error fetching entrant data: ", e);
@@ -91,9 +129,11 @@ public class Admin {
                 });
     }
 
+
     /**
      * Deletes an entrant's profile from the "entrants" collection and removes any
      * references to the profile from the corresponding lists in the "events" collection.
+     * Deletes associated facility, which deletes organized events
      *
      * @param context The context where the deletion is being performed.
      * @param entrantToDelete The entrant object whose profile needs to be deleted.
@@ -108,65 +148,58 @@ public class Admin {
         WriteBatch batch = db.batch();
 
         DocumentReference profileRef = db.collection("entrants").document(profileId);
-        batch.delete(profileRef);
 
-        // List of subcategories where profile IDs might be referenced
-        List<String> subcategories = Arrays.asList("cancelled", "enrolled", "invited", "rejected", "wait");
-
-        // Check if the entrant has any events in the "organized" subcategory
-        if (entrantToDelete.getOrganized() != null && !entrantToDelete.getOrganized().isEmpty()) {
-            List<String> organizedEvents = entrantToDelete.getOrganized();
-
-            // Delete each organized event
-            for (String eventId : organizedEvents) {
-                DocumentReference eventRef = db.collection("events").document(eventId);
-                deleteEvent(context, eventRef);
-            }
+        // the associated facility if present
+        String facilityId = entrantToDelete.getFacility();
+        if (facilityId != null && !facilityId.isEmpty()) {
+            DocumentReference facilityRef = db.collection("facility").document(facilityId);
+            deleteFacility(context, facilityRef);
         }
 
-        // Iterate through all event documents and update their lists by removing the profile reference
-        db.collection("events")
-                .get()
-                .addOnSuccessListener(querySnapshot -> {
-                    for (DocumentSnapshot eventDoc : querySnapshot.getDocuments()) {
-                        DocumentReference eventRef = eventDoc.getReference();
-                        Map<String, Object> eventData = eventDoc.getData();
+        // if entrant has organized events
+        profileRef.get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        Map<String, Object> entrantData = documentSnapshot.getData();
 
-                        if (eventData != null) {
-                            // Iterate over subcategories and remove the profile from each list where it exists
-                            for (String subcategory : subcategories) {
-                                if (eventData.containsKey(subcategory)) {
-                                    List<String> profileList = (List<String>) eventData.get(subcategory);
-                                    if (profileList != null && profileList.contains(profileId)) {
-                                        profileList.remove(profileId); // Remove the profile ID
-                                        batch.update(eventRef, subcategory, profileList); // Update the document
-                                    }
+                        if (entrantData != null && entrantData.containsKey("organized")) {
+                            List<String> organizedEventIds = (List<String>) entrantData.get("organized");
+
+                            if (organizedEventIds != null && !organizedEventIds.isEmpty()) {
+                                // fetch each event and delete it
+                                for (String eventId : organizedEventIds) {
+                                    DocumentReference eventRef = db.collection("events").document(eventId);
+                                    deleteEvent(context, eventRef);
                                 }
                             }
                         }
-                    }
 
-                    batch.commit()
-                            .addOnSuccessListener(aVoid -> {
-                                Toast.makeText(context, "Profile and references deleted successfully", Toast.LENGTH_SHORT).show();
-                            })
-                            .addOnFailureListener(e -> {
-                                Log.e("DeleteProfile", "Error deleting profile or references: ", e);
-                                Toast.makeText(context, "Failed to delete profile. Try again.", Toast.LENGTH_SHORT).show();
-                            });
+                        batch.delete(profileRef);
+
+                        batch.commit()
+                                .addOnSuccessListener(aVoid -> {
+                                    Toast.makeText(context, "Entrant and their events deleted successfully", Toast.LENGTH_SHORT).show();
+                                })
+                                .addOnFailureListener(e -> {
+                                    Log.e("DeleteEntrant", "Error deleting entrant: ", e);
+                                    Toast.makeText(context, "Failed to delete entrant. Try again.", Toast.LENGTH_SHORT).show();
+                                });
+                    }
                 })
                 .addOnFailureListener(e -> {
-                    Log.e("DeleteProfile", "Error fetching entrant references: ", e);
-                    Toast.makeText(context, "Failed to fetch related data. Try again.", Toast.LENGTH_SHORT).show();
+                    Log.e("DeleteEntrant", "Error fetching entrant data: ", e);
+                    Toast.makeText(context, "Failed to fetch entrant details. Try again.", Toast.LENGTH_SHORT).show();
                 });
 
-}
+    }
+
+
 
     /**
-     * Deletes a facility from the "facilities" collection and performs cascading deletions:
-     * - Deletes all events associated with the facility.
-     * - Clears the facility reference from the organizer's document.
-     * - Updates the organizer's role to "entrant".
+     * Deletes a facility from the "facilities"
+     * Deletes all events associated with the facility.
+     * Removes facility reference from the organizer's document.
+     * Updates the organizer's role to "entrant".
      *
      * @param context The context where the deletion is being performed.
      * @param facilityRef The DocumentReference to the facility that needs to be deleted.
