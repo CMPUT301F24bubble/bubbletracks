@@ -155,7 +155,7 @@ public class BrowseEventsAdminAdapter extends RecyclerView.Adapter<BrowseEventsA
      * It will send a notification to the organizer that their event has been deleted.
      * @param event The {@link Event} object representing the event to be deleted.
      */
-    private void handleDeleteEventActionAction(Event event) {
+    private void handleDeleteEventAction(Event event) {
         // GOES INTO DATABASE
 
         // DELETES EVENT FROM DATABASE: should cascade so that the event will not appear in any waitlist/registered/hosting list
@@ -173,7 +173,7 @@ public class BrowseEventsAdminAdapter extends RecyclerView.Adapter<BrowseEventsA
      *
      * @param event The {@link Event} object representing the event to be canceled.
      */
-    private void handleCancelEventActionAction(Event event) {
+    private void handleCancelEventAction(Event event) {
         // GOES INTO DATABASE
 
         // CHANGES QR CODE OF THE EVENT SO THAT A POSTER ORIGINALLY PUT UP WILL GO TO EVENT CANCELED PAGE
@@ -192,7 +192,7 @@ public class BrowseEventsAdminAdapter extends RecyclerView.Adapter<BrowseEventsA
      *
      * @param event The {@link Event} object representing the event to be canceled.
      */
-    private void handleDeletePosterActionAction(Event event) {
+    private void handleDeletePosterAction(Event event) {
         // GOES INTO DATABASE
 
         // REPLACES IMAGE POSTER WITH DEFAULT IMAGE OF WEBSITE
