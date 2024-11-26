@@ -1,6 +1,99 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+<!--
+1) Time
+2) Registration closing time
+3) Amount of people in waitlist
+4)
+-->
+<!-- Holds Event Image/Event Date/Event Name/Event Location -->
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/browseEventXMLID"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    android:paddingStart = "100dp"
+    app:cardElevation="4dp"
+    app:cardCornerRadius="8dp">
+
+    <!-- FrameLayout to allow overlay -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:padding = "10dp"
+        android:layout_height="wrap_content">
+
+        <!-- Content Layout -->
+        <LinearLayout
+            android:paddingStart="30dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+
+            android:padding="8dp">
+
+            <!-- Image -->
+            <ImageView
+                android:id="@+id/browseEventPoster"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/sushi_class" />
+
+            <!-- Content -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:layout_marginStart="8dp">
+
+                <!-- Title -->
+                <TextView
+                    android:id="@+id/browseEventTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Item Title"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="@android:color/black" />
+
+                <!-- Description -->
+                <TextView
+                    android:id="@+id/browseEventDescription"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Item description goes here."
+                    android:textSize="14sp"
+                    android:textColor="@android:color/darker_gray" />
+            </LinearLayout>
+
+            <!-- Overflow Menu -->
+            <ImageButton
+                android:id="@+id/browseOverflowMenu"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/overflow_icon" />
+        </LinearLayout>
+
+        <!-- Date Overlay -->
+        <TextView
+            android:id="@+id/browseEventDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding = "3dp"
+            android:paddingStart = "10dp"
+            android:paddingEnd = "10dp"
+            android:layout_gravity="bottom|start"
+            android:backgroundTint="@color/home_blue"
+            android:background="@drawable/rounded_corners"
+            android:text="NOV 29 - DEC 31"
+            android:textSize="10sp"
+            android:textColor="@android:color/white"
+            android:textStyle="bold"
+            android:layout_marginStart="8dp"
+            android:layout_marginBottom="9dp" />
+    </FrameLayout>
+</androidx.cardview.widget.CardView>

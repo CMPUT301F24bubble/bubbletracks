@@ -23,6 +23,7 @@
             android:id="@+id/eventPic"
             android:src="@drawable/sushi_class"
             android:scaleType="centerCrop"
+            android:backgroundTint="@color/white"
             android:background="@drawable/rounded_corners"
             android:layout_width="match_parent"
             android:layout_height="150dp" />
