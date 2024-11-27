@@ -158,29 +158,6 @@ public class AdminEntrantListAdapter extends ArrayAdapter<Entrant> {
             facilityLocationTextView.setText("Facility Location: N/A");
         }
 
-        // delete facility button
-        Button deleteFacilityButton = dialogView.findViewById(R.id.delete_facility_button);
-        if (deleteFacilityButton != null) {
-            deleteFacilityButton.setOnClickListener(v -> {
-                if (facilityId != null) {
-                    // delete facility
-                    DocumentReference facilityRef = db.collection("facilities").document(facilityId);
-                    facilityRef.delete().addOnSuccessListener(aVoid -> {
-                        entrant.setFacility(null);
-                        facilityNameTextView.setText("Facility Name: N/A");
-                        facilityIdTextView.setText("Facility ID: N/A");
-                        facilityLocationTextView.setText("Facility Location: N/A");
-                        Toast.makeText(getContext(), "Facility deleted successfully", Toast.LENGTH_SHORT).show();
-                    }).addOnFailureListener(e -> {
-                        Toast.makeText(getContext(), "Failed to delete facility", Toast.LENGTH_SHORT).show();
-                        Log.e("FacilityDeleteError", "Error deleting facility", e);
-                    });
-                } else {
-                    Toast.makeText(getContext(), "No facility associated with this entrant", Toast.LENGTH_SHORT).show();
-                }
-            });
-        }
-
         Button closeButton = dialogView.findViewById(R.id.close_button);
         if (closeButton != null) {
             closeButton.setOnClickListener(v -> dialog.dismiss());

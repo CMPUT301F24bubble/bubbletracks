@@ -148,32 +148,55 @@ public class Admin {
         }
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
+        String profileId = entrantToDelete.getID();
         WriteBatch batch = db.batch();
 
-        String profileId = entrantToDelete.getID();
         DocumentReference profileRef = db.collection("entrants").document(profileId);
 
-        // delete facility
+        // the associated facility if present
         String facilityId = entrantToDelete.getFacility();
         if (facilityId != null && !facilityId.isEmpty()) {
-            DocumentReference facilityRef = db.collection("facilities").document(facilityId);
-            deleteFacility(context, facilityRef).addOnCompleteListener(task -> {
-                if (!task.isSuccessful()) {
-                    Log.e("DeleteEntrant", "Error deleting facility: ", task.getException());
-                    Toast.makeText(context, "Failed to delete associated facility.", Toast.LENGTH_SHORT).show();
-                }
-            });
+            DocumentReference facilityRef = db.collection("facility").document(facilityId);
+            deleteFacility(context, facilityRef);
         }
 
-        batch.delete(profileRef);
+        // if entrant has organized events
+        profileRef.get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        Map<String, Object> entrantData = documentSnapshot.getData();
 
-        batch.commit().addOnSuccessListener(aVoid -> {
-            Toast.makeText(context, "Entrant deleted successfully.", Toast.LENGTH_SHORT).show();
-        }).addOnFailureListener(e -> {
-            Log.e("DeleteEntrant", "Error deleting entrant: ", e);
-            Toast.makeText(context, "Failed to delete entrant. Try again.", Toast.LENGTH_SHORT).show();
-        });
+                        if (entrantData != null && entrantData.containsKey("organized")) {
+                            List<String> organizedEventIds = (List<String>) entrantData.get("organized");
+
+                            if (organizedEventIds != null && !organizedEventIds.isEmpty()) {
+                                // fetch each event and delete it
+                                for (String eventId : organizedEventIds) {
+                                    DocumentReference eventRef = db.collection("events").document(eventId);
+                                    deleteEvent(context, eventRef);
+                                }
+                            }
+                        }
+
+                        batch.delete(profileRef);
+
+                        batch.commit()
+                                .addOnSuccessListener(aVoid -> {
+                                    Toast.makeText(context, "Entrant and their events deleted successfully", Toast.LENGTH_SHORT).show();
+                                })
+                                .addOnFailureListener(e -> {
+                                    Log.e("DeleteEntrant", "Error deleting entrant: ", e);
+                                    Toast.makeText(context, "Failed to delete entrant. Try again.", Toast.LENGTH_SHORT).show();
+                                });
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("DeleteEntrant", "Error fetching entrant data: ", e);
+                    Toast.makeText(context, "Failed to fetch entrant details. Try again.", Toast.LENGTH_SHORT).show();
+                });
+
     }
+
 
 
     /**
@@ -193,45 +216,47 @@ public class Admin {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         WriteBatch batch = db.batch();
 
-        // Fetch the facility document
-        return facilityRef.get().continueWithTask(task -> {
-            if (task.isSuccessful()) {
-                DocumentSnapshot facilityDoc = task.getResult();
-                if (facilityDoc.exists()) {
-                    Map<String, Object> facilityData = facilityDoc.getData();
-                    if (facilityData != null) {
-                        // Delete events associated with the facility
-                        List<String> eventIds = (List<String>) facilityData.get("events");
-                        if (eventIds != null && !eventIds.isEmpty()) {
-                            for (String eventId : eventIds) {
-                                DocumentReference eventRef = db.collection("events").document(eventId);
-                                deleteEvent(context, eventRef); // Delete individual events
-                            }
-                        }
+        facilityRef.get().addOnSuccessListener(facilityDoc -> {
+            if (facilityDoc.exists()) {
+                Map<String, Object> facilityData = facilityDoc.getData();
 
-                        // Update organizer's role and remove facility reference
-                        String organizerId = (String) facilityData.get("organizer");
-                        if (organizerId != null) {
-                            DocumentReference organizerRef = db.collection("entrants").document(organizerId);
-                            batch.update(organizerRef, "facility", null);
-                            batch.update(organizerRef, "role", "entrant"); // Set role to "entrant"
+                if (facilityData != null) {
+                    List<String> eventIds = (List<String>) facilityData.get("events");
+                    String organizerId = (String) facilityData.get("organizer");
+
+                    // delete events in facility
+                    if (eventIds != null && !eventIds.isEmpty()) {
+                        for (String eventId : eventIds) {
+                            DocumentReference eventRef = db.collection("events").document(eventId);
+                            deleteEvent(context, eventRef);
                         }
                     }
 
-                    // Delete the facility itself
-                    batch.delete(facilityRef);
-
-                    // Commit the batch
-                    return batch.commit();
-                } else {
-                    throw new IllegalStateException("Facility not found!");
+                    if (organizerId != null) {
+                        DocumentReference organizerRef = db.collection("entrants").document(organizerId);
+                        batch.update(organizerRef, "facility", null);
+                        batch.update(organizerRef, "role", "entrant"); // turn role to entrant
+                    }
                 }
-            } else {
-                throw task.getException();
-            }
-        });
-    }
 
+                batch.delete(facilityRef);
+
+                batch.commit().addOnSuccessListener(aVoid -> {
+                    Toast.makeText(context, "Facility and related data deleted successfully", Toast.LENGTH_SHORT).show();
+                }).addOnFailureListener(e -> {
+                    Log.e("DeleteFacility", "Error deleting facility or related data: ", e);
+                    Toast.makeText(context, "Failed to delete facility. Try again.", Toast.LENGTH_SHORT).show();
+                });
+
+            } else {
+                Toast.makeText(context, "Facility not found!", Toast.LENGTH_SHORT).show();
+            }
+        }).addOnFailureListener(e -> {
+            Log.e("DeleteFacility", "Error fetching facility data: ", e);
+            Toast.makeText(context, "Failed to fetch facility data. Try again.", Toast.LENGTH_SHORT).show();
+        });
+        return facilityRef.delete();
+    }
 
     /**
      * Removes the hash QRCode data
