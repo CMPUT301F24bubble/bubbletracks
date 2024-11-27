@@ -50,6 +50,7 @@ import java.util.Locale;
 public class OrganizerActivity extends AppCompatActivity {
 
     private Event event = new Event();
+    private Entrant currentUser = new Entrant();
 
     // declare all views necessary
     private EditText nameText, descriptionText, maxCapacityText, priceText, waitListLimitText;
@@ -181,7 +182,11 @@ public class OrganizerActivity extends AppCompatActivity {
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                finish();
+                Intent intent = new Intent(OrganizerActivity.this, MainActivity.class);
+                intent.putExtra("event", event);
+                intent.putExtra("user", currentUser);
+                startActivity(intent);
+
             }
         });
     }
@@ -417,7 +422,10 @@ public class OrganizerActivity extends AppCompatActivity {
                                     backButton.setOnClickListener(new View.OnClickListener() {
                                         @Override
                                         public void onClick(View view) {
-                                            finish();
+                                            Intent intent = new Intent(OrganizerActivity.this, MainActivity.class);
+                                            intent.putExtra("event", event);
+                                            intent.putExtra("user", currentUser);
+                                            startActivity(intent);
                                         }
                                     });
 
@@ -456,6 +464,7 @@ public class OrganizerActivity extends AppCompatActivity {
         // get the entrant from the database
         entrantDB.getEntrant(ID).thenAccept(user -> {
             if(user != null){
+                currentUser = user;
 
                 // update the user to have the event's id in its events organized list and store it
                 user.addToEventsOrganized(event.getId());
