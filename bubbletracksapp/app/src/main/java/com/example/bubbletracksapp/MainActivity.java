@@ -93,6 +93,7 @@ public class MainActivity extends AppCompatActivity {
         Button userEventsButton = binding.buttonEvents;
         Button eventHostButton = binding.buttonEventHost;
         Button adminProfileAccessButton = binding.buttonAdminProfiles;
+        Button adminFacilityAccessButton = binding.buttonFacilityProfiles;
 
         Intent scanIntent = new Intent(MainActivity.this, QRScanner.class);
         switchActivityButton(scanButton, scanIntent);
@@ -105,6 +106,9 @@ public class MainActivity extends AppCompatActivity {
 
         Intent adminProfileIntent = new Intent(MainActivity.this, AdminProfileViews.class);
         switchActivityButton(adminProfileAccessButton, adminProfileIntent);
+
+        Intent adminFacilityIntent = new Intent(MainActivity.this, AdminFacilityViews.class);
+        switchActivityButton(adminFacilityAccessButton, adminFacilityIntent);
 
         eventHostButton.setOnClickListener(new View.OnClickListener() {
             @Override
