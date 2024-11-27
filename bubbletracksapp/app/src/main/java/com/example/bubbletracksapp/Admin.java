@@ -37,15 +37,15 @@ public class Admin {
      * from the corresponding lists in the "entrants" collection.
      *
      * @param context The context where the deletion is being performed.
-     * @param eventRef The event that needs to be deleted.
+     * @param event The event that needs to be deleted.
      */
-    public void deleteEvent(Context context, DocumentReference eventRef) {
-        if (eventRef == null) {
+    public void deleteEvent(Context context, Event event) {
+        if (event == null) {
             return;
         }
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        String eventId = eventRef.getId();
+        String eventId = event.getId();
         WriteBatch batch = db.batch();
 
         batch.delete(eventRef);
