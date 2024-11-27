@@ -89,7 +89,7 @@
             android:layout_gravity="bottom|start"
             android:backgroundTint="@color/home_blue"
             android:background="@drawable/rounded_corners"
-            android:text="NOV 29 - DEC 31"
+            android:text="NOV 29 - 5:00 PM"
             android:textSize="10sp"
             android:textColor="@android:color/white"
             android:textStyle="bold"

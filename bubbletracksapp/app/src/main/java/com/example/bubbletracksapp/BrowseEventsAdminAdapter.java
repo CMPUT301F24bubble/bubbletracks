@@ -22,7 +22,10 @@ import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.List;
+import java.util.logging.Handler;
 
 
 public class BrowseEventsAdminAdapter extends RecyclerView.Adapter<BrowseEventsAdminAdapter.BrowseEventViewHolder> {
@@ -102,36 +105,49 @@ public class BrowseEventsAdminAdapter extends RecyclerView.Adapter<BrowseEventsA
         holder.eventDescription.setText(event.getDescription() != null ? event.getDescription() : "No Description");
 
         // SETS EVENT IMAGE
-        // INCOMPLETE
-        // SETS EVENT FATE
-        // INCOMPLETE
+        if (event.getImage().equals(null)) {
+            holder.eventPic.setImageResource(R.drawable.default_image);
+        } else {
+            // IMAGES STORED IN DATABASE AS:
+            holder.eventPic.setImageResource();
+
+        }
+
+        // SETS EVENT DATE: should look like NOV 29 @ 5:30 PM
+        String month = event.getMonth(event.getDateTime());
+        String day = event.getDay(event.getDateTime());
+        String time = event.getTime(event.getDateTime());
+        holder.eventDate.setText(month+" "+day+" "+"-"+" "+time);
 
         // CREATES ON CLICK LISTENER FOR OVERFLOW MENU
         holder.overflowImageButton.setOnClickListener(v -> {
             PopupMenu popupMenu = new PopupMenu(context, holder.overflowImageButton);
             popupMenu.inflate(R.menu.overflow_admin_search_menu);
 
+            // SHOWS THE MENU
+            popupMenu.show();
+
             // CREATES ON CLICK LISTENER FOR OVERFLOW MENU
             popupMenu.setOnMenuItemClickListener(item -> {
                 int id = item.getItemId();
                 if (id == R.id.action_delete_event) {
                     handleDeleteEventAction(event);
+                    popupMenu.dismiss();
                     return true;
                 } else if (id == R.id.action_cancel_event) {
                     handleCancelEventAction(event);
+                    popupMenu.dismiss();
                     return true;
                 } else if (id == R.id.action_delete_poster) {
                     handleDeletePosterAction(event);
+                    popupMenu.dismiss();
                     return true;
                 } else {
+                    popupMenu.dismiss();
                     return false;
                 }
             });
-
-            // SHOWS THE MENU
-            popupMenu.show();
         });
-
 
     }
 
@@ -161,7 +177,7 @@ public class BrowseEventsAdminAdapter extends RecyclerView.Adapter<BrowseEventsA
 
         // DELETES EVENT FROM DATABASE: should cascade so that the event will not appear in any waitlist/registered/hosting list
 
-        // SENDS NOTIFICATION TO HOST THAT THEIR EVENT HAS BEEN DELETED ex: Admin has deleted "<Name of event>" on <Date of Event>. Please contact us at <email> in case you have any further questions.
+        // OPTIONAL:  SENDS NOTIFICATION TO HOST THAT THEIR EVENT HAS BEEN DELETED ex: Admin has deleted "<Name of event>" on <Date of Event>. Please contact us at <email> in case you have any further questions.
     }
 
     /**

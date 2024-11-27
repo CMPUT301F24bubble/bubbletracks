@@ -152,7 +152,6 @@ public class AppEventAdapter extends RecyclerView.Adapter<AppEventAdapter.EventV
         //SET EVENT TIME
         //holder.eventDateTime.setText();
 
-
         // SETS EVENT IMAGE
         holder.eventPic.setImageResource(R.drawable.default_image); // Replace with a default drawable
 
