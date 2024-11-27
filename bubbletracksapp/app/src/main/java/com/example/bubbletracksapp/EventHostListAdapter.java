@@ -21,11 +21,11 @@ import java.util.ArrayList;
  * @author
  */
 public class EventHostListAdapter extends ArrayAdapter<Event>{
-//    interface EventHostI {
-//        void viewWaitlist(Event event);
-//        void editEvent(Event event);
-//    }
-//    private EventHostI listener;
+    interface EventHostI {
+        void viewWaitlist(Event event);
+        void editEvent(Event event);
+    }
+    private EventHostI listener;
 
     /**
      * Initialize the adapter with the list of events
@@ -34,11 +34,11 @@ public class EventHostListAdapter extends ArrayAdapter<Event>{
      */
     public EventHostListAdapter(Context context, ArrayList<Event> events) {
         super(context, 0, events);
-//        if (context instanceof EventHostI) {
-//            listener = (EventHostI) context;
-//        } else {
-//            throw new RuntimeException(context + " must implement EventHostI");
-//        }
+        if (context instanceof EventHostI) {
+            listener = (EventHostI) context;
+        } else {
+            throw new RuntimeException(context + " must implement EventHostI");
+        }
     }
 
     /**
@@ -89,7 +89,7 @@ public class EventHostListAdapter extends ArrayAdapter<Event>{
              */
             @Override
             public void onClick(View view) {
-                viewWaitlist(event);
+                listener.viewWaitlist(event);
             }
         });
 
@@ -100,34 +100,9 @@ public class EventHostListAdapter extends ArrayAdapter<Event>{
              */
             @Override
             public void onClick(View view) {
-                editEvent(event);
+                listener.editEvent(event);
             }
         });
-
-
         return view;
     }
-
-    /**
-     * Allow to view the waitlist of entrants
-     * @param event event that event host holds
-     */
-    public void viewWaitlist(Event event) {
-        Context context = EventHostListAdapter.this.getContext();
-
-        Intent intent = new Intent(EventHostListAdapter.this.getContext(), OrganizerEditActivity.class);
-        intent.putExtra("event", event);
-
-        context.startActivity(intent);
-
-    }
-
-    /**
-     * Allow to edit event details
-     * @param event event that event host holds
-     */
-    public void editEvent(Event event) {
-
-    }
-
 }

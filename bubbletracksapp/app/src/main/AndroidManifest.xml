@@ -73,6 +73,7 @@
         <activity android:name=".EntrantViewActivity" />
         <activity android:name=".AppUserEventScreenGenerator" />
         <activity android:name=".OrganizerLocationsMap" />
+        <activity android:name=".OrganizerEventHosting" />
     </application>
 
 </manifest>

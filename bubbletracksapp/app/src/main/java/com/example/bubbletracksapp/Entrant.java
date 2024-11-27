@@ -511,4 +511,24 @@ public class Entrant implements Parcelable {
         return new LatLng(lat,lng);
     }
 
+    /**
+     * Removes the event from the users list
+     * @param event The event's ID being rejected
+     */
+    public void rejectEvent(String event) {
+        eventsWaitlist.remove(event);
+        eventsInvited.remove(event);
+        eventsEnrolled.remove(event);
+        updateEntrantFirebase();
+    }
+
+    /**
+     * Adds the event into the users enrolled list
+     * @param event The event's ID being accepted
+     */
+    public void acceptEvent(String event) {
+        eventsEnrolled.add(event);
+        updateEntrantFirebase();
+    }
+
 }

@@ -65,7 +65,7 @@
                 android:id="@+id/event_location"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Adress"
+                android:text="Address"
                 android:textColor="#555555"
                 android:textSize="14sp" />
 
@@ -111,27 +111,7 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Event QR Code"
-                android:textStyle="bold"/>
-            <TextView
-                android:layout_width="200dp"
-                android:layout_height="wrap_content"
-                android:text="Entrants must scan this QR code to join your event"/>
-
-        </LinearLayout>
-
-        <ImageView
-            android:layout_width="75dp"
-            android:layout_height="75dp"
-            android:backgroundTint="@color/white"
-            android:paddingEnd="16dp"
-            android:src="@drawable/qr_ex"
-            />
+            android:orientation="vertical"/>
 
     </LinearLayout>
 </LinearLayout>
