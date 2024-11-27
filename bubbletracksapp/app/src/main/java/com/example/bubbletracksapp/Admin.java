@@ -5,12 +5,16 @@ import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.WriteBatch;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -204,9 +208,9 @@ public class Admin {
      * @param context The context where the deletion is being performed.
      * @param facilityRef The DocumentReference to the facility that needs to be deleted.
      */
-    public void deleteFacility(Context context, DocumentReference facilityRef) {
+    public Task<Void> deleteFacility(Context context, DocumentReference facilityRef) {
         if (facilityRef == null) {
-            return;
+            return Tasks.forException(new IllegalArgumentException("Facility reference cannot be null"));
         }
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -251,7 +255,28 @@ public class Admin {
             Log.e("DeleteFacility", "Error fetching facility data: ", e);
             Toast.makeText(context, "Failed to fetch facility data. Try again.", Toast.LENGTH_SHORT).show();
         });
+        return facilityRef.delete();
     }
+
+    /**
+     * Removes the hash QRCode data
+     * @param context
+     * @param event
+     */
+    public void removeHashData(Context context, Event event) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        DocumentReference eventRef = db.collection("events").document(event.getId());
+
+        eventRef.update("QrCode", FieldValue.delete())
+                .addOnSuccessListener(aVoid -> {
+                    Toast.makeText(context, "QrCode removed successfully", Toast.LENGTH_SHORT).show();
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("RemoveHashData", "Error removing QrCode: ", e);
+                    Toast.makeText(context, "Failed to remove QrCode. Please try again.", Toast.LENGTH_SHORT).show();
+                });
+    }
+
 
 
 } // remove this bracket later when implemented profile pictures
