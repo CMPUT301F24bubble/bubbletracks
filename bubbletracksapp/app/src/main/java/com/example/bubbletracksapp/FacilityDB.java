@@ -12,7 +12,10 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
@@ -145,4 +148,42 @@ public class FacilityDB {
         return returnCode;
     }
 
+        /**
+         * Fetches all the facilities from Firestore.
+         * @return CompletableFuture<ArrayList<Facility>> - A CompletableFuture that resolves to a list of facilities.
+         */
+        public CompletableFuture<ArrayList<Facility>> getAllFacilities() {
+            CompletableFuture<ArrayList<Facility>> returnCode = new CompletableFuture<>();
+            ArrayList<Facility> facilities = new ArrayList<>();
+
+            facilitiesRef.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                @Override
+                public void onSuccess(QuerySnapshot querySnapshot) {
+                    if (querySnapshot.isEmpty()) {
+                        Log.d("getAllFacilities", "No facilities found in database");
+                        returnCode.complete(null);
+                        return;
+                    }
+                    // Go through each document and get the Facility information.
+                    for (QueryDocumentSnapshot document : querySnapshot) {
+                        try {
+                            // Assuming the Facility class has a constructor that takes a document snapshot
+                            Facility newFacility = new Facility(document);
+                            facilities.add(newFacility);
+                        } catch (Exception e) {
+                            Log.d("getAllFacilities", "An error occurred while adding a facility, " +
+                                    "check if all facilities contain the correct fields");
+                        }
+                    }
+
+                    returnCode.complete(facilities);
+                }
+            }).addOnFailureListener(e -> {
+                Log.e("getAllFacilities", "Error fetching facilities", e);
+                returnCode.completeExceptionally(e); // Complete the future exceptionally on failure
+            });
+
+            return returnCode;
+        }
 }
+

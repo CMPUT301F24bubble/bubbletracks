@@ -95,6 +95,7 @@ public class MainActivity extends AppCompatActivity {
         Button eventHostButton = binding.buttonEventHost;
         Button adminProfileAccessButton = binding.buttonAdminProfiles;
         Button browseEventsButton=binding.buttonBrowseEvent;
+        Button adminFacilityAccessButton = binding.buttonFacilityProfiles;
 
         Intent scanIntent = new Intent(MainActivity.this, QRScanner.class);
         switchActivityButton(scanButton, scanIntent);
@@ -111,6 +112,8 @@ public class MainActivity extends AppCompatActivity {
         // TAKES YOU TO THE BROWSE EVENTS TAB WHEN ADMIN
         Intent adminEventBrowseIntent = new Intent(MainActivity.this, BrowseEventsScreenGenerator.class);
         switchActivityButton(browseEventsButton, adminEventBrowseIntent);
+        Intent adminFacilityIntent = new Intent(MainActivity.this, AdminFacilityViews.class);
+        switchActivityButton(adminFacilityAccessButton, adminFacilityIntent);
 
         eventHostButton.setOnClickListener(new View.OnClickListener() {
             @Override

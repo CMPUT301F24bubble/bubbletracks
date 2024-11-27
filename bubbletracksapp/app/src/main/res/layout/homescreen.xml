@@ -131,6 +131,14 @@
                 android:drawableTop="@drawable/baseline_groups_24"
                 android:text="Event Catalogue" />
 
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/button_facility_profiles"
+                style="@style/HomeButtons"
+                android:layout_height="60dp"
+                android:backgroundTint="@color/home_blue"
+                android:drawableTop="@drawable/baseline_location_on_24"
+                android:text="Facility Access" />
+
 
         </LinearLayout>
     </HorizontalScrollView>
