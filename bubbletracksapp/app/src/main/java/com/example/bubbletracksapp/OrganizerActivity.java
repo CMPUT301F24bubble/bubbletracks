@@ -83,19 +83,6 @@ public class OrganizerActivity extends AppCompatActivity {
         facility = intent.getStringExtra("id");
         location = intent.getStringExtra("location");
 
-        FacilityDB facilityDB = new FacilityDB();
-        facilityDB.getFacility(facility).thenAccept(curFacility -> {
-            if(curFacility != null){
-                curFacility.addToEventList(event.getId());
-                facilityDB.updateFacility(curFacility);
-            } else {
-                Toast.makeText(OrganizerActivity.this, "Could not find your facility.", Toast.LENGTH_LONG).show();
-            }
-        }).exceptionally(e -> {
-            Toast.makeText(OrganizerActivity.this, "Could not load your profile: " + e.getMessage(), Toast.LENGTH_LONG).show();
-            return null;
-        });
-
         // find all the views using their ids
         nameText = findViewById(R.id.textName);
         dateTimeButton = findViewById(R.id.buttonDateTime);
@@ -492,6 +479,20 @@ public class OrganizerActivity extends AppCompatActivity {
     }
 
     protected void uploadEvent(){
+
+        FacilityDB facilityDB = new FacilityDB();
+        facilityDB.getFacility(facility).thenAccept(curFacility -> {
+            if(curFacility != null){
+                curFacility.addToEventList(event.getId());
+                facilityDB.updateFacility(curFacility);
+            } else {
+                Toast.makeText(OrganizerActivity.this, "Could not find your facility.", Toast.LENGTH_LONG).show();
+            }
+        }).exceptionally(e -> {
+            Toast.makeText(OrganizerActivity.this, "Could not load your profile: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            return null;
+        });
+
         // store the event
         EventDB eventDB = new EventDB();
         eventDB.addEvent(event);
