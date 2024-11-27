@@ -2,37 +2,24 @@ package com.example.bubbletracksapp;
 
 import static java.util.UUID.randomUUID;
 
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import com.example.bubbletracksapp.databinding.HomescreenBinding;
-import com.google.android.material.snackbar.Snackbar;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.util.Log;
 import android.view.View;
 
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
 
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.Toast;
-
-import java.util.UUID;
-import java.util.concurrent.CancellationException;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.function.Supplier;
 
 /**
  *Main Activity for the user.
@@ -75,48 +62,40 @@ public class MainActivity extends AppCompatActivity {
             return null;
         });
 
-        Button eventsButton = binding.buttonEvents;
-        Button createEventButton = binding.buttonCreateEvents;
-        Button scanButton = binding.buttonScan;
-        Button ticketsButton = binding.buttonTickets;
-        Button profileButton = binding.buttonProfile;
-        Button userEventsButton = binding.buttonEvents;
-        Button eventHostButton = binding.buttonEventHost;
+        Button entrantButton = binding.buttonEntrant;
+        Button organizerButton = binding.buttonOrganizer;
+        Button adminButton = binding.buttonAdmin;
 
-        Intent createEventIntent = new Intent(MainActivity.this, OrganizerActivity.class); //class where you are, then class where you wanan go
-        switchActivityButton(createEventButton, createEventIntent);
-
-        Intent scanIntent = new Intent(MainActivity.this, QRScanner.class);
-        switchActivityButton(scanButton, scanIntent);
-
-        Intent profileIntent = new Intent(MainActivity.this, EntrantEditActivity.class);
-        switchActivityButton(profileButton, profileIntent);
-
-        Intent userEventsIntent = new Intent(MainActivity.this, AppUserEventScreenGenerator.class);
-        switchActivityButton(userEventsButton, userEventsIntent);
-
-        eventHostButton.setOnClickListener(new View.OnClickListener() {
+        organizerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (savedInstanceState == null) {
-                    getSupportFragmentManager().beginTransaction()
-                            .setReorderingAllowed(true)
-                            .add(R.id.content_holder, OrganizerEventHosting.class, null)
-                            .commit();
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fragmentContainerView, OrganizerFragment.class, null)
+                        .setReorderingAllowed(true)
+                        //.addToBackStack("") // Having this on the backstack can be annoying.
+                        .commit();
                 }
+            });
+
+        entrantButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fragmentContainerView, EntrantFragment.class, null)
+                        .setReorderingAllowed(true)
+                        //.addToBackStack("") // Having this on the backstack can be annoying.
+                        .commit();
             }
         });
-    }
-    /**
-     * Generalized code for buttons that use start(Activity()
-     * @param button is the button that will be clicked
-     * @param intent is the intent passed to startActivity()
-     */
-    public void switchActivityButton(Button button, Intent intent){
-        button.setOnClickListener(new View.OnClickListener() {
+
+        adminButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(intent);
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fragmentContainerView, AdminFragment.class, null)
+                        .setReorderingAllowed(true)
+                        //.addToBackStack("") // Having this on the backstack can be annoying.
+                        .commit();
             }
         });
     }
