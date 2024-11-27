@@ -69,7 +69,8 @@
                 android:background="@color/home_blue"
                 android:drawableTop="@drawable/facility_icon"
                 android:text="Organize"
-                android:textColorLink="#03A9F4" />
+                android:textColorLink="#03A9F4"
+                android:visibility="gone" />
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/button_admin"
@@ -80,7 +81,8 @@
                 android:background="@color/home_blue"
                 android:drawableTop="@drawable/baseline_key_24"
                 android:text="Admin"
-                android:textColorLink="#03A9F4" />
+                android:textColorLink="#03A9F4"
+                android:visibility="gone" />
 
         </LinearLayout>
     </HorizontalScrollView>

@@ -50,9 +50,23 @@ public class MainActivity extends AppCompatActivity {
         currentDeviceID = getDeviceID();
         Log.d("DeviceID:",currentDeviceID);
 
+        Button entrantButton = binding.buttonEntrant;
+        Button organizerButton = binding.buttonOrganizer;
+        Button adminButton = binding.buttonAdmin;
+
         db.getEntrant(currentDeviceID).thenAccept(user -> {
             if(user != null){
                 currentUser = user;
+                if(currentUser.getRole().equals("admin")){
+                    Log.d("User role:", "Woohoo, admin");
+                    adminButton.setVisibility(View.VISIBLE);
+                    organizerButton.setVisibility(View.VISIBLE);
+                } else if (currentUser.getRole().equals("organizer")) {
+                    Log.d("User role:", "Organizer");
+                    organizerButton.setVisibility(View.VISIBLE);
+                } else {
+                    Log.d("User role:", "Entrant");
+                }
             } else {
                 currentUser = new Entrant(currentDeviceID);
                 db.addEntrant(currentUser);
@@ -61,10 +75,6 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(MainActivity.this, "Failed to load user: " + e.getMessage(), Toast.LENGTH_LONG).show();
             return null;
         });
-
-        Button entrantButton = binding.buttonEntrant;
-        Button organizerButton = binding.buttonOrganizer;
-        Button adminButton = binding.buttonAdmin;
 
         organizerButton.setOnClickListener(new View.OnClickListener() {
             @Override
