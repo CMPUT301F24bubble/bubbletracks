@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
+import com.example.bubbletracksapp.databinding.AdminBrowseEventsBinding;
 import com.example.bubbletracksapp.databinding.HomescreenBinding;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -93,6 +94,7 @@ public class MainActivity extends AppCompatActivity {
         Button userEventsButton = binding.buttonEvents;
         Button eventHostButton = binding.buttonEventHost;
         Button adminProfileAccessButton = binding.buttonAdminProfiles;
+        Button browseEventsButton;
 
         Intent scanIntent = new Intent(MainActivity.this, QRScanner.class);
         switchActivityButton(scanButton, scanIntent);
@@ -105,6 +107,9 @@ public class MainActivity extends AppCompatActivity {
 
         Intent adminProfileIntent = new Intent(MainActivity.this, AdminProfileViews.class);
         switchActivityButton(adminProfileAccessButton, adminProfileIntent);
+
+        Intent adminEventBrowseIntent = new Intent(MainActivity.this, BrowseEventsScreenGenerator.class);
+        switchActivityButton(browseEventsButtonm, adminEventBrowseIntent);
 
         eventHostButton.setOnClickListener(new View.OnClickListener() {
             @Override
