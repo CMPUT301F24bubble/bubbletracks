@@ -126,6 +126,7 @@
                 android:layout_height="wrap_content"
                 android:text="Entrants must scan this QR code to join your event"/>
 
+
         </LinearLayout>
 
         <ImageView
@@ -135,6 +136,14 @@
             android:paddingEnd="16dp"
             android:src="@drawable/qr_ex"
             />
+        <ImageButton
+            android:id="@+id/delete_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/baseline_delete_forever_24"
+            android:backgroundTint="@color/white"
+            app:tint="@color/black"/>
 
     </LinearLayout>
+
 </LinearLayout>

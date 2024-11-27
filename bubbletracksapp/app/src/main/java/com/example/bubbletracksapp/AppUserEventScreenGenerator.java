@@ -52,7 +52,7 @@ public class AppUserEventScreenGenerator extends AppCompatActivity {
     private List<String> otherOption = Arrays.asList("Waitlist", "Registered");
     private Spinner statusSpinner;
     private Entrant user;
-
+    List<Event> eventList;
 
     /**
      * Initializes main components of the screen: drop down menu, the event display,
@@ -71,6 +71,7 @@ public class AppUserEventScreenGenerator extends AppCompatActivity {
 
         SharedPreferences localID = getSharedPreferences("LocalID", Context.MODE_PRIVATE);
         String ID = localID.getString("ID", "Device ID not found");
+        Log.d("TAG", ID);
         // INITIALIZES DROP DOWN MENU/SPINNER
         statusSpinner = findViewById(R.id.listOptions);
 
@@ -199,7 +200,13 @@ public class AppUserEventScreenGenerator extends AppCompatActivity {
         } else {
         String regStatus = "unknown"; // Default status if no matching user is found
             eventDB.getEventList(user1.getEventsWaitlist()).thenAccept(events -> {
-                List<Event> eventList = events;
+                if(events != null) {
+                    eventList = events;
+                }
+                else
+                {
+                    eventList = new ArrayList<>();
+                }
                 // Initialize the adapter with the event list and the determined registration status
                 eventAdapter = new AppEventAdapter(this, eventList, user1, null);
                 eventsplace.setAdapter(eventAdapter);

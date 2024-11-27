@@ -70,13 +70,13 @@
                 android:layout_height="60dp"
                 android:layout_weight="1"
                 android:backgroundTint="@color/home_blue"
-                android:drawableTop="@drawable/baseline_groups_24"
+                android:drawableTop="@drawable/baseline_person_24"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
                 android:text="Profile" />
 
             <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/button_createEvents"
+                android:id="@+id/button_createManageFacility"
                 style="@style/HomeButtons"
                 android:layout_width="wrap_content"
                 android:layout_height="60dp"
@@ -85,7 +85,7 @@
                 android:drawableTop="@drawable/baseline_image_search_24"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
-                android:text="Create Event" />
+                android:text="Create Facility" />
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/button_eventHost"
@@ -114,6 +114,15 @@
                 android:backgroundTint="@color/neutral"
                 android:drawableTop="@drawable/baseline_key_24"
                 android:text="Admin Access" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/button_admin_profiles"
+                style="@style/HomeButtons"
+                android:layout_height="60dp"
+                android:backgroundTint="@color/home_blue"
+                android:drawableTop="@drawable/baseline_groups_24"
+                android:text="Profile Access" />
+
 
         </LinearLayout>
     </HorizontalScrollView>

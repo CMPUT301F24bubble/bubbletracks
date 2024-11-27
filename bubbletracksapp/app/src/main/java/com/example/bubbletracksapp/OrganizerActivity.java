@@ -1,6 +1,5 @@
 package com.example.bubbletracksapp;
 
-import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
@@ -25,19 +24,13 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.libraries.places.api.Places;
-import com.google.android.libraries.places.api.model.Place;
-import com.google.android.libraries.places.widget.Autocomplete;
-import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.google.zxing.WriterException;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 
 /**
@@ -51,33 +44,29 @@ public class OrganizerActivity extends AppCompatActivity {
 
     private Event event = new Event();
 
+    private Date curDate = new Date();
+
     // declare all views necessary
     private EditText nameText, descriptionText, maxCapacityText, priceText, waitListLimitText;
-    private ImageButton dateTimeButton, registrationOpenButton, registrationCloseButton, locationButton;
+    private ImageButton dateTimeButton, registrationOpenButton, registrationCloseButton;
     private Button uploadPhotoButton, createButton;
-    private TextView dateTimeText, registrationOpenText, registrationCloseText, locationText;
+    private TextView dateTimeText, registrationOpenText, registrationCloseText;
     private ImageView posterImage;
     private CheckBox requireGeolocationCheckBox;
     private ImageButton backButton;
 
 
     // declare calendar variables
-    private Date dateTime, registrationOpen, registrationClose;
+    private Date dateTime, registrationClose;
+    private Date registrationOpen = new Date();
 
     // Declares an ActivityResultLauncher that will handle the result of an image upload action
     private ActivityResultLauncher<String> uploadImageLauncher;
 
-    // Declares an ActivityResultLauncher that will handle the result of a location selecting action
-    private ActivityResultLauncher<Intent> autocompleteLauncher;
-
-    // fields to extract from the selected Location
-    List<Place.Field> fields = Arrays.asList(Place.Field.ID, Place.Field.ADDRESS);
-
     // declare uri variable
     private Uri posterUri;
 
-    // declare place variable
-    private String location;
+    private String facility, location;
 
     /**
      * sets the layout, assigns all the views declared and sets up all the on click listeners
@@ -87,11 +76,25 @@ public class OrganizerActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // initialize the places API
-        Places.initialize(getApplicationContext(), "AIzaSyBOt38qDT81Qj6jR0cmNHVGs3hPPw0XrZA");
-
         // set the layout to the create event page
         setContentView(R.layout.create_event);
+
+        Intent intent = getIntent();
+        facility = intent.getStringExtra("id");
+        location = intent.getStringExtra("location");
+
+        FacilityDB facilityDB = new FacilityDB();
+        facilityDB.getFacility(facility).thenAccept(curFacility -> {
+            if(curFacility != null){
+                curFacility.addToEventList(event.getId());
+                facilityDB.updateFacility(curFacility);
+            } else {
+                Toast.makeText(OrganizerActivity.this, "Could not find your facility.", Toast.LENGTH_LONG).show();
+            }
+        }).exceptionally(e -> {
+            Toast.makeText(OrganizerActivity.this, "Could not load your profile: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            return null;
+        });
 
         // find all the views using their ids
         nameText = findViewById(R.id.textName);
@@ -109,9 +112,15 @@ public class OrganizerActivity extends AppCompatActivity {
         uploadPhotoButton = findViewById(R.id.buttonUploadPhoto);
         posterImage = findViewById(R.id.imagePoster);
         createButton = findViewById(R.id.buttonCreate);
-        locationText = findViewById(R.id.textLocation);
-        locationButton = findViewById(R.id.buttonLocation);
         backButton =  findViewById(R.id.back_button);
+
+        // handler to go back to homescreen
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
 
         // initialize the activity result launcher for the image picker
         uploadImageLauncher = registerForActivityResult(new ActivityResultContracts.GetContent(), uri -> {
@@ -121,28 +130,11 @@ public class OrganizerActivity extends AppCompatActivity {
             }
         });
 
-        // initialize the activity result launcher for the location search
-        autocompleteLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
-                if (result.getResultCode() == RESULT_OK && result.getData() != null) {
-                    location = Autocomplete.getPlaceFromIntent(result.getData()).getAddress();
-                    locationText.setText(location);
-                }
-            }
-        );
-
         // handler for button for selecting the date and time
         dateTimeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 selectDateTime();
-            }
-        });
-
-        // handler for button for selecting location
-        locationButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                selectLocation();
             }
         });
 
@@ -177,13 +169,7 @@ public class OrganizerActivity extends AppCompatActivity {
                 createEvent();
             }
         });
-        // handler to go back to homescreen
-        backButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                finish();
-            }
-        });
+
     }
 
 
@@ -236,17 +222,6 @@ public class OrganizerActivity extends AppCompatActivity {
 
         datePickerDialog.show();
 
-    }
-
-    /**
-     * opens google places API to search for a location and stores it in location
-     */
-    protected void selectLocation(){
-
-        // launch activity result launcher
-        Intent intent = new Autocomplete.IntentBuilder(AutocompleteActivityMode.OVERLAY, fields)
-                .build(OrganizerActivity.this);
-        autocompleteLauncher.launch(intent);
     }
 
     /**
@@ -347,9 +322,10 @@ public class OrganizerActivity extends AppCompatActivity {
         // extract all the text views
         String name = nameText.getText().toString().trim();
         String dateTimeString = dateTimeText.getText().toString().trim();
-        String description = descriptionText.getText().toString().trim();
         String registrationCloseString = registrationCloseText.getText().toString().trim();
         String maxCapacity = maxCapacityText.getText().toString().trim();
+
+        String description = descriptionText.getText().toString().trim();
         String price = priceText.getText().toString().trim();
         String waitListLimit = waitListLimitText.getText().toString().trim();
 
@@ -361,84 +337,129 @@ public class OrganizerActivity extends AppCompatActivity {
 
             // create a new event class and store all the fields
             event.setName(name);
-            event.setGeolocation(location);
+
+            if(curDate.after(dateTime) || curDate.after(registrationClose) || curDate.after(registrationOpen)){
+                Toast.makeText(OrganizerActivity.this, "Please enter valid date and " +
+                        "times, the event and registration dates can't be in the past", Toast.LENGTH_LONG).show();
+                return;
+            }
+
+            if(!(registrationOpen.before(registrationClose) && registrationClose.before(dateTime))){
+                Toast.makeText(OrganizerActivity.this, "Please enter valid date and " +
+                        "times, registration open date needs to be before registration close date " +
+                        "and registration close date needs to be before the event", Toast.LENGTH_LONG).show();
+                return;
+            }
+
             event.setDateTime(dateTime);
+            event.setRegistrationClose(registrationClose);
+
+            event.setFacility(facility);
+            event.setGeolocation(location);
+
+            try {
+                event.setMaxCapacity(Integer.parseInt(maxCapacity));
+            } catch (NumberFormatException e) {
+                Toast.makeText(OrganizerActivity.this, "Please enter a valid capacity", Toast.LENGTH_LONG).show();
+                return;
+            }
+
+            if(Integer.parseInt(maxCapacity) < 0){
+                Toast.makeText(OrganizerActivity.this, "Please enter a valid capacity", Toast.LENGTH_LONG).show();
+                return;
+            }
+
             event.setDescription(description);
             event.setRegistrationOpen(registrationOpen);
-            event.setRegistrationClose(registrationClose);
-            event.setMaxCapacity(Integer.parseInt(maxCapacity));
-            event.setPrice(Integer.parseInt(price));
-            event.setWaitListLimit(Integer.parseInt(waitListLimit));
+
+            if(price.isEmpty()){
+                event.setPrice(0);
+            } else {
+                try {
+                    event.setPrice(Integer.parseInt(price));
+                } catch (NumberFormatException e) {
+                    Toast.makeText(OrganizerActivity.this, "Please enter a valid price", Toast.LENGTH_LONG).show();
+                    return;
+                }
+
+                if(Integer.parseInt(price) < 0){
+                    Toast.makeText(OrganizerActivity.this, "Please enter a valid price", Toast.LENGTH_LONG).show();
+                    return;
+                }
+
+            }
+
+            if(waitListLimit.isEmpty()){
+                event.setWaitListLimit(Integer.MAX_VALUE);
+            } else {
+                try {
+                    event.setWaitListLimit(Integer.parseInt(waitListLimit));
+                } catch (NumberFormatException e) {
+                    Toast.makeText(OrganizerActivity.this, "Please enter a valid waitlist limit", Toast.LENGTH_LONG).show();
+                    return;
+                }
+
+                if(Integer.parseInt(price) < 0){
+                    Toast.makeText(OrganizerActivity.this, "Please enter a valid waitlist limit", Toast.LENGTH_LONG).show();
+                    return;
+                }
+
+            }
+
             event.setNeedsGeolocation(requireGeolocationCheckBox.isChecked());
+
             event.setQRCode("https://www.bubbletracks.com/events/" + event.getId());
 
-            // make a firebase storage instance and a filename
-            String filename = "posters/" + System.currentTimeMillis() + ".jpg";
-            StorageReference storageReference = FirebaseStorage.getInstance().getReference(filename);
+            if(posterUri == null){
 
-            // store the image in firebase storage
-            storageReference.putFile(posterUri)
-                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                uploadEvent();
 
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+            } else {
 
-                            // get the download url of the image
-                            storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                // make a firebase storage instance and a filename
+                String filename = "posters/" + System.currentTimeMillis() + ".jpg";
+                StorageReference storageReference = FirebaseStorage.getInstance().getReference(filename);
 
-                                @Override
-                                public void onSuccess(Uri uri) {
+                // store the image in firebase storage
+                storageReference.putFile(posterUri)
+                        .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
 
-                                    // store the download string in the event class
-                                    String downloadUrl = uri.toString();
-                                    event.setImage(downloadUrl);
+                            @Override
+                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
 
-                                    // store the event
-                                    EventDB eventDB = new EventDB();
-                                    eventDB.addEvent(event);
+                                // get the download url of the image
+                                storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
 
-                                    // update the current user to add the created event in the organizer's
-                                    // organized events
-                                    updateEntrant();
+                                    @Override
+                                    public void onSuccess(Uri uri) {
 
-                                    // change to a new layout to show the generated QR code
-                                    setContentView(R.layout.qr_code);
-                                    ImageView qrCode = findViewById(R.id.imageViewQRCode);
-                                    ImageButton backButton = findViewById(R.id.back_button);
+                                        // store the download string in the event class
+                                        String downloadUrl = uri.toString();
+                                        event.setImage(downloadUrl);
 
-                                    QRGenerator qrGenerator = new QRGenerator();
-                                    try{
-                                        Bitmap qrBitmap = qrGenerator.generateQRCode(event.getQRCode());
-                                        qrCode.setImageBitmap(qrBitmap);
-                                    } catch (WriterException exception){
-                                        Log.e("OrganizerActivity", "Qr code generation failed", exception);
+                                        uploadEvent();
+
                                     }
 
-                                    backButton.setOnClickListener(new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View view) {
-                                            finish();
-                                        }
-                                    });
-
-                                }
+                                    // handle errors
+                                }).addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Toast.makeText(getApplicationContext(), "Failed to get download URL: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                            }
 
                             // handle errors
-                            }).addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    Toast.makeText(getApplicationContext(), "Failed to get download URL: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                                }
-                            });
-                        }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Toast.makeText(OrganizerActivity.this, "Upload failed: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                            }
+                        });
 
-                    // handle errors
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Toast.makeText(OrganizerActivity.this, "Upload failed: " + e.getMessage(), Toast.LENGTH_LONG).show();
-                        }
-                    });
+            }
+
         }
     }
 
@@ -467,6 +488,36 @@ public class OrganizerActivity extends AppCompatActivity {
         }).exceptionally(e -> {
             Toast.makeText(OrganizerActivity.this, "Failed to load profile: " + e.getMessage(), Toast.LENGTH_LONG).show();
             return null;
+        });
+    }
+
+    protected void uploadEvent(){
+        // store the event
+        EventDB eventDB = new EventDB();
+        eventDB.addEvent(event);
+
+        // update the current user to add the created event in the organizer's
+        // organized events
+        updateEntrant();
+
+        // change to a new layout to show the generated QR code
+        setContentView(R.layout.qr_code);
+        ImageView qrCode = findViewById(R.id.imageViewQRCode);
+        ImageButton backButton = findViewById(R.id.back_button);
+
+        QRGenerator qrGenerator = new QRGenerator();
+        try{
+            Bitmap qrBitmap = qrGenerator.generateQRCode(event.getQRCode());
+            qrCode.setImageBitmap(qrBitmap);
+        } catch (WriterException exception){
+            Log.e("OrganizerActivity", "Qr code generation failed", exception);
+        }
+
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
         });
     }
 

@@ -35,6 +35,8 @@ public class Entrant implements Parcelable {
     private String phone;
     private String deviceID;
     private Boolean notification;
+    private String role;
+    private String facility;
     private ArrayList<String> eventsOrganized = new ArrayList<>();
     private ArrayList<String> eventsInvited = new ArrayList<>();
     private ArrayList<String> eventsEnrolled = new ArrayList<>();
@@ -47,17 +49,21 @@ public class Entrant implements Parcelable {
      * @param phone Entrants phone number
      * @param deviceID Entrants device ID to determine who the entrant is
      * @param notification Entrants declaration of allowing notification
+     * @param role Denotes role; takes on either 'admin', 'organizer', or ''
+     * @param facility facility ID to determine which facility belongs to this entrant
      * @param eventsOrganized events from the organizer
      * @param eventsInvited evened entrant is invited to
      * @param eventsEnrolled event entrant is enrolled in
      * @param eventsWaitlist event entrant is in waitlist for
      */
-    public Entrant(String[] name, String email, String phone, String deviceID, Boolean notification, ArrayList<String> eventsOrganized, ArrayList<String> eventsInvited, ArrayList<String> eventsEnrolled, ArrayList<String> eventsWaitlist) {
+    public Entrant(String[] name, String email, String phone, String deviceID, Boolean notification, String role, String facility, ArrayList<String> eventsOrganized, ArrayList<String> eventsInvited, ArrayList<String> eventsEnrolled, ArrayList<String> eventsWaitlist) {
         this.name = name;
         this.email = email;
         this.phone = phone;
         this.deviceID = deviceID;
         this.notification = notification;
+        this.role = role;
+        this.facility = facility;
         this.eventsOrganized = eventsOrganized;
         this.eventsInvited = eventsInvited;
         this.eventsEnrolled = eventsEnrolled;
@@ -73,6 +79,8 @@ public class Entrant implements Parcelable {
         this.email = "";
         this.phone = "";
         this.deviceID = newDeviceID;
+        this.role = "";
+        this.facility = "";
         this.notification = false;
         this.eventsOrganized = new ArrayList<>();
         this.eventsInvited = new ArrayList<>();
@@ -89,6 +97,8 @@ public class Entrant implements Parcelable {
         this.email = "";
         this.phone = "";
         this.deviceID = "";
+        this.role = "";
+        this.facility = "";
         this.notification = false;
         this.eventsOrganized = new ArrayList<>();
         this.eventsInvited = new ArrayList<>();
@@ -108,6 +118,8 @@ public class Entrant implements Parcelable {
         this.phone = document.getString("phone");
         this.deviceID = document.getString("ID");
         this.notification = document.getBoolean("notification");
+        this.role = document.getString("role");
+        this.facility = document.getString("facility");
         this.eventsOrganized = (ArrayList<String>)document.getData().get("organized");
         this.eventsInvited = (ArrayList<String>)document.getData().get("invited");
         this.eventsEnrolled = (ArrayList<String>)document.getData().get("enrolled");
@@ -127,6 +139,8 @@ public class Entrant implements Parcelable {
         deviceID = in.readString();
         byte tmpNotification = in.readByte();
         notification = tmpNotification == 0 ? null : tmpNotification == 1;
+        role = in.readString();
+        facility = in.readString();
         eventsOrganized = in.createStringArrayList();
         eventsInvited = in.createStringArrayList();
         eventsEnrolled = in.createStringArrayList();
@@ -163,6 +177,8 @@ public class Entrant implements Parcelable {
         map.put("name", getNameAsList());
         map.put("email", email);
         map.put("phone", phone);
+        map.put("role", role);
+        map.put("facility", facility);
         map.put("notification", notification);
         map.put("ID", deviceID);
         map.put("organized", eventsOrganized);
@@ -172,6 +188,15 @@ public class Entrant implements Parcelable {
 
         return map;
     }
+
+    /**
+     * Retrieve role (organizer, admin, null) or entrant
+     * @return role of entrant as a string
+     */
+    public String getRole() { return role; }
+
+    public String getFacility() { return facility; }
+
     /**
      * Retrieve name of entrant
      * @return the name of the entrant
@@ -220,6 +245,8 @@ public class Entrant implements Parcelable {
         this.email = email;
     }
 
+    public void setFacility(String facility) { this.facility = facility; }
+
     /**
      * Get the phone number of the entrant
      * @return a string format of the entrants phone number
@@ -251,6 +278,10 @@ public class Entrant implements Parcelable {
         this.notification = notification;
     }
 
+    public ArrayList<String> getOrganized() {
+        return eventsOrganized;
+    }
+
     /**
      * describes the content of the entrant
      * @return 0
@@ -271,6 +302,14 @@ public class Entrant implements Parcelable {
         parcel.writeStringArray(name);
         parcel.writeString(email);
         parcel.writeString(phone);
+        parcel.writeString(deviceID);
+        parcel.writeByte((byte) (notification == null ? 0 : notification ? 1 : 2));
+        parcel.writeString(role);
+        parcel.writeString(facility);
+        parcel.writeStringList(eventsOrganized);
+        parcel.writeStringList(eventsInvited);
+        parcel.writeStringList(eventsEnrolled);
+        parcel.writeStringList(eventsWaitlist);
     }
 
     // Will need to be updated after changing the fields. May be easy to just use the device ID.\
@@ -284,7 +323,7 @@ public class Entrant implements Parcelable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Entrant entrant = (Entrant) o;
-        return Objects.deepEquals(name, entrant.name) && Objects.equals(email, entrant.email) && Objects.equals(phone, entrant.phone) && Objects.equals(deviceID, entrant.deviceID);
+        return Objects.deepEquals(name, entrant.name) && Objects.equals(email, entrant.email) && Objects.equals(phone, entrant.phone) && Objects.equals(deviceID, entrant.deviceID) && Objects.equals(role, entrant.role) && Objects.equals(facility, entrant.facility);
     }
     /**
      * get hash code of entrant
@@ -325,6 +364,17 @@ public class Entrant implements Parcelable {
      */
     public void setEventsOrganized(ArrayList<String> eventsOrganized) {
         this.eventsOrganized = eventsOrganized;
+    }
+
+    /**
+     * set the role of the entrant; must be "entrant", "admin", or "organizer"
+     * @param role
+     */
+    public void setRole(String role) {
+        if (role.equalsIgnoreCase("entrant") || role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("organizer"))
+        { this.role = role; } else {
+            throw new IllegalArgumentException("Entrant role must equal \"entrant\", \"admin\", or \"organizer\"");
+        }
     }
 
     /**

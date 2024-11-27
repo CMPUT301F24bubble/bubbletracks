@@ -70,6 +70,7 @@ import java.util.Date;
  */
 public class OrganizerEventHosting extends Fragment{
     private ListsBinding binding;
+    private Admin admin;
 
     EventDB eventDB = new EventDB();
     ArrayList<Event> hostedEvents = new ArrayList<>();
