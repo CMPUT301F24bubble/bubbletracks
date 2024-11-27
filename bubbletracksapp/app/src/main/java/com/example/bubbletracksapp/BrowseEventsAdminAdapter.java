@@ -105,7 +105,7 @@ public class BrowseEventsAdminAdapter extends RecyclerView.Adapter<BrowseEventsA
         }
 
         // GETS EVENT OF INTEREST
-        Event event = allTheEvents.get();
+        Event event = allTheEvents.get(position);
 
         // SETS EVENT TITLE and handles null value
         holder.eventTitle.setText(event.getName() != null ? event.getName() : "No Title");
@@ -117,8 +117,7 @@ public class BrowseEventsAdminAdapter extends RecyclerView.Adapter<BrowseEventsA
         if (event.getImage().equals(null)) {
             holder.eventPic.setImageResource(R.drawable.default_image);
         } else {
-            // IMAGES STORED IN DATABASE AS:
-            holder.eventPic.setImageResource(Picasso.get().load(event.getImage()).into(posterImage);
+            holder.eventPic.setImageResource(Picasso.get().load(event.getImage()).into(posterImage));
         }
 
         // SETS EVENT DATE: should look like NOV 29 @ 5:30 PM
