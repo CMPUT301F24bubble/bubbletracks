@@ -400,4 +400,17 @@ public class Event implements Parcelable{
         parcel.writeLong(registrationOpen.getTime());
         parcel.writeLong(registrationClose.getTime());
     }
+
+    /**
+     * Removes the given entrant from the event
+     * @param entrant The id of the entrant being removed from the event
+     */
+    public void cancelEntrant(String entrant) {
+        waitList.remove(entrant);
+        invitedList.remove(entrant);
+        enrolledList.remove(entrant);
+        rejectedList.remove(entrant);
+        cancelledList.add(entrant);
+        updateEventFirebase();
+    }
 }

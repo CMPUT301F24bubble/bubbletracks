@@ -25,7 +25,6 @@
             android:layout_margin="0dp"
             android:layout_weight="0.5"
             android:background="@drawable/round_event"
-            android:backgroundTint="#34B140"
             android:text="Redraw" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -43,6 +43,7 @@ import java.util.Locale;
 public class OrganizerActivity extends AppCompatActivity {
 
     private Event event = new Event();
+    private Entrant currentUser = new Entrant();
 
     private Date curDate = new Date();
 
@@ -66,7 +67,7 @@ public class OrganizerActivity extends AppCompatActivity {
     // declare uri variable
     private Uri posterUri;
 
-    private String facility, location;
+    private String facility;
 
     /**
      * sets the layout, assigns all the views declared and sets up all the on click listeners
@@ -81,7 +82,6 @@ public class OrganizerActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         facility = intent.getStringExtra("id");
-        location = intent.getStringExtra("location");
 
         FacilityDB facilityDB = new FacilityDB();
         facilityDB.getFacility(facility).thenAccept(curFacility -> {
@@ -118,7 +118,10 @@ public class OrganizerActivity extends AppCompatActivity {
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                finish();
+                Intent intent = new Intent(OrganizerActivity.this, MainActivity.class);
+                intent.putExtra("event", event);
+                intent.putExtra("user", currentUser);
+                startActivity(intent);
             }
         });
 
@@ -169,7 +172,6 @@ public class OrganizerActivity extends AppCompatActivity {
                 createEvent();
             }
         });
-
     }
 
 
@@ -477,6 +479,7 @@ public class OrganizerActivity extends AppCompatActivity {
         // get the entrant from the database
         entrantDB.getEntrant(ID).thenAccept(user -> {
             if(user != null){
+                currentUser = user;
 
                 // update the user to have the event's id in its events organized list and store it
                 user.addToEventsOrganized(event.getId());

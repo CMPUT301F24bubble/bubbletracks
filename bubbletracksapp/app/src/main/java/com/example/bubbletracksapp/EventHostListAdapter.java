@@ -31,12 +31,13 @@ import java.util.Map;
  * Adapter between event host and the event list
  * @author
  */
-public class EventHostListAdapter extends ArrayAdapter<Event> {
-//    interface EventHostI {
-//        void viewWaitlist(Event event);
-//        void editEvent(Event event);
-//    }
-//    private EventHostI listener;
+public class EventHostListAdapter extends ArrayAdapter<Event>{
+    interface EventHostI {
+        void viewWaitlist(Event event);
+        void editEvent(Event event);
+    }
+    private EventHostI listener;
+
     /**
      * Initialize the adapter with the list of events
      *
@@ -45,11 +46,11 @@ public class EventHostListAdapter extends ArrayAdapter<Event> {
      */
     public EventHostListAdapter(Context context, ArrayList<Event> events) {
         super(context, 0, events);
-//        if (context instanceof EventHostI) {
-//            listener = (EventHostI) context;
-//        } else {
-//            throw new RuntimeException(context + " must implement EventHostI");
-//        }
+        if (context instanceof EventHostI) {
+            listener = (EventHostI) context;
+        } else {
+            throw new RuntimeException(context + " must implement EventHostI");
+        }
     }
 
     /**
@@ -101,7 +102,7 @@ public class EventHostListAdapter extends ArrayAdapter<Event> {
              */
             @Override
             public void onClick(View view) {
-                viewWaitlist(event);
+                listener.viewWaitlist(event);
             }
         });
 
@@ -112,7 +113,7 @@ public class EventHostListAdapter extends ArrayAdapter<Event> {
              */
             @Override
             public void onClick(View view) {
-                editEvent(event);
+                listener.editEvent(event);
             }
         });
 

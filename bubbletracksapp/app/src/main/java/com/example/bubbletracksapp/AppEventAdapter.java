@@ -190,8 +190,9 @@ public class AppEventAdapter extends RecyclerView.Adapter<AppEventAdapter.EventV
     private void handleAcceptClick(Event event) {
         // Code to handle accepting this specific event
         Toast.makeText(context, "Accepted: " + event.getName(), Toast.LENGTH_SHORT).show();
-        user.addToEventsEnrolled(event.getId());
-        user.updateEntrantFirebase();
+        user.acceptEvent(event.getId());
+        event.addToEnrolledList(user.getID());
+        event.updateEventFirebase();
     }
 
     /**
@@ -215,6 +216,7 @@ public class AppEventAdapter extends RecyclerView.Adapter<AppEventAdapter.EventV
             user.deleteFromEventsEnrolled(event.getId());
         }
 
+        event.cancelEntrant(user.getID());
         user.updateEntrantFirebase();
 
     }
