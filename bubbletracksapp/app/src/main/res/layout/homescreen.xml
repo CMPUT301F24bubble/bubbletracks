@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="bottom"
+    android:gravity="bottom|right"
     android:orientation="vertical">
 
     <TextView
@@ -36,6 +36,30 @@
         android:layout_weight="2">
 
     </FrameLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/button_createManageFacility"
+            style="@style/HomeButtons"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rounded_corners_half"
+            android:backgroundTint="#236CA8"
+            android:drawableRight="@drawable/baseline_image_search_24"
+            android:drawablePadding="8dp"
+            android:gravity="center_horizontal|center_vertical"
+            android:minWidth="98dip"
+            android:minHeight="58dip"
+            android:paddingLeft="20dp"
+            android:paddingTop="10dp"
+            android:paddingEnd="10dp"
+            android:paddingBottom="10dp"
+            android:text="Create Facility" />
+    </LinearLayout>
 
     <HorizontalScrollView
         android:id="@+id/button_scroll_view"

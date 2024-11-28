@@ -43,10 +43,14 @@ public class AdminFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_admin, container, false);
 
-        Button createEventButton = view.findViewById(R.id.button_adminBrowser);
+        Button browseFacilitiesButton = view.findViewById(R.id.button_admin_facilities);
+        Button browseProfilesButton = view.findViewById(R.id.button_admin_profiles);
 
-        //Intent createEventIntent = new Intent(getActivity(), OrganizerActivity.class);
-        //switchActivityButton(createEventButton, createEventIntent);
+        Intent adminProfileIntent = new Intent(getActivity(), AdminProfileViews.class);
+        switchActivityButton(browseProfilesButton, adminProfileIntent);
+
+        Intent adminFacilityIntent = new Intent(getActivity(), AdminFacilityViews.class);
+        switchActivityButton(browseFacilitiesButton, adminFacilityIntent);
 
         // Inflate the layout for this fragment
         return view;

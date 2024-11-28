@@ -30,7 +30,7 @@
                 android:padding="15dp">
 
                 <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/button_adminBrowser"
+                    android:id="@+id/button_admin_facilities"
                     style="@style/HomeButtons"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
@@ -41,11 +41,11 @@
                     android:drawableTop="@drawable/baseline_key_24"
                     android:gravity="center_horizontal|center_vertical"
                     android:padding="15dp"
-                    android:text="Admin Browse"
+                    android:text="Browse Facilities"
                     android:textColorLink="#03A9F4" />
 
                 <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/button_host"
+                    android:id="@+id/button_admin_profiles"
                     style="@style/HomeButtons"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
@@ -53,10 +53,11 @@
                     android:layout_weight="1"
                     android:background="@drawable/rounded_corners"
                     android:backgroundTint="@color/home_blue"
+                    android:drawableTop="@drawable/baseline_key_24"
                     android:gravity="center_horizontal|center_vertical"
                     android:padding="15dp"
-                    android:textColorLink="#03A9F4"
-                    android:visibility="invisible" />
+                    android:text="Browse Profiles"
+                    android:textColorLink="#03A9F4" />
 
                 <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/button_eventEdit"
