@@ -7,6 +7,8 @@
 
 package com.example.bubbletracksapp;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -23,6 +25,7 @@ public class BrowseEventsScreenGenerator extends AppCompatActivity {
     private EventDB eventDB = new EventDB();
     private RecyclerView eventsCatalogue;
     private BrowseEventsAdminAdapter adapter;
+    private TextView noEventsInDB;
 
     // CONSTRUCTOR
     public BrowseEventsScreenGenerator(){}
@@ -37,10 +40,33 @@ public class BrowseEventsScreenGenerator extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.admin_browse_events);
         // SETS UP RECYCLER VIEW
-        eventsCatalogue = eventsCatalogue.findViewById(R.id.event_catalogue);
-        // SETS UP ADAPTER
-        adapter = new BrowseEventsAdminAdapter(this, new CompletableFuture<>());
-        eventsCatalogue.setAdapter(adapter);
-        eventsCatalogue.setLayoutManager(new LinearLayoutManager(this));
+        eventsCatalogue = eventsCatalogue.findViewById(R.id.event_db);
+
+        displayEvents();
+    }
+
+
+    private void displayEvents() {
+        allTheEvents.whenComplete((events, throwable) -> runOnUiThread(() -> {
+            if (throwable != null) {
+                // Handle errors (show a dialog or toast)
+                noEventsInDB.setText("An error occurred: " + throwable.getMessage());
+                noEventsInDB.setVisibility(View.VISIBLE);
+                eventsCatalogue.setVisibility(View.GONE);
+            } else if (events != null && !events.isEmpty()) {
+                // Populate RecyclerView and hide placeholder
+                BrowseEventsAdminAdapter adapter = new BrowseEventsAdminAdapter(this, new CompletableFuture<>());
+                eventsCatalogue.setAdapter(adapter);
+                eventsCatalogue.setVisibility(View.VISIBLE);
+                noEventsInDB.setVisibility(View.GONE);
+            } else {
+                // Show placeholder and hide RecyclerView
+                noEventsInDB.setVisibility(View.VISIBLE);
+                eventsCatalogue.setVisibility(View.GONE);
+            }
+        }));
     }
 }
+
+
+
