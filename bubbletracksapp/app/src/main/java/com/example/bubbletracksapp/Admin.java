@@ -1,12 +1,9 @@
 package com.example.bubbletracksapp;
 
-import android.app.AlertDialog;
 import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.Task;
-import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
@@ -14,7 +11,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.WriteBatch;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -41,17 +37,18 @@ public class Admin {
      * from the corresponding lists in the "entrants" collection.
      *
      * @param context The context where the deletion is being performed.
-     * @param eventRef The event that needs to be deleted.
+     * @param event The event that needs to be deleted.
      */
-    public void deleteEvent(Context context, DocumentReference eventRef) {
-        if (eventRef == null) {
+    public void deleteEvent(Context context, Event event) {
+        if (event == null||event.getId()==null) {
             return;
         }
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        String eventId = eventRef.getId();
+        String eventId = event.getId();
         WriteBatch batch = db.batch();
 
+        DocumentReference eventRef = db.collection("events").document(eventId);
         batch.delete(eventRef);
 
         // subcategories to check in entrants' data
@@ -169,11 +166,28 @@ public class Admin {
                             List<String> organizedEventIds = (List<String>) entrantData.get("organized");
 
                             if (organizedEventIds != null && !organizedEventIds.isEmpty()) {
-                                // fetch each event and delete it
+                                // get each event and delete it
                                 for (String eventId : organizedEventIds) {
                                     DocumentReference eventRef = db.collection("events").document(eventId);
-                                    deleteEvent(context, eventRef);
+
+                                    eventRef.get()
+                                            .addOnSuccessListener(eventdocumentSnapshot -> {
+                                                if (eventdocumentSnapshot.exists()) {
+                                                    Event event = eventdocumentSnapshot.toObject(Event.class);
+                                                    if (event != null) {
+                                                        deleteEvent(context, event);
+                                                    } else {
+                                                        Log.e("EventID to object", "Event conversion failed for eventId: " + eventId);
+                                                    }
+                                                } else {
+                                                    Log.e("EventID to object", "Event document does not exist for eventId: " + eventId);
+                                                }
+                                            })
+                                            .addOnFailureListener(e -> {
+                                                Log.e("EventID to object", "Error fetching event document for eventId: " + eventId, e);
+                                            });
                                 }
+
                             }
                         }
 
@@ -227,8 +241,25 @@ public class Admin {
                     if (eventIds != null && !eventIds.isEmpty()) {
                         for (String eventId : eventIds) {
                             DocumentReference eventRef = db.collection("events").document(eventId);
-                            deleteEvent(context, eventRef);
+                            eventRef.get()
+                                    .addOnSuccessListener(eventDocumentSnapshot -> {
+                                        if (eventDocumentSnapshot.exists()) {
+                                            Event event = eventDocumentSnapshot.toObject(Event.class);
+                                            if (event != null) {
+                                                event.setId(eventDocumentSnapshot.getId());
+                                                deleteEvent(context, event);
+                                            } else {
+                                                Log.e("EventID to object", "Event object failed for eventId: " + eventId);
+                                            }
+                                        } else {
+                                            Log.e("EventID to object", "Event document does not exist for eventId: " + eventId);
+                                        }
+                                    })
+                                    .addOnFailureListener(e -> {
+                                        Log.e("EventID to object", "Error fetching event document for eventId: " + eventId, e);
+                                    });
                         }
+
                     }
 
                     if (organizerId != null) {
