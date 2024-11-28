@@ -64,6 +64,7 @@ public class AdminFragment extends Fragment {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                intent.putExtra("user", currentUser);
                 startActivity(intent);
             }
         });

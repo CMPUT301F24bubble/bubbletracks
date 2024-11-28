@@ -26,7 +26,6 @@ public class OrganizerFragment extends Fragment {
      *
      * @return A new instance of fragment OrganizerFragment.
      */
-    // TODO: Rename and change types and number of parameters
     public static OrganizerFragment newInstance(String param1, String param2) {
         OrganizerFragment fragment = new OrganizerFragment();
         Bundle args = new Bundle();
@@ -58,10 +57,18 @@ public class OrganizerFragment extends Fragment {
 
         Button facilityButton = view.findViewById(R.id.button_facility);
         Button hostedEventsButton = view.findViewById(R.id.button_host);
-        Button createEventButton = view.findViewById(R.id.button_eventEdit);
 
-        Intent createEventIntent = new Intent(getActivity(), OrganizerActivity.class);
-        switchActivityButton(createEventButton, createEventIntent);
+        /*Intent manageFacilityIntent = new Intent(getActivity(), OrganizerManageActivity.class);
+        if(!MainActivity.currentUser.getFacility().isEmpty()){
+            manageFacilityIntent.putExtra("id", user.getFacility());
+            switchActivityButton(createFacilityButton, manageFacilityIntent);
+            createFacilityButton.setText("MANAGE FACILITY");
+        } else {
+            switchActivityButton(createFacilityButton, createFacilityIntent);
+        }*/
+
+        Intent hostedEventsIntent = new Intent(getActivity(), OrganizerEventHosting.class);
+        switchActivityButton(hostedEventsButton, hostedEventsIntent);
 
         // Inflate the layout for this fragment
         return view;
@@ -75,6 +82,7 @@ public class OrganizerFragment extends Fragment {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                intent.putExtra("user", currentUser);
                 startActivity(intent);
             }
         });

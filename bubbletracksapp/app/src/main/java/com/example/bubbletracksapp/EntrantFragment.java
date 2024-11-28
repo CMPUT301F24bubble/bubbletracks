@@ -52,8 +52,8 @@ public class EntrantFragment extends Fragment {
 
         Button scanButton = view.findViewById(R.id.button_scan);
         Button ticketsButton = view.findViewById(R.id.button_empty7);
-        Button profileButton = view.findViewById(R.id.button_empty6);
-        Button userEventsButton = view.findViewById(R.id.button_empty8);
+        Button profileButton = view.findViewById(R.id.button_profile);
+        Button userEventsButton = view.findViewById(R.id.button_userEvents);
 
         Intent scanIntent = new Intent(getActivity(), QRScanner.class);
         switchActivityButton(scanButton, scanIntent);
@@ -76,6 +76,7 @@ public class EntrantFragment extends Fragment {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                intent.putExtra("user", currentUser);
                 startActivity(intent);
             }
         });

@@ -30,21 +30,6 @@
                 android:padding="15dp">
 
                 <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/button_facility"
-                    style="@style/HomeButtons"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_margin="10dp"
-                    android:layout_weight="1"
-                    android:background="@drawable/rounded_corners"
-                    android:backgroundTint="@color/home_blue"
-                    android:drawableTop="@drawable/facility_icon"
-                    android:gravity="center_horizontal|center_vertical"
-                    android:padding="15dp"
-                    android:text="Facility"
-                    android:textColorLink="#03A9F4" />
-
-                <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/button_host"
                     style="@style/HomeButtons"
                     android:layout_width="0dp"
@@ -60,6 +45,22 @@
                     android:textColorLink="#03A9F4" />
 
                 <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/button_facility"
+                    style="@style/HomeButtons"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_margin="10dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/rounded_corners"
+                    android:backgroundTint="@color/home_blue"
+                    android:drawableTop="@drawable/facility_icon"
+                    android:gravity="center_horizontal|center_vertical"
+                    android:padding="15dp"
+                    android:text="Facility"
+                    android:textColorLink="#03A9F4"
+                    android:visibility="invisible" />
+
+                <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/button_eventEdit"
                     style="@style/HomeButtons"
                     android:layout_width="0dp"
@@ -72,7 +73,8 @@
                     android:gravity="center_horizontal|center_vertical"
                     android:padding="15dp"
                     android:text="Event Edit"
-                    android:textColorLink="#03A9F4" />
+                    android:textColorLink="#03A9F4"
+                    android:visibility="invisible" />
 
             </LinearLayout>
 

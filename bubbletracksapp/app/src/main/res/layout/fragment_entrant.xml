@@ -45,7 +45,7 @@
                     android:textColorLink="#03A9F4" />
 
                 <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/button_empty8"
+                    android:id="@+id/button_userEvents"
                     style="@style/HomeButtons"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
@@ -59,18 +59,17 @@
                     android:textColorLink="#03A9F4" />
 
                 <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/button_empty7"
+                    android:id="@+id/button_profile"
                     style="@style/HomeButtons"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_margin="10dp"
                     android:layout_weight="1"
                     android:background="@drawable/rounded_corners"
-                    android:backgroundTint="@color/neutral"
-                    android:drawableTop="@drawable/ticketicon"
-                    android:padding="15dp"
-                    android:text="Tickets"
-                    android:tint="@color/white" />
+                    android:backgroundTint="@color/home_blue"
+                    android:drawableTop="@drawable/baseline_groups_24"
+                    android:padding="20dp"
+                    android:text="Profile" />
 
             </LinearLayout>
 
@@ -84,17 +83,19 @@
                 android:padding="15dp">
 
                 <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/button_empty6"
+                    android:id="@+id/button_empty7"
                     style="@style/HomeButtons"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_margin="10dp"
                     android:layout_weight="1"
                     android:background="@drawable/rounded_corners"
-                    android:backgroundTint="@color/home_blue"
-                    android:drawableTop="@drawable/baseline_groups_24"
-                    android:padding="20dp"
-                    android:text="Profile" />
+                    android:backgroundTint="@color/neutral"
+                    android:drawableTop="@drawable/ticketicon"
+                    android:padding="15dp"
+                    android:text="Tickets"
+                    android:tint="@color/white"
+                    android:visibility="invisible" />
 
                 <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/button_empty5"
