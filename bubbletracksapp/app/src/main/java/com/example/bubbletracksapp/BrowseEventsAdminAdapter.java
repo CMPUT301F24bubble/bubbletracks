@@ -52,7 +52,7 @@ public class BrowseEventsAdminAdapter extends RecyclerView.Adapter<BrowseEventsA
     class BrowseEventViewHolder extends RecyclerView.ViewHolder {
         TextView eventTitle, eventDescription, eventDate;
         ImageView eventPic;
-        //ImageButton overflowImageButton;
+        ImageButton overflowImageButton;
         CardView eventParent;
 
         public BrowseEventViewHolder(@NonNull View itemView) {
@@ -125,7 +125,7 @@ public class BrowseEventsAdminAdapter extends RecyclerView.Adapter<BrowseEventsA
                 Log.d("ImageView", "ImageView is: " + holder.eventPic);
                 Picasso.get().load(event.getImage()).into(holder.eventPic);
             } else {
-                holder.eventPic.setImageResource(R.drawable.default_image);
+
             }
 
             // SETS EVENT DATE: should look like NOV 29 @ 13:30
@@ -138,23 +138,23 @@ public class BrowseEventsAdminAdapter extends RecyclerView.Adapter<BrowseEventsA
                 holder.eventDate.setText("Unknown");
             }
 
-                /*
+
+            // CREATES ON CLICK LISTENER FOR OVERFLOW MENU
+            holder.overflowImageButton.setOnClickListener(v -> {
+                PopupMenu popupMenu = new PopupMenu(context, holder.overflowImageButton);
+                popupMenu.inflate(R.menu.overflow_admin_search_menu);
+
+                // SHOWS THE MENU
+                popupMenu.show();
+
                 // CREATES ON CLICK LISTENER FOR OVERFLOW MENU
-                holder.overflowImageButton.setOnClickListener(v -> {
-                    PopupMenu popupMenu = new PopupMenu(context, holder.overflowImageButton);
-                    popupMenu.inflate(R.menu.overflow_admin_search_menu);
-
-                    // SHOWS THE MENU
-                    popupMenu.show();
-
-                    // CREATES ON CLICK LISTENER FOR OVERFLOW MENU
-                    popupMenu.setOnMenuItemClickListener(item -> {
-                        int id = item.getItemId();
-                        if (id == R.id.action_delete_event) {
-                            handleDeleteEventAction(this,event);
-                            popupMenu.dismiss();
-                            return true;
-                        } else if (id == R.id.action_delete_QR_data) {
+                popupMenu.setOnMenuItemClickListener(item -> {
+                    int id = item.getItemId();
+                    if (id == R.id.action_delete_event) {
+                        handleDeleteEventAction(this, event);
+                        popupMenu.dismiss();
+                        return true;
+                    } /*else if (id == R.id.action_delete_QR_data) {
                             handleDeleteQRDataAction(event);
                             popupMenu.dismiss();
                             return true;
@@ -162,23 +162,17 @@ public class BrowseEventsAdminAdapter extends RecyclerView.Adapter<BrowseEventsA
                             handleDeletePosterAction(event);
                             popupMenu.dismiss();
                             return true;
-                        } else {
-                            popupMenu.dismiss();
-                            return false;
-                        }
-                    });
-                });// Get the first event
-            } else {
-                System.out.println("No events available.");
-            }
-        });
-        */
-
-
+                        } */ else {
+                        popupMenu.dismiss();
+                        return false;
+                    }
+                });
+            });
+        } else {
+            System.out.println("No events available.");
         }
-
-
     }
+
 
     /**
      * Returns
@@ -190,7 +184,24 @@ public class BrowseEventsAdminAdapter extends RecyclerView.Adapter<BrowseEventsA
     public int getItemCount() {
         return allTheEvents == null ? 0 : allTheEvents.size();
     }
+
+    private void handleDeleteEventAction(Context context, DocumentReference event) {
+
+        // DELETES EVENT FROM DATABASE: should cascade so that the event will not appear in any waitlist/registered/hosting list
+        Admin admin = new Admin(context);
+        admin.deleteEvent(context, event);
+        // OPTIONAL:  SENDS NOTIFICATION TO HOST THAT THEIR EVENT HAS BEEN DELETED ex: Admin has deleted "<Name of event>" on <Date of Event>. Please contact us at <email> in case you have any further questions.
+    }
+
+
+
 }
+
+
+
+
+
+
 
 /*
 
@@ -206,13 +217,7 @@ public class BrowseEventsAdminAdapter extends RecyclerView.Adapter<BrowseEventsA
 
 
 /*
-private void handleDeleteEventAction(Context context, DocumentReference event) {
 
-    // DELETES EVENT FROM DATABASE: should cascade so that the event will not appear in any waitlist/registered/hosting list
-    Admin admin = new Admin(context);
-    admin.deleteEvent(context, event);
-    // OPTIONAL:  SENDS NOTIFICATION TO HOST THAT THEIR EVENT HAS BEEN DELETED ex: Admin has deleted "<Name of event>" on <Date of Event>. Please contact us at <email> in case you have any further questions.
-}
 
 /**
  * Handles the action of canceling an event.
