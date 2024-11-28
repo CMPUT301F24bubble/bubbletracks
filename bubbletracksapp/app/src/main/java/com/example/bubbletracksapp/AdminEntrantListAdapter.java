@@ -152,7 +152,6 @@ public class AdminEntrantListAdapter extends ArrayAdapter<Entrant> {
                 Log.e("FacilityFetchError", "Error fetching facility details", e);
             });
         } else {
-            // No facility associated with the entrant
             facilityNameTextView.setText("Facility Name: N/A");
             facilityIdTextView.setText("Facility ID: N/A");
             facilityLocationTextView.setText("Facility Location: N/A");
