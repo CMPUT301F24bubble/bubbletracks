@@ -165,7 +165,13 @@ public class AppUserEventScreenGenerator extends AppCompatActivity {
                         // Display a Toast or perform actions based on the selected item
                         Toast.makeText(AppUserEventScreenGenerator.this, "Selected: " + selectedOption, Toast.LENGTH_SHORT).show();
 
-                        displayList(currentUser);
+                        // Perform different actions based on selection
+                        if (selectedOption.equals("Waitlist")) {
+                            // Displays Waitlisted Event
+                            displayList("Waitlist");
+                        } else if (selectedOption.equals("Registered")) {
+                            displayList("Waitlist");
+                        }
                     }
 
                     @Override
@@ -202,22 +208,40 @@ public class AppUserEventScreenGenerator extends AppCompatActivity {
      * @param user
      *
      */
-    private void displayList(Entrant user) {
-        if (user == null) {
+    private void displayList(String type) {
+        if (currentUser == null) {
             // Log an error or handle the case when user is not yet available
             Log.e("AppUserEventScreen", "User object is null. Cannot display list.");
             return; // Exit the method early
         } else {
-            eventDB.getEventList(user.getEventsWaitlist()).thenAccept(events -> {
-                if(events != null) {
-                    eventList.clear();
-                    eventList.addAll(events);
-                    eventAdapter.notifyDataSetChanged();
-                }
-            });
+            if(Objects.equals(type, "Waitlist"))
+            {
+                setEventList(currentUser.getEventsWaitlist());
+            }
+            else if (Objects.equals(type, "Registered")) {
+                setEventList(currentUser.getEventsEnrolled());
+            }
         }
     }
 
+    /**
+     * Set the events of the adapter, depending if the user is looking at the events
+     * they are waiting to join or the events they enrolled.
+     * @param eventIDs The IDs of the events that will be set
+     */
+    private void setEventList(ArrayList<String> eventIDs) {
+        eventDB.getEventList(eventIDs).thenAccept(events -> {
+            if(events != null) {
+                eventAdapter.setEventList(events);
+                eventAdapter.notifyDataSetChanged();
+            }
+            else
+            {
+                eventList.clear();
+                eventAdapter.notifyDataSetChanged();
+            }
+        });
+    }
 
 
 }
