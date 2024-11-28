@@ -7,6 +7,8 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -15,6 +17,7 @@ import com.example.bubbletracksapp.databinding.LotteryMainBinding;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -24,6 +27,7 @@ import java.util.List;
  */
 public class OrganizerEditActivity extends AppCompatActivity {
     Event event;
+    Entrant currentUser;
     EntrantDB entrantDB = new EntrantDB();
 
     ArrayList<Entrant> waitList = new ArrayList<>();
@@ -31,6 +35,8 @@ public class OrganizerEditActivity extends AppCompatActivity {
     ArrayList<Entrant> rejectedList = new ArrayList<>();
     ArrayList<Entrant> cancelledList = new ArrayList<>();
     ArrayList<Entrant> enrolledList = new ArrayList<>();
+
+    List<String> spinList = new ArrayList<String>();
 
     ListView waitlistListView;
     EntrantListAdapter waitlistAdapter;
@@ -53,37 +59,43 @@ public class OrganizerEditActivity extends AppCompatActivity {
         Intent in =  getIntent();
         try {
             event = in.getParcelableExtra("event");
+            currentUser = in.getParcelableExtra("user");
         } catch (Exception e) {
             Log.d("OrganizerEditActivity", "event extra was not passed correctly");
             throw new RuntimeException(e);
         }
 
         //If the Event has been pooled already, just show the lists
-        if(event.getInvitedList().size() > 0)
+        if(!event.getInvitedList().isEmpty() || !event.getRejectedList().isEmpty()
+                || !event.getCancelledList().isEmpty() || !event.getEnrolledList().isEmpty())
         {
             startListActivity();
         }
         setContentView(binding.getRoot());
 
         waitlistListView = binding.reusableListView;
+        waitlistAdapter = new EntrantListAdapter(this, waitList);
+        waitlistListView.setAdapter(waitlistAdapter);
+
+        TextView waitListDescription = binding.waitListDescription;
+        waitListDescription.setText(getString(R.string.wait_list_text, event.getName()));
+
+        Spinner nSpin = binding.waitlistChooseCount;
+        ArrayAdapter<String> spinAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, spinList);
+        spinAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        nSpin.setAdapter(spinAdapter);
 
         entrantDB.getEntrantList(event.getWaitList()).thenAccept(entrants -> {
             if(entrants != null){
-                waitList = entrants;
-                waitlistAdapter = new EntrantListAdapter(this, waitList);
-                waitlistListView.setAdapter(waitlistAdapter);
+                waitList.addAll(entrants);
+                waitlistAdapter.notifyDataSetChanged();
 
                 Log.d("getWaitList", "WaitList loaded");
 
-                Spinner nSpinner = binding.waitlistChooseCount;
-                List<String> spinList = new ArrayList<String>();
                 for (int i=1; i<=waitList.size(); i++){
                     spinList.add(String.valueOf(i));
                 }
-                ArrayAdapter<String> spinAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, spinList);
-                spinAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                nSpinner.setAdapter(spinAdapter);
-
+                spinAdapter.notifyDataSetChanged();
 
             } else {
                 Log.d("getWaitList", "No entrants in waitlist");
@@ -98,12 +110,22 @@ public class OrganizerEditActivity extends AppCompatActivity {
              */
             @Override
             public void onClick(View view) {
-                Spinner nSpin = binding.waitlistChooseCount;
-                String nStr = nSpin.getSelectedItem().toString();
-                int n = Integer.parseInt(nStr);
-                drawEntrants(n);
-                updateEventWithLists();
-                startListActivity();
+                // You can only draw entrants if the registration date passed and there are users in waitlist.
+                if(!event.getRegistrationClose().after(new Date())) {
+                    if(!waitList.isEmpty()) {
+                        String nStr = nSpin.getSelectedItem().toString();
+                        int n = Integer.parseInt(nStr);
+                        drawEntrants(n);
+                        updateEventWithLists();
+                        startListActivity();
+                    }
+                    else {
+                        Toast.makeText(OrganizerEditActivity.this, "No users in waitlist.", Toast.LENGTH_SHORT).show();
+                    }
+                }
+                else {
+                    Toast.makeText(OrganizerEditActivity.this, "Registration date is still open. Wait until it closes.", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -115,7 +137,18 @@ public class OrganizerEditActivity extends AppCompatActivity {
              */
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(OrganizerEditActivity.this, MainActivity.class);
+                updateEventWithLists();
+                Intent intent = new Intent(OrganizerEditActivity.this, OrganizerEventHosting.class);
+                intent.putExtra("user", currentUser);
+                intent.putExtra("event", event);
+                startActivity(intent);
+            }
+        });
+
+        binding.viewAttendeeMapButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(OrganizerEditActivity.this, OrganizerLocationsMap.class);
                 intent.putExtra("event", event);
                 startActivity(intent);
             }
@@ -123,8 +156,6 @@ public class OrganizerEditActivity extends AppCompatActivity {
 
     }
 
-    // should return error if n is bigger than the size of waitlist INCOMPLETE
-    // Assuming it is the fist time it is called INCOMPLETE
     /**
      * Allows the organizer to draw n entrants from the waitlist.
      * @param n The number of entrants to sample.
@@ -132,13 +163,15 @@ public class OrganizerEditActivity extends AppCompatActivity {
      * @return true if successfully sampled entrants
      */
     public boolean drawEntrants(int n) {
-        Collections.shuffle(waitList);
+        ArrayList<Entrant> newWaitlist = new ArrayList<>(waitList);
+        Collections.shuffle(newWaitlist);
         invitedList.clear();
         rejectedList.clear();
         enrolledList.clear();
-        invitedList.addAll(waitList.subList(0, n));
-        rejectedList.addAll(waitList.subList(n, waitList.size()));
-
+        invitedList.addAll(newWaitlist.subList(0, n));
+        rejectedList.addAll(newWaitlist.subList(n, newWaitlist.size()));
+        updateEventWithLists();
+        addEntrantsInvitations();
         return true;
     }
 
@@ -146,8 +179,8 @@ public class OrganizerEditActivity extends AppCompatActivity {
      * Shows the lists
      */
     private void startListActivity() {
-        event.updateEventFirebase();
         Intent intent = new Intent(OrganizerEditActivity.this, OrganizerEntrantListActivity.class);
+        intent.putExtra("user", currentUser);
         intent.putExtra("event", event);
         startActivity(intent);
     }
@@ -161,6 +194,16 @@ public class OrganizerEditActivity extends AppCompatActivity {
         event.setRejectedListWithEvents(rejectedList);
         event.setCancelledListWithEvents(cancelledList);
         event.setEnrolledListWithEvents(enrolledList);
+        event.updateEventFirebase();
     }
 
+    /**
+     * Updates the entrants that were invited with their invitations
+     */
+    private void addEntrantsInvitations() {
+        for (Entrant entrant: invitedList) {
+            entrant.addToEventsInvited(event.getId());
+            entrant.updateEntrantFirebase();
+        }
+    }
 }

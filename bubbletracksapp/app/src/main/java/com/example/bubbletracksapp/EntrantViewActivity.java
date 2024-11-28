@@ -1,10 +1,12 @@
 package com.example.bubbletracksapp;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -14,11 +16,14 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.android.gms.maps.model.LatLng;
 import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Objects;
 
 public class EntrantViewActivity extends AppCompatActivity {
 
@@ -71,7 +76,15 @@ public class EntrantViewActivity extends AppCompatActivity {
         joinButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                addEntrant();
+                // If the event needs a geolocation, make sure the entrant has a geolocation
+                if(!event.getNeedsGeolocation() || !Objects.equals(entrant.getGeolocation(), new LatLng(0, 0)))
+                {
+                    addEntrant();
+                }
+                else {
+                    Toast.makeText(EntrantViewActivity.this, "Allow geolocation and update your profile" +
+                            " to join this waitlist", Toast.LENGTH_LONG).show();
+                }
             }
         });
 
@@ -171,9 +184,15 @@ public class EntrantViewActivity extends AppCompatActivity {
     protected void addEntrant(){
         AlertDialog joinDialog;
         if (!inWaitlist) { // Entrant wants to join waitlist
+            String message = "";
+            if(event.getNeedsGeolocation()){
+                message = "This waitlist will share information about your current location. Are you sure you want to join the waitlist for this event?";
+            } else{
+                message = "Are you sure you want to join the waitlist for this event?";
+            }
             joinDialog = new AlertDialog.Builder(EntrantViewActivity.this)
                     .setTitle("Confirm Joining Waitlist")
-                    .setMessage("Are you sure you want to join the waitlist for this event?")
+                    .setMessage(message)
                     .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
