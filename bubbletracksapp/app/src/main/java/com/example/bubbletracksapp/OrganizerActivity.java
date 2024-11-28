@@ -357,7 +357,6 @@ public class OrganizerActivity extends AppCompatActivity {
             event.setRegistrationClose(registrationClose);
 
             event.setFacility(facility);
-            event.setGeolocation(location);
 
             try {
                 event.setMaxCapacity(Integer.parseInt(maxCapacity));
