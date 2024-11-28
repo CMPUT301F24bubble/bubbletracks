@@ -26,14 +26,16 @@ public class EventHostListAdapter extends ArrayAdapter<Event>{
         void editEvent(Event event);
     }
     private EventHostI listener;
+    private OrganizerEventHosting activity;
 
     /**
      * Initialize the adapter with the list of events
      * @param context context of what adapter does
      * @param events list of entrants
      */
-    public EventHostListAdapter(Context context, ArrayList<Event> events) {
+    public EventHostListAdapter(Context context, ArrayList<Event> events, OrganizerEventHosting activity) {
         super(context, 0, events);
+        this.activity = activity;
         if (context instanceof EventHostI) {
             listener = (EventHostI) context;
         } else {
@@ -71,6 +73,7 @@ public class EventHostListAdapter extends ArrayAdapter<Event>{
         TextView eventTimeText = view.findViewById(R.id.event_time);
         TextView eventLocationText = view.findViewById(R.id.event_location);
         TextView eventTitleText = view.findViewById(R.id.event_title);
+        Button updatePosterButton = view.findViewById(R.id.update_poster_button);
 
         AppCompatImageButton seePeopleButton = view.findViewById(R.id.see_people_button);
         AppCompatImageButton editEventButton = view.findViewById(R.id.edit_event_button);
@@ -103,6 +106,14 @@ public class EventHostListAdapter extends ArrayAdapter<Event>{
                 listener.editEvent(event);
             }
         });
+
+        updatePosterButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                activity.updatePoster(event);
+            }
+        });
+
         return view;
     }
 }

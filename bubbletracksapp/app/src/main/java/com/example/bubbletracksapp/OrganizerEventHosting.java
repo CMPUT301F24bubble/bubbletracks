@@ -1,17 +1,24 @@
 package com.example.bubbletracksapp;
 
-import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.Toast;
-
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.example.bubbletracksapp.databinding.EventHostingListBinding;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.util.ArrayList;
 
@@ -30,6 +37,9 @@ public class OrganizerEventHosting extends AppCompatActivity implements EventHos
     private ListView eventListView;
     private EventHostListAdapter eventListAdapter;
 
+    private ActivityResultLauncher<String> uploadImageLauncher;
+    private Event newEventImage;
+
     /**
      * Set up creation of activity
      *
@@ -44,6 +54,12 @@ public class OrganizerEventHosting extends AppCompatActivity implements EventHos
         binding = EventHostingListBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        uploadImageLauncher = registerForActivityResult(new ActivityResultContracts.GetContent(), uri -> {
+            if (uri != null) {
+                uploadNewImage(uri);
+            }
+        });
+
         Intent in = getIntent();
         try {
             currentUser = in.getParcelableExtra("user");
@@ -54,7 +70,7 @@ public class OrganizerEventHosting extends AppCompatActivity implements EventHos
 
         eventListView = binding.reusableListView;
 
-        eventListAdapter = new EventHostListAdapter(OrganizerEventHosting.this, hostedEvents);
+        eventListAdapter = new EventHostListAdapter(OrganizerEventHosting.this, hostedEvents, this);
         eventListView.setAdapter(eventListAdapter);
 
         eventDB.getEventList(currentUser.getEventsOrganized()).thenAccept(events -> {
@@ -105,5 +121,58 @@ public class OrganizerEventHosting extends AppCompatActivity implements EventHos
 //        intent.putExtra("event", event);
 //        intent.putExtra("user", currentUser);
 //        startActivity(intent);
+    }
+
+    public void updatePoster(Event event){
+
+        newEventImage = event;
+        Intent intent = new Intent(MediaStore.ACTION_PICK_IMAGES);
+        uploadImageLauncher.launch("image/*");
+    }
+
+    protected void uploadNewImage(Uri uri){
+        String filename = "posters/" + newEventImage.getId() + "poster.jpg";
+        StorageReference storageReference = FirebaseStorage.getInstance().getReference(filename);
+
+        storageReference.putFile(uri)
+                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
+                        // get the download url of the image
+                        storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+
+                            @Override
+                            public void onSuccess(Uri uri) {
+
+                                // store the download string in the event class
+                                String downloadUrl = uri.toString();
+                                newEventImage.setImage(downloadUrl);
+
+
+
+                                eventDB.updateEvent(newEventImage);
+
+                                Toast.makeText(OrganizerEventHosting.this, "Poster has been updated", Toast.LENGTH_SHORT).show();
+
+                            }
+
+                            // handle errors
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Toast.makeText(OrganizerEventHosting.this, "Failed to get download URL: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+
+                    // handle errors
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(OrganizerEventHosting.this, "Upload failed: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    }
+                });
     }
 }
