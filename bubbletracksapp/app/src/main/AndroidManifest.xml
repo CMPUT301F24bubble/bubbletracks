@@ -92,7 +92,9 @@
         <activity android:name=".OrganizerFacilityActivity" />
         <activity android:name=".OrganizerManageActivity" />
         <activity android:name=".EntrantViewActivity" />
+
         <activity android:name=".AppUserEventScreenGenerator" />
+        <activity android:name=".BrowseEventsScreenGenerator" />
     </application>
 
 </manifest>

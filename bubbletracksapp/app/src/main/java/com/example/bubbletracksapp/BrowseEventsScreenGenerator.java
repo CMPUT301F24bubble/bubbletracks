@@ -40,7 +40,8 @@ public class BrowseEventsScreenGenerator extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.admin_browse_events);
         // SETS UP RECYCLER VIEW
-        eventsCatalogue = eventsCatalogue.findViewById(R.id.event_db);
+        eventsCatalogue = findViewById(R.id.event_db);
+        eventsCatalogue.setLayoutManager(new LinearLayoutManager(this));
 
         displayEvents();
     }
