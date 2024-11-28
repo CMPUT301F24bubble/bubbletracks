@@ -22,7 +22,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 /**
- *Main Activity for the user.
+ *Main Activity for the user. Launches homescreen, with one tab for each user role.
  * @author Zoe
  */
 public class MainActivity extends AppCompatActivity {
@@ -54,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
         Button organizerButton = binding.buttonOrganizer;
         Button adminButton = binding.buttonAdmin;
 
+        // Find out the current user and set button visibility accordingly
         db.getEntrant(currentDeviceID).thenAccept(user -> {
             if(user != null){
                 currentUser = user;
@@ -68,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
                     Log.d("User role:", "Entrant");
                 }
             } else {
+                // Make a new entrant if they haven't launched the app before.
                 currentUser = new Entrant(currentDeviceID);
                 db.addEntrant(currentUser);
                 Log.d("Added new Entrant",currentUser.getID());}
@@ -76,6 +78,7 @@ public class MainActivity extends AppCompatActivity {
             return null;
         });
 
+        // Code for the Organizer, Entrant, and Admin buttons
         organizerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

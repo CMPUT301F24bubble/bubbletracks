@@ -72,7 +72,7 @@ public class EntrantFragment extends Fragment {
      * @param button is the button that will be clicked
      * @param intent is the intent passed to startActivity()
      */
-    public void switchActivityButton(Button button, Intent intent){
+    private void switchActivityButton(Button button, Intent intent){
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
