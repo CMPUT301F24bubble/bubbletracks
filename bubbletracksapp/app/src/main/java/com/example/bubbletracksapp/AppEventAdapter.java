@@ -136,9 +136,9 @@ public class AppEventAdapter extends RecyclerView.Adapter<AppEventAdapter.EventV
         else if(user.getEventsWaitlist().contains(event.getId()) && user.getEventsWaitlist()!=null)
         {
             regStatus = "WAITLISTED";
-        } else {
-            holder.eventRegStatus.setText(regStatus != null ? regStatus : "unknown");
         }
+        holder.eventRegStatus.setText(regStatus != null ? regStatus : "unknown");
+
 
         // SETS EVENT LOCATION
         //holder.eventLocation.setText();

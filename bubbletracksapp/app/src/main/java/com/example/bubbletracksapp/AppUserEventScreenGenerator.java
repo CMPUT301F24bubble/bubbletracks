@@ -45,8 +45,8 @@ public class AppUserEventScreenGenerator extends AppCompatActivity {
     EventDB eventDB = new EventDB();
     private List<String> otherOption = Arrays.asList("Waitlist", "Registered");
     private Spinner statusSpinner;
-    private Entrant user;
-    List<Event> eventList;
+    private Entrant currentUser;
+    List<Event> eventList = new ArrayList<>();
 
     /**
      * Initializes main components of the screen: drop down menu, the event display,
@@ -73,13 +73,13 @@ public class AppUserEventScreenGenerator extends AppCompatActivity {
         ArrayAdapter<CharSequence> spinnerAdapter = ArrayAdapter.createFromResource(this,
                 R.array.list_options, android.R.layout.simple_spinner_item);
 
-        // SETS UP ADAPTER
+        // SETS UP SPINNER ADAPTER
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         // SETS UP STATUS SPINNER
         statusSpinner.setAdapter(spinnerAdapter);
         statusSpinner.setSelection(0);
-
+        
         // SETS UP RECYCLER VIEW
         eventsplace = findViewById(R.id.waitlist);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
@@ -144,7 +144,12 @@ public class AppUserEventScreenGenerator extends AppCompatActivity {
 
         entrantDB.getEntrant(ID).thenAccept(theUser -> {
             if(theUser != null) {
-                user = theUser;
+                currentUser = theUser;
+
+                // CREATE AND SET EVENT ADAPTER with the event list and the determined registration status
+                eventAdapter = new AppEventAdapter(AppUserEventScreenGenerator.this, eventList,
+                        currentUser, null);
+                eventsplace.setAdapter(eventAdapter);
 
                 // SETS UP ON CLICK LISTENER FOR SPINNER
                 statusSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -156,13 +161,7 @@ public class AppUserEventScreenGenerator extends AppCompatActivity {
                         // Display a Toast or perform actions based on the selected item
                         Toast.makeText(AppUserEventScreenGenerator.this, "Selected: " + selectedOption, Toast.LENGTH_SHORT).show();
 
-                        // Perform different actions based on selection
-                        if (selectedOption.equals("Waitlist")) {
-                            // Displays Waitlisted Event
-                            displayList("Waitlist and Invited", user);
-                        } else if (selectedOption.equals("Registered")) {
-                            displayList("Registered", user);
-                        }
+                        displayList(currentUser);
                     }
 
                     @Override
@@ -182,29 +181,22 @@ public class AppUserEventScreenGenerator extends AppCompatActivity {
     /**
      * Displays list
      *
-     * @param listType
-     * @param user1
+     * @param user
      *
      */
-    private void displayList(String listType, Entrant user1) {
-        if (user1 == null) {
+    private void displayList(Entrant user) {
+        if (user == null) {
             // Log an error or handle the case when user is not yet available
             Log.e("AppUserEventScreen", "User object is null. Cannot display list.");
             return; // Exit the method early
         } else {
-        String regStatus = "unknown"; // Default status if no matching user is found
-            eventDB.getEventList(user1.getEventsWaitlist()).thenAccept(events -> {
+            eventDB.getEventList(user.getEventsWaitlist()).thenAccept(events -> {
                 if(events != null) {
-                    eventList = events;
+                    eventList.clear();
+                    eventList.addAll(events);
+                    eventAdapter.notifyDataSetChanged();
+                    Log.d("TAG", "displayList: ");
                 }
-                else
-                {
-                    eventList = new ArrayList<>();
-                }
-                // Initialize the adapter with the event list and the determined registration status
-                eventAdapter = new AppEventAdapter(this, eventList, user1, null);
-                eventsplace.setAdapter(eventAdapter);
-
             });
         }
     }
