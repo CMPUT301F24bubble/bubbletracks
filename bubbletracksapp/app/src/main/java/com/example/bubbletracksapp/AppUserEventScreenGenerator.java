@@ -98,8 +98,8 @@ public class AppUserEventScreenGenerator extends AppCompatActivity {
         eventsplace.setHasFixedSize(true);
 
         // CREATE AND SET EVENT ADAPTER with the event list and the determined registration status
-        eventAdapter = new AppEventAdapter(AppUserEventScreenGenerator.this, eventList,
-                currentUser, null);
+        eventAdapter = new AppEventAdapter(AppUserEventScreenGenerator.this,
+                eventList, currentUser);
         eventsplace.setAdapter(eventAdapter);
 
         // Initialize a flag outside the listener to control the loop
@@ -212,7 +212,7 @@ public class AppUserEventScreenGenerator extends AppCompatActivity {
 
     }
 
-    
+
     /**
      * Displays list, whether it is the waitlist or enrolled list
      * @param type the type of list to be displayed

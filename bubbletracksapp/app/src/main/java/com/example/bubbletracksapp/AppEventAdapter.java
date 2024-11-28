@@ -15,6 +15,8 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.squareup.picasso.Picasso;
+
 import java.util.Date;
 import java.util.List;
 
@@ -29,13 +31,11 @@ public class AppEventAdapter extends RecyclerView.Adapter<AppEventAdapter.EventV
     List<Event> eventList;
     Entrant user;
     Event event;
-    Integer eventPicInteger;
 
-    public AppEventAdapter (Context context, List<Event> eventList, Entrant user, Integer eventPicInteger) {
+    public AppEventAdapter (Context context, List<Event> eventList, Entrant user) {
         this.context = context;
         this.eventList = eventList;
         this.user = user;
-        this.eventPicInteger = eventPicInteger;
     }
 
     public void setUser(Entrant user) {
@@ -146,7 +146,7 @@ public class AppEventAdapter extends RecyclerView.Adapter<AppEventAdapter.EventV
 
 
         // SETS EVENT IMAGE
-        holder.eventPic.setImageResource(R.drawable.default_image); // Replace with a default drawable
+        Picasso.get().load(event.getImage()).into(holder.eventPic);
 
 
         // DETERMINES EVENT DISPLAY SIZE
