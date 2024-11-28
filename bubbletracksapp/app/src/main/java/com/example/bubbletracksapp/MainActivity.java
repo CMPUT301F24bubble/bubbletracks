@@ -55,9 +55,14 @@ public class MainActivity extends AppCompatActivity {
         Button adminButton = binding.buttonAdmin;
 
         // Find out the current user and set button visibility accordingly
+        Button createFacilityButton = binding.buttonCreateManageFacility;
+        Intent createFacilityIntent = new Intent(MainActivity.this, OrganizerFacilityActivity.class); //class where you are, then class where you wanan go
+        Intent manageFacilityIntent = new Intent(MainActivity.this, OrganizerManageActivity.class);
+
         db.getEntrant(currentDeviceID).thenAccept(user -> {
             if(user != null){
                 currentUser = user;
+                // Check user role
                 if(currentUser.getRole().equals("admin")){
                     Log.d("User role:", "Woohoo, admin");
                     adminButton.setVisibility(View.VISIBLE);
@@ -67,6 +72,14 @@ public class MainActivity extends AppCompatActivity {
                     organizerButton.setVisibility(View.VISIBLE);
                 } else {
                     Log.d("User role:", "Entrant");
+                }
+                // Check user facility
+                if(!user.getFacility().isEmpty()){
+                    manageFacilityIntent.putExtra("id", user.getFacility());
+                    switchActivityButton(createFacilityButton, manageFacilityIntent);
+                    createFacilityButton.setText("MANAGE FACILITY");
+                } else {
+                    switchActivityButton(createFacilityButton, createFacilityIntent);
                 }
             } else {
                 // Make a new entrant if they haven't launched the app before.
@@ -109,6 +122,21 @@ public class MainActivity extends AppCompatActivity {
                         .setReorderingAllowed(true)
                         //.addToBackStack("") // Having this on the backstack can be annoying.
                         .commit();
+            }
+        });
+    }
+
+    /**
+     * Generalized code for buttons that use start(Activity()
+     * @param button is the button that will be clicked
+     * @param intent is the intent passed to startActivity()
+     */
+    public void switchActivityButton(Button button, Intent intent){
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                intent.putExtra("user", currentUser);
+                startActivity(intent);
             }
         });
     }
