@@ -63,9 +63,20 @@ public class MainActivity extends AppCompatActivity {
         currentDeviceID = getDeviceID();
         Log.d("DeviceID:",currentDeviceID);
 
+        Button createFacilityButton = binding.buttonCreateManageFacility;
+        Intent createFacilityIntent = new Intent(MainActivity.this, OrganizerFacilityActivity.class); //class where you are, then class where you wanan go
+        Intent manageFacilityIntent = new Intent(MainActivity.this, OrganizerManageActivity.class);
+
         db.getEntrant(currentDeviceID).thenAccept(user -> {
             if(user != null){
                 currentUser = user;
+                if(!user.getFacility().isEmpty()){
+                    manageFacilityIntent.putExtra("id", user.getFacility());
+                    switchActivityButton(createFacilityButton, manageFacilityIntent);
+                    createFacilityButton.setText("MANAGE FACILITY");
+                } else {
+                    switchActivityButton(createFacilityButton, createFacilityIntent);
+                }
             } else {
                 currentUser = new Entrant(currentDeviceID);
                 db.addEntrant(currentUser);
@@ -76,15 +87,13 @@ public class MainActivity extends AppCompatActivity {
         });
 
         Button eventsButton = binding.buttonEvents;
-        Button createEventButton = binding.buttonCreateEvents;
         Button scanButton = binding.buttonScan;
         Button ticketsButton = binding.buttonTickets;
         Button profileButton = binding.buttonProfile;
         Button userEventsButton = binding.buttonEvents;
         Button eventHostButton = binding.buttonEventHost;
-
-        Intent createEventIntent = new Intent(MainActivity.this, OrganizerActivity.class); //class where you are, then class where you wanan go
-        switchActivityButton(createEventButton, createEventIntent);
+        Button adminProfileAccessButton = binding.buttonAdminProfiles;
+        Button adminFacilityAccessButton = binding.buttonFacilityProfiles;
 
         Intent scanIntent = new Intent(MainActivity.this, QRScanner.class);
         switchActivityButton(scanButton, scanIntent);
@@ -94,6 +103,12 @@ public class MainActivity extends AppCompatActivity {
 
         Intent userEventsIntent = new Intent(MainActivity.this, AppUserEventScreenGenerator.class);
         switchActivityButton(userEventsButton, userEventsIntent);
+
+        Intent adminProfileIntent = new Intent(MainActivity.this, AdminProfileViews.class);
+        switchActivityButton(adminProfileAccessButton, adminProfileIntent);
+
+        Intent adminFacilityIntent = new Intent(MainActivity.this, AdminFacilityViews.class);
+        switchActivityButton(adminFacilityAccessButton, adminFacilityIntent);
 
         Intent eventHostIntent = new Intent(MainActivity.this, OrganizerEventHosting.class);
         switchActivityButton(eventHostButton, eventHostIntent);

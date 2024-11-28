@@ -65,7 +65,7 @@
                 android:id="@+id/event_location"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Address"
+                android:text="Adress"
                 android:textColor="#555555"
                 android:textSize="14sp" />
 
@@ -134,7 +134,7 @@
             android:src="@drawable/qr_ex"
             />
         <ImageButton
-            android:id="@+id/delete_button"
+            android:id="@+id/delete_event"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/baseline_delete_forever_24"

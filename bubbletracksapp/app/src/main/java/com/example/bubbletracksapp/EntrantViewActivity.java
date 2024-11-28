@@ -132,15 +132,23 @@ public class EntrantViewActivity extends AppCompatActivity {
     }
 
     protected void setViews(){
-        Picasso.get()
-                .load(event.getImage())
-                .into(posterImage);
+        if(event.getImage() == null){
+            posterImage.setVisibility(View.GONE);
+        } else {
+            Picasso.get()
+                    .load(event.getImage())
+                    .into(posterImage);
+        }
         monthText.setText(event.getMonth(event.getDateTime()));
         dateText.setText(event.getDay(event.getDateTime()));
         timeText.setText(event.getTime(event.getDateTime()));
         locationText.setText(event.getGeolocation());
         nameText.setText(event.getName());
-        descriptionText.setText(event.getDescription());
+        if(event.getDescription().isEmpty()){
+            descriptionText.setVisibility(View.GONE);
+        } else {
+            descriptionText.setText(event.getDescription());
+        }
         capacityText.setText("Capacity: " + event.getMaxCapacity());
         priceText.setText("Price: " + event.getPrice());
         if(event.getNeedsGeolocation()){
