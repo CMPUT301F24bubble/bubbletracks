@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
 
     private AppBarConfiguration appBarConfiguration;
     private HomescreenBinding binding;
-    public Entrant currentUser;
+    private Entrant currentUser;
     private String currentDeviceID;
 
     /**
@@ -110,17 +110,8 @@ public class MainActivity extends AppCompatActivity {
         Intent adminFacilityIntent = new Intent(MainActivity.this, AdminFacilityViews.class);
         switchActivityButton(adminFacilityAccessButton, adminFacilityIntent);
 
-        eventHostButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (savedInstanceState == null) {
-                    getSupportFragmentManager().beginTransaction()
-                            .setReorderingAllowed(true)
-                            .replace(R.id.content_holder, OrganizerEventHosting.class, null) // Use replace instead of add
-                            .commit();
-                }
-            }
-        });
+        Intent eventHostIntent = new Intent(MainActivity.this, OrganizerEventHosting.class);
+        switchActivityButton(eventHostButton, eventHostIntent);
 
     }
     /**
@@ -132,6 +123,7 @@ public class MainActivity extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                intent.putExtra("user", currentUser);
                 startActivity(intent);
             }
         });
