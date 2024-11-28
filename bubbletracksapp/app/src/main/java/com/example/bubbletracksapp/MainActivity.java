@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
 
     private AppBarConfiguration appBarConfiguration;
     private HomescreenBinding binding;
-    public Entrant currentUser;
+    private Entrant currentUser;
     private String currentDeviceID;
 
     /**
