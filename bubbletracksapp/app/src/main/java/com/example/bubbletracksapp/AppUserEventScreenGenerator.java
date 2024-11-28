@@ -3,7 +3,6 @@ package com.example.bubbletracksapp;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.media.Image;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -17,6 +16,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -28,10 +28,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SnapHelper;
 import com.github.rubensousa.gravitysnaphelper.GravitySnapHelper;
-import com.google.firebase.firestore.FirebaseFirestore;
+
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * This is a class that displays a user's waitlist/invited list/registered list
@@ -44,6 +46,7 @@ public class AppUserEventScreenGenerator extends AppCompatActivity {
     private List<Event> waitlistEvents = new ArrayList<>();
     private List<Event> registeredEvents = new ArrayList<>();
     private Button accept, decline;
+    private TextView locationView, timeView;
     private ImageButton backButton;
     EntrantDB entrantDB = new EntrantDB();
     EventDB eventDB = new EventDB();
@@ -83,12 +86,21 @@ public class AppUserEventScreenGenerator extends AppCompatActivity {
         // SETS UP STATUS SPINNER
         statusSpinner.setAdapter(spinnerAdapter);
         statusSpinner.setSelection(0);
-        
+
+        // SETS UP TEXT VIEWS
+        timeView = findViewById(R.id.eventDateTime);
+        locationView = findViewById(R.id.eventLocation);
+
         // SETS UP RECYCLER VIEW
         eventsplace = findViewById(R.id.waitlist);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         eventsplace.setLayoutManager(linearLayoutManager);
         eventsplace.setHasFixedSize(true);
+
+        // CREATE AND SET EVENT ADAPTER with the event list and the determined registration status
+        eventAdapter = new AppEventAdapter(AppUserEventScreenGenerator.this, eventList,
+                currentUser, null);
+        eventsplace.setAdapter(eventAdapter);
 
         // Initialize a flag outside the listener to control the loop
 
@@ -123,11 +135,14 @@ public class AppUserEventScreenGenerator extends AppCompatActivity {
             @Override
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
-
                 View view = snapHelper.findSnapView(linearLayoutManager);
                 if (view != null) {
                     int pos = linearLayoutManager.getPosition(view);
                     RecyclerView.ViewHolder viewHolder = eventsplace.findViewHolderForAdapterPosition(pos);
+
+                    // SET THE TEXT VIEWS BELOW THE EVENT
+                    setTextViews(eventList.get(pos));
+
                     if (viewHolder != null) {
                         LinearLayout eventParent = viewHolder.itemView.findViewById(R.id.eventParent);
 
@@ -149,11 +164,7 @@ public class AppUserEventScreenGenerator extends AppCompatActivity {
         entrantDB.getEntrant(ID).thenAccept(theUser -> {
             if(theUser != null) {
                 currentUser = theUser;
-
-                // CREATE AND SET EVENT ADAPTER with the event list and the determined registration status
-                eventAdapter = new AppEventAdapter(AppUserEventScreenGenerator.this, eventList,
-                        currentUser, null);
-                eventsplace.setAdapter(eventAdapter);
+                eventAdapter.setUser(currentUser);
 
                 // SETS UP ON CLICK LISTENER FOR SPINNER
                 statusSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -170,7 +181,7 @@ public class AppUserEventScreenGenerator extends AppCompatActivity {
                             // Displays Waitlisted Event
                             displayList("Waitlist");
                         } else if (selectedOption.equals("Registered")) {
-                            displayList("Waitlist");
+                            displayList("Registered");
                         }
                     }
 
@@ -201,12 +212,10 @@ public class AppUserEventScreenGenerator extends AppCompatActivity {
 
     }
 
-    // Method to display the selected list
+    
     /**
-     * Displays list
-     *
-     * @param user
-     *
+     * Displays list, whether it is the waitlist or enrolled list
+     * @param type the type of list to be displayed
      */
     private void displayList(String type) {
         if (currentUser == null) {
@@ -232,16 +241,48 @@ public class AppUserEventScreenGenerator extends AppCompatActivity {
     private void setEventList(ArrayList<String> eventIDs) {
         eventDB.getEventList(eventIDs).thenAccept(events -> {
             if(events != null) {
-                eventAdapter.setEventList(events);
+                eventList.clear();
+                eventList.addAll(events);
                 eventAdapter.notifyDataSetChanged();
+                // Set the date for the first event shown
+                setTextViews(eventList.get(0));
             }
             else
             {
                 eventList.clear();
                 eventAdapter.notifyDataSetChanged();
+                // If there are no events, set the default events
+                setDefaultActivityText();
             }
         });
     }
 
+    /**
+     * Set the the text below the event being displayed. The location and time.
+     * @param event The event that is being displayed
+     */
+    private void setTextViews(Event event) {
+        // GET EVENT LOCATION
+        String location = event.getGeolocation();
+
+        //GET EVENT TIME
+        Date eventDate = event.getDateTime();
+        String eventTime = String.format("%s %s %s at %s", event.getMonth(eventDate),
+                event.getDay(eventDate), event.getYear(eventDate), event.getTime(eventDate));
+
+        // SET DISPLAY TEXT
+        timeView.setText(eventTime);
+        locationView.setText(location);
+    }
+
+
+    /**
+     * Empty the text views of time and location.
+     * It is used when no event is being displayed
+     */
+    public void setDefaultActivityText() {
+        timeView.setText(" ");
+        locationView.setText(" ");
+    }
 
 }
