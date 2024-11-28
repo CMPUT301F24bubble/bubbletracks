@@ -28,6 +28,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
+// TODO: handleOnClickEvent Functions
+
 public class BrowseEventsAdminAdapter extends RecyclerView.Adapter<BrowseEventsAdminAdapter.BrowseEventViewHolder> {
 
     // ATTRIBUTES (gets all event images from the database)
@@ -57,7 +59,7 @@ public class BrowseEventsAdminAdapter extends RecyclerView.Adapter<BrowseEventsA
             eventTitle = itemView.findViewById(R.id.browseEventTitle);
             eventDate = itemView.findViewById(R.id.browseEventDate);
             eventDescription = itemView.findViewById(R.id.browseEventDescription);
-            eventPic = itemView.findViewById(R.id.browseEventPoster);
+            // eventPic initialized in the onBindViewHolder Method.
             eventParent = itemView.findViewById(R.id.browseEventXMLID);
             overflowImageButton = itemView.findViewById(R.id.browseOverflowMenu);
         }
@@ -106,7 +108,7 @@ public class BrowseEventsAdminAdapter extends RecyclerView.Adapter<BrowseEventsA
 
         // GETS EVENT OF INTEREST
         allTheEvents.thenAccept(events -> {
-            // Accessing events in the ArrayList
+            // GETS AN EVENT FROM LIST OF ALL EVENTS IN DATABASE
             if (!events.isEmpty()) {
                 Event event = events.get(position);
 
@@ -117,19 +119,23 @@ public class BrowseEventsAdminAdapter extends RecyclerView.Adapter<BrowseEventsA
                 holder.eventDescription.setText(event.getDescription() != null ? event.getDescription() : "No Description");
 
                 // SETS EVENT IMAGE
-                ImageView eventPic = null;
-                eventPic = eventPic.findViewById(R.id.browseEventPoster);
-                if (event.getImage().equals(null)) {
+                ImageView eventPic = holder.itemView.findViewById(R.id.browseEventPoster);
+                if (event.getImage() == null) {
                     holder.eventPic.setImageResource(R.drawable.default_image);
                 } else {
                     Picasso.get().load(event.getImage()).into(eventPic);
                 }
 
-                // SETS EVENT DATE: should look like NOV 29 @ 5:30 PM
+                // SETS EVENT DATE: should look like NOV 29 @ 13:30
                 String month = event.getMonth(event.getDateTime());
                 String day = event.getDay(event.getDateTime());
                 String time = event.getTime(event.getDateTime());
-                holder.eventDate.setText(month+" "+day+" "+"-"+" "+time);
+                if (month != null && day != null && time != null) {
+                    holder.eventDate.setText(month+" "+day+" "+"@"+" "+time);
+                } else {
+                    holder.eventDate.setText("Unknown");
+                }
+
 
                 // CREATES ON CLICK LISTENER FOR OVERFLOW MENU
                 holder.overflowImageButton.setOnClickListener(v -> {
@@ -188,7 +194,7 @@ public class BrowseEventsAdminAdapter extends RecyclerView.Adapter<BrowseEventsA
      * It will send a notification to the organizer that their event has been deleted.
      * @param event The {@link DocumentReference} object representing the event to be deleted.
      */
-    private void handleDeleteEventAction(Context context, Event event) {
+    private void handleDeleteEventAction(Context context, DocumentReference event) {
 
         // DELETES EVENT FROM DATABASE: should cascade so that the event will not appear in any waitlist/registered/hosting list
         Admin admin = new Admin(context);

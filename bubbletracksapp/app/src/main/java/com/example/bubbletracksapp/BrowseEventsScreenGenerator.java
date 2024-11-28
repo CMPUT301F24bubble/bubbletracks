@@ -47,6 +47,7 @@ public class BrowseEventsScreenGenerator extends AppCompatActivity {
 
 
     private void displayEvents() {
+        allTheEvents= eventDB.getAllEvents();
         allTheEvents.whenComplete((events, throwable) -> runOnUiThread(() -> {
             if (throwable != null) {
                 // Handle errors (show a dialog or toast)
