@@ -1,7 +1,9 @@
 package com.example.bubbletracksapp;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.Image;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -12,6 +14,7 @@ import android.view.animation.AccelerateInterpolator;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -41,6 +44,7 @@ public class AppUserEventScreenGenerator extends AppCompatActivity {
     private List<Event> waitlistEvents = new ArrayList<>();
     private List<Event> registeredEvents = new ArrayList<>();
     private Button accept, decline;
+    private ImageButton backButton;
     EntrantDB entrantDB = new EntrantDB();
     EventDB eventDB = new EventDB();
     private List<String> otherOption = Arrays.asList("Waitlist", "Registered");
@@ -169,6 +173,20 @@ public class AppUserEventScreenGenerator extends AppCompatActivity {
 
                     }
                 });
+
+                // INITIALIZE BUTTON TO GO BACK TO HOME SCREEN
+                backButton = findViewById(R.id.back_button);
+
+                // IMPLEMENTED BUTTON TO GO BACK TO HOME SCREEN
+                backButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent intent = new Intent(AppUserEventScreenGenerator.this, MainActivity.class);
+                        intent.putExtra("user", currentUser);
+                        startActivity(intent);
+                    }
+                });
+
             }
         }).exceptionally(e -> {
             Toast.makeText(AppUserEventScreenGenerator.this, "Failed to load profile: " + e.getMessage(), Toast.LENGTH_LONG).show(); //also a fail
@@ -195,7 +213,6 @@ public class AppUserEventScreenGenerator extends AppCompatActivity {
                     eventList.clear();
                     eventList.addAll(events);
                     eventAdapter.notifyDataSetChanged();
-                    Log.d("TAG", "displayList: ");
                 }
             });
         }
