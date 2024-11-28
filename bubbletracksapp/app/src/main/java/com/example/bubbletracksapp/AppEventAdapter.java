@@ -1,6 +1,7 @@
 package com.example.bubbletracksapp;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.Date;
 import java.util.List;
 
 
@@ -26,6 +28,7 @@ public class AppEventAdapter extends RecyclerView.Adapter<AppEventAdapter.EventV
     Context context;
     List<Event> eventList;
     Entrant user;
+    Event event;
     Integer eventPicInteger;
 
     public AppEventAdapter (Context context, List<Event> eventList, Entrant user, Integer eventPicInteger) {
@@ -33,6 +36,10 @@ public class AppEventAdapter extends RecyclerView.Adapter<AppEventAdapter.EventV
         this.eventList = eventList;
         this.user = user;
         this.eventPicInteger = eventPicInteger;
+    }
+
+    public void setUser(Entrant user) {
+        this.user = user;
     }
 
     // CONSTRUCTOR THAT MATCHES SUPER CLASS
@@ -50,8 +57,6 @@ public class AppEventAdapter extends RecyclerView.Adapter<AppEventAdapter.EventV
 
             eventTitle = itemView.findViewById(R.id.eventTitle);
             eventRegStatus = itemView.findViewById(R.id.eventRegStatus);
-            eventDateTime = itemView.findViewById(R.id.eventDateTime);
-            eventLocation = itemView.findViewById(R.id.eventLocation);
             eventPic = itemView.findViewById(R.id.eventPic);
             eventParent = itemView.findViewById(R.id.eventParent);
             accept = itemView.findViewById(R.id.accept);
@@ -95,7 +100,7 @@ public class AppEventAdapter extends RecyclerView.Adapter<AppEventAdapter.EventV
      */
     @Override
     public void onBindViewHolder(@NonNull EventViewHolder holder, int position) {
-        Event event = eventList.get(position);
+        event = eventList.get(position);
 
         // Set up the accept button with an OnClickListener, passing the event object
         holder.accept.setOnClickListener(v -> {
@@ -138,13 +143,6 @@ public class AppEventAdapter extends RecyclerView.Adapter<AppEventAdapter.EventV
             regStatus = "WAITLISTED";
         }
         holder.eventRegStatus.setText(regStatus != null ? regStatus : "unknown");
-
-
-        // SETS EVENT LOCATION
-        //holder.eventLocation.setText();
-
-        //SET EVENT TIME
-        //holder.eventDateTime.setText();
 
 
         // SETS EVENT IMAGE
