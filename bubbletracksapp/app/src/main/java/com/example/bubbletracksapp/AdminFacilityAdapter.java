@@ -1,5 +1,6 @@
 package com.example.bubbletracksapp;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -61,35 +62,28 @@ public class AdminFacilityAdapter extends ArrayAdapter<Facility> {
             } else {
                 eventsTextView.setText("No events organized.");
             }
+            deleteButton.setOnClickListener(view -> {
+                Admin admin = new Admin(getContext());
+                new AlertDialog.Builder(getContext())
+                        .setTitle("Delete Facility")
+                        .setMessage("Are you sure you want to delete this user?")
+                        .setPositiveButton("Yes", (dialog, which) -> {
+                            DocumentReference facilityRef = FirebaseFirestore.getInstance()
+                                    .collection("facilities")
+                                    .document(facility.getId());
 
-            deleteButton.setOnClickListener(v -> {
-                if (facility.getId() != null && !facility.getId().isEmpty()) {
-                    DocumentReference facilityRef = FirebaseFirestore.getInstance()
-                            .collection("facilities")
-                            .document(facility.getId());
-
-                    Admin admin = new Admin(getContext());
-                    admin.deleteFacility(getContext(), facilityRef)
-                            .addOnSuccessListener(aVoid -> {
-                                facilityNameText.setText("Facility Name: N/A");
-                                facilityIdText.setText("Facility ID: N/A");
-                                facilityLocationText.setText("Facility Location: N/A");
-                                facilityOrganizerText.setText("Organizer: N/A");
-                                Toast.makeText(getContext(), "Facility deleted successfully", Toast.LENGTH_SHORT).show();
-                            })
-                            .addOnFailureListener(e -> {
-                                Toast.makeText(getContext(), "Failed to delete facility", Toast.LENGTH_SHORT).show();
-                                Log.e("FacilityDeleteError", "Error deleting facility", e);
-                            });
-                } else {
-
-                    Toast.makeText(getContext(), "Facility ID is missing. Cannot delete.", Toast.LENGTH_SHORT).show();
-                }
+                            admin.deleteFacility(getContext(), facilityRef);
+                            remove(facility);
+                            notifyDataSetChanged();
+                        })
+                        .setNegativeButton("No", (dialog, which) -> dialog.dismiss())
+                        .create()
+                        .show();
             });
         }
 
-        return convertView;
-    }
+            return convertView;
+        }
 }
 
 

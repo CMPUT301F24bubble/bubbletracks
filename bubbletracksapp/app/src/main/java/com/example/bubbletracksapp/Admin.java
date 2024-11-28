@@ -160,7 +160,6 @@ public class Admin {
             deleteFacility(context, facilityRef);
         }
 
-        // if entrant has organized events
         profileRef.get()
                 .addOnSuccessListener(documentSnapshot -> {
                     if (documentSnapshot.exists()) {
@@ -208,9 +207,9 @@ public class Admin {
      * @param context The context where the deletion is being performed.
      * @param facilityRef The DocumentReference to the facility that needs to be deleted.
      */
-    public Task<Void> deleteFacility(Context context, DocumentReference facilityRef) {
+    public void deleteFacility(Context context, DocumentReference facilityRef) {
         if (facilityRef == null) {
-            return Tasks.forException(new IllegalArgumentException("Facility reference cannot be null"));
+            return;
         }
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -255,7 +254,6 @@ public class Admin {
             Log.e("DeleteFacility", "Error fetching facility data: ", e);
             Toast.makeText(context, "Failed to fetch facility data. Try again.", Toast.LENGTH_SHORT).show();
         });
-        return facilityRef.delete();
     }
 
     /**
