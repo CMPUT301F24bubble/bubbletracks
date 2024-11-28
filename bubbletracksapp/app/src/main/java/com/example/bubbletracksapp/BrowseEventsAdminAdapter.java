@@ -34,26 +34,26 @@ public class BrowseEventsAdminAdapter extends RecyclerView.Adapter<BrowseEventsA
 
     // ATTRIBUTES (gets all event images from the database)
     Context context;
-    List<DocumentReference> eventDatabase;
-    CompletableFuture<ArrayList<Event>> allTheEvents = new CompletableFuture<>();
-
+    ArrayList<Event> allTheEvents = new ArrayList<>();
 
 
     // CONSTRUCTOR
-    public BrowseEventsAdminAdapter (BrowseEventsScreenGenerator context, CompletableFuture<ArrayList<Event>> events) {
+    public BrowseEventsAdminAdapter(BrowseEventsScreenGenerator context, ArrayList<Event> events) {
         this.context = context;
         this.allTheEvents = events;
     }
 
     // CREATES VIEW HOLDER
+
     /**
      * Class that initializes the components of the event_display.xml
      */
     class BrowseEventViewHolder extends RecyclerView.ViewHolder {
         TextView eventTitle, eventDescription, eventDate;
         ImageView eventPic;
-        ImageButton overflowImageButton;
+        //ImageButton overflowImageButton;
         CardView eventParent;
+
         public BrowseEventViewHolder(@NonNull View itemView) {
             super(itemView);
             eventTitle = itemView.findViewById(R.id.browseEventTitle);
@@ -61,20 +61,21 @@ public class BrowseEventsAdminAdapter extends RecyclerView.Adapter<BrowseEventsA
             eventDescription = itemView.findViewById(R.id.browseEventDescription);
             // eventPic initialized in the onBindViewHolder Method.
             eventParent = itemView.findViewById(R.id.browseEventXMLID);
-            overflowImageButton = itemView.findViewById(R.id.browseOverflowMenu);
+            //overflowImageButton = itemView.findViewById(R.id.browseOverflowMenu);
         }
     }
 
     // METHODS
+
     /**
      * Called when RecyclerView needs a new {@link BrowseEventViewHolder} to represent an item.
-     *
+     * <p>
      * This method will be invoked only when there are no existing {@link BrowseEventViewHolder}s
      * that can be reused. A new {@link BrowseEventViewHolder} is created to hold the layout
      * for each individual item in the RecyclerView.
      *
-     * @param parent The {@link ViewGroup} into which the new View will be added after
-     *               it is bound to an adapter position.
+     * @param parent   The {@link ViewGroup} into which the new View will be added after
+     *                 it is bound to an adapter position.
      * @param viewType The view type of the new View. This parameter can be used to
      *                 differentiate between multiple view types if your adapter uses them.
      * @return A new {@link BrowseEventViewHolder} that holds a View of the given view type.
@@ -84,7 +85,7 @@ public class BrowseEventsAdminAdapter extends RecyclerView.Adapter<BrowseEventsA
     @Override
     public BrowseEventViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(context);
-        View view = layoutInflater.inflate(R.layout. vertical_item_event, parent, false);
+        View view = layoutInflater.inflate(R.layout.vertical_item_event, parent, false);
         return new BrowseEventViewHolder(view);
     }
 
@@ -92,8 +93,8 @@ public class BrowseEventsAdminAdapter extends RecyclerView.Adapter<BrowseEventsA
     /**
      * Displays the all events from the database
      *
-     * @param holder The {@link ViewGroup} into which the new View will be added after
-     *               it is bound to an adapter position.
+     * @param holder   The {@link ViewGroup} into which the new View will be added after
+     *                 it is bound to an adapter position.
      * @param position The view type of the new View. This parameter can be used to
      *                 differentiate between multiple view types if your adapter uses them.
      * @
@@ -102,41 +103,39 @@ public class BrowseEventsAdminAdapter extends RecyclerView.Adapter<BrowseEventsA
     public void onBindViewHolder(@NonNull BrowseEventViewHolder holder, int position) {
 
         // HANDLES WHETHER THERE IS NO EVENT DATABASE OR THE POSITION GIVEN IS INVALID
-        if (eventDatabase == null || position >= eventDatabase.size()) {
+        if (allTheEvents == null || position >= allTheEvents.size()) {
             return;
         }
 
         // GETS EVENT OF INTEREST
-        allTheEvents.thenAccept(events -> {
-            // GETS AN EVENT FROM LIST OF ALL EVENTS IN DATABASE
-            if (!events.isEmpty()) {
-                Event event = events.get(position);
+        if (!allTheEvents.isEmpty()) {
+            Event event = allTheEvents.get(position);
 
-                // SETS EVENT TITLE and handles null value
-                holder.eventTitle.setText(event.getName() != null ? event.getName() : "No Title");
+            // SETS EVENT TITLE and handles null value
+            holder.eventTitle.setText(event.getName() != null ? event.getName() : "No Title");
 
-                // SETS EVENT DESCRIPTION and handles null value
-                holder.eventDescription.setText(event.getDescription() != null ? event.getDescription() : "No Description");
+            // SETS EVENT DESCRIPTION and handles null value
+            holder.eventDescription.setText(event.getDescription() != null ? event.getDescription() : "No Description");
 
-                // SETS EVENT IMAGE
-                ImageView eventPic = holder.itemView.findViewById(R.id.browseEventPoster);
-                if (event.getImage() == null) {
-                    holder.eventPic.setImageResource(R.drawable.default_image);
-                } else {
-                    Picasso.get().load(event.getImage()).into(eventPic);
-                }
+            // SETS EVENT IMAGE
+            ImageView eventPic = holder.itemView.findViewById(R.id.browseEventPoster);
+            if (event.getImage() == null) {
+                holder.eventPic.setImageResource(R.drawable.default_image);
+            } else {
+                Picasso.get().load(event.getImage()).into(holder.eventPic);
+            }
 
-                // SETS EVENT DATE: should look like NOV 29 @ 13:30
-                String month = event.getMonth(event.getDateTime());
-                String day = event.getDay(event.getDateTime());
-                String time = event.getTime(event.getDateTime());
-                if (month != null && day != null && time != null) {
-                    holder.eventDate.setText(month+" "+day+" "+"@"+" "+time);
-                } else {
-                    holder.eventDate.setText("Unknown");
-                }
+            // SETS EVENT DATE: should look like NOV 29 @ 13:30
+            String month = event.getMonth(event.getDateTime());
+            String day = event.getDay(event.getDateTime());
+            String time = event.getTime(event.getDateTime());
+            if (month != null && day != null && time != null) {
+                holder.eventDate.setText(month + " " + day + " " + "@" + " " + time);
+            } else {
+                holder.eventDate.setText("Unknown");
+            }
 
-
+                /*
                 // CREATES ON CLICK LISTENER FOR OVERFLOW MENU
                 holder.overflowImageButton.setOnClickListener(v -> {
                     PopupMenu popupMenu = new PopupMenu(context, holder.overflowImageButton);
@@ -170,9 +169,13 @@ public class BrowseEventsAdminAdapter extends RecyclerView.Adapter<BrowseEventsA
                 System.out.println("No events available.");
             }
         });
+        */
+
+
+        }
+
 
     }
-
 
     /**
      * Returns
@@ -182,10 +185,13 @@ public class BrowseEventsAdminAdapter extends RecyclerView.Adapter<BrowseEventsA
      */
     @Override
     public int getItemCount() {
-        return eventDatabase == null ? 0 : eventDatabase.size();
+        return allTheEvents == null ? 0 : allTheEvents.size();
     }
+}
 
-    /**
+/*
+
+/**
      * Handles the action of deleting an event.
      *
      * This method is triggered when the "Delete Event" option in the overflow menu is selected.
@@ -194,33 +200,37 @@ public class BrowseEventsAdminAdapter extends RecyclerView.Adapter<BrowseEventsA
      * It will send a notification to the organizer that their event has been deleted.
      * @param event The {@link DocumentReference} object representing the event to be deleted.
      */
-    private void handleDeleteEventAction(Context context, DocumentReference event) {
-
-        // DELETES EVENT FROM DATABASE: should cascade so that the event will not appear in any waitlist/registered/hosting list
-        Admin admin = new Admin(context);
-        admin.deleteEvent(context, event);
-        // OPTIONAL:  SENDS NOTIFICATION TO HOST THAT THEIR EVENT HAS BEEN DELETED ex: Admin has deleted "<Name of event>" on <Date of Event>. Please contact us at <email> in case you have any further questions.
-    }
-
-    /**
-     * Handles the action of canceling an event.
-     *
-     * This method is triggered when the "Cancel Event" option in the overflow menu is selected.
-     * It will set the QR code data to be a page that says "Sorry! Event is canceled!".
-     * Updates the database.
-     * It will send a notification to the organizer that their event has been canceled.
-     *
-     * @param event The {@link Event} object representing the event to be canceled.
-     */
-    private void handleDeleteQRDataAction(Event event) {
-        // GOES INTO DATABASE
-
-        // CHANGES QR CODE OF THE EVENT SO THAT A POSTER ORIGINALLY PUT UP WILL GO TO EVENT CANCELED PAGE
-
-        // OPTIONAL: SENDS NOTIFICATION TO HOST THAT THEIR EVENT HAS BEEN CANCELED ex: Admin has successfully canceled "<Name of event>" on <Date of Event>.
-    }
 
 
+/*
+private void handleDeleteEventAction(Context context, DocumentReference event) {
+
+    // DELETES EVENT FROM DATABASE: should cascade so that the event will not appear in any waitlist/registered/hosting list
+    Admin admin = new Admin(context);
+    admin.deleteEvent(context, event);
+    // OPTIONAL:  SENDS NOTIFICATION TO HOST THAT THEIR EVENT HAS BEEN DELETED ex: Admin has deleted "<Name of event>" on <Date of Event>. Please contact us at <email> in case you have any further questions.
+}
+
+/**
+ * Handles the action of canceling an event.
+ *
+ * This method is triggered when the "Cancel Event" option in the overflow menu is selected.
+ * It will set the QR code data to be a page that says "Sorry! Event is canceled!".
+ * Updates the database.
+ * It will send a notification to the organizer that their event has been canceled.
+ *
+ * @param event The {@link Event} object representing the event to be canceled.
+ */
+/*private void handleDeleteQRDataAction(Event event) {
+    // GOES INTO DATABASE
+
+    // CHANGES QR CODE OF THE EVENT SO THAT A POSTER ORIGINALLY PUT UP WILL GO TO EVENT CANCELED PAGE
+
+    // OPTIONAL: SENDS NOTIFICATION TO HOST THAT THEIR EVENT HAS BEEN CANCELED ex: Admin has successfully canceled "<Name of event>" on <Date of Event>.
+}*/
+
+
+    /*
     /**
      * Handles the action of deleting an event poster.
      *
@@ -231,13 +241,13 @@ public class BrowseEventsAdminAdapter extends RecyclerView.Adapter<BrowseEventsA
      *
      * @param event The {@link Event} object representing the event to be canceled.
      */
-    private void handleDeletePosterAction(Event event) {
-        // GOES INTO DATABASE
 
-        // REPLACES IMAGE POSTER WITH DEFAULT IMAGE OF WEBSITE
+/*private void handleDeletePosterAction(Event event) {
+    // GOES INTO DATABASE
 
-        // OPTIONAL: SENDS NOTIFICATION TO HOST THAT THEIR EVENT HAS BEEN DELETED ex: Admin has deleted the
-        // POSTER of "<Name of event>" on <Date of Event> for not following company guidlines. Please contact us at <email> in case you have any further questions.
-    }
+    // REPLACES IMAGE POSTER WITH DEFAULT IMAGE OF WEBSITE
 
-}
+    // OPTIONAL: SENDS NOTIFICATION TO HOST THAT THEIR EVENT HAS BEEN DELETED ex: Admin has deleted the
+    // POSTER of "<Name of event>" on <Date of Event> for not following company guidlines. Please contact us at <email> in case you have any further questions.
+}*/
+

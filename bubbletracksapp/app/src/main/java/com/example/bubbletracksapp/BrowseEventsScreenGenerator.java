@@ -56,7 +56,7 @@ public class BrowseEventsScreenGenerator extends AppCompatActivity {
                 eventsCatalogue.setVisibility(View.GONE);
             } else if (events != null && !events.isEmpty()) {
                 // Populate RecyclerView and hide placeholder
-                BrowseEventsAdminAdapter adapter = new BrowseEventsAdminAdapter(this, new CompletableFuture<>());
+                BrowseEventsAdminAdapter adapter = new BrowseEventsAdminAdapter(this, new ArrayList<>());
                 eventsCatalogue.setAdapter(adapter);
                 eventsCatalogue.setVisibility(View.VISIBLE);
                 noEventsInDB.setVisibility(View.GONE);
