@@ -90,6 +90,7 @@ public class AppUserEventScreenGenerator extends AppCompatActivity {
         // SETS UP TEXT VIEWS
         timeView = findViewById(R.id.eventDateTime);
         locationView = findViewById(R.id.eventLocation);
+        setDefaultActivityText();
 
         // SETS UP RECYCLER VIEW
         eventsplace = findViewById(R.id.waitlist);
