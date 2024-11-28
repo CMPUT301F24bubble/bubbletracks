@@ -8,6 +8,7 @@
 package com.example.bubbletracksapp;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -59,11 +60,13 @@ public class BrowseEventsAdminAdapter extends RecyclerView.Adapter<BrowseEventsA
             eventTitle = itemView.findViewById(R.id.browseEventTitle);
             eventDate = itemView.findViewById(R.id.browseEventDate);
             eventDescription = itemView.findViewById(R.id.browseEventDescription);
-            // eventPic initialized in the onBindViewHolder Method.
+            eventPic = itemView.findViewById(R.id.browseEventPoster);
             eventParent = itemView.findViewById(R.id.browseEventXMLID);
             //overflowImageButton = itemView.findViewById(R.id.browseOverflowMenu);
         }
     }
+
+
 
     // METHODS
 
@@ -118,11 +121,11 @@ public class BrowseEventsAdminAdapter extends RecyclerView.Adapter<BrowseEventsA
             holder.eventDescription.setText(event.getDescription() != null ? event.getDescription() : "No Description");
 
             // SETS EVENT IMAGE
-            ImageView eventPic = holder.itemView.findViewById(R.id.browseEventPoster);
-            if (event.getImage() == null) {
-                holder.eventPic.setImageResource(R.drawable.default_image);
-            } else {
+            if (event.getImage() != null) {
+                Log.d("ImageView", "ImageView is: " + holder.eventPic);
                 Picasso.get().load(event.getImage()).into(holder.eventPic);
+            } else {
+                holder.eventPic.setImageResource(R.drawable.default_image);
             }
 
             // SETS EVENT DATE: should look like NOV 29 @ 13:30

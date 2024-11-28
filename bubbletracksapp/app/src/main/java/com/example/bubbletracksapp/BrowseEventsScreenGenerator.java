@@ -42,6 +42,11 @@ public class BrowseEventsScreenGenerator extends AppCompatActivity {
         // SETS UP RECYCLER VIEW
         eventsCatalogue = findViewById(R.id.event_db);
         eventsCatalogue.setLayoutManager(new LinearLayoutManager(this));
+        adapter = new BrowseEventsAdminAdapter(this, new ArrayList<>()); // Attach an empty adapter initially
+        eventsCatalogue.setAdapter(adapter);
+
+        // INITIALIZES "No events in database." TEXT VIEW
+        noEventsInDB = findViewById(R.id.no_events_in_db);
 
         displayEvents();
     }
@@ -56,8 +61,11 @@ public class BrowseEventsScreenGenerator extends AppCompatActivity {
                 noEventsInDB.setVisibility(View.VISIBLE);
                 eventsCatalogue.setVisibility(View.GONE);
             } else if (events != null && !events.isEmpty()) {
-                // Populate RecyclerView and hide placeholder
-                BrowseEventsAdminAdapter adapter = new BrowseEventsAdminAdapter(this, new ArrayList<>());
+                //UPDATES ADAPTER
+                adapter.allTheEvents.clear();
+                adapter.allTheEvents.addAll(events);
+                adapter.notifyDataSetChanged();
+
                 eventsCatalogue.setAdapter(adapter);
                 eventsCatalogue.setVisibility(View.VISIBLE);
                 noEventsInDB.setVisibility(View.GONE);
