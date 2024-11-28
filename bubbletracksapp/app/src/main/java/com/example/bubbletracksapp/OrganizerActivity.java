@@ -28,6 +28,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.google.zxing.WriterException;
+import java.io.ByteArrayOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -395,8 +396,6 @@ public class OrganizerActivity extends AppCompatActivity {
 
             event.setNeedsGeolocation(requireGeolocationCheckBox.isChecked());
 
-            event.setQRCode("https://www.bubbletracks.com/events/" + event.getId());
-
             if(posterUri == null){
 
                 uploadEvent();
@@ -404,18 +403,18 @@ public class OrganizerActivity extends AppCompatActivity {
             } else {
 
                 // make a firebase storage instance and a filename
-                String filename = "posters/" + System.currentTimeMillis() + ".jpg";
-                StorageReference storageReference = FirebaseStorage.getInstance().getReference(filename);
+                String posterFilename = "posters/" + event.getId() + "poster.jpg";
+                StorageReference posterStorageReference = FirebaseStorage.getInstance().getReference(posterFilename);
 
                 // store the image in firebase storage
-                storageReference.putFile(posterUri)
+                posterStorageReference.putFile(posterUri)
                         .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
 
                             @Override
                             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
 
                                 // get the download url of the image
-                                storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                posterStorageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
 
                                     @Override
                                     public void onSuccess(Uri uri) {
@@ -493,10 +492,6 @@ public class OrganizerActivity extends AppCompatActivity {
             return null;
         });
 
-        // store the event
-        EventDB eventDB = new EventDB();
-        eventDB.addEvent(event);
-
         // update the current user to add the created event in the organizer's
         // organized events
         updateEntrant();
@@ -508,8 +503,57 @@ public class OrganizerActivity extends AppCompatActivity {
 
         QRGenerator qrGenerator = new QRGenerator();
         try{
-            Bitmap qrBitmap = qrGenerator.generateQRCode(event.getQRCode());
+            Bitmap qrBitmap = qrGenerator.generateQRCode(event.getId());
             qrCode.setImageBitmap(qrBitmap);
+
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            qrBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+
+            byte[] qrByteArray = stream.toByteArray();
+
+            String QRFilename = "QRCodes/" + event.getId() + "qrcode.png";
+            StorageReference QRcodeStorageReference = FirebaseStorage.getInstance().getReference(QRFilename);
+
+            // store the image in firebase storage
+            QRcodeStorageReference.putBytes(qrByteArray)
+                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
+                            // get the download url of the image
+                            QRcodeStorageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+
+                                @Override
+                                public void onSuccess(Uri uri) {
+
+                                    // store the download string in the event class
+                                    String downloadUrl = uri.toString();
+                                    event.setQRCode(downloadUrl);
+
+                                    // store the event
+                                    EventDB eventDB = new EventDB();
+                                    eventDB.addEvent(event);
+
+                                }
+
+                                // handle errors
+                            }).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Toast.makeText(getApplicationContext(), "Failed to get download URL: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        }
+
+                        // handle errors
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(OrganizerActivity.this, "Upload failed: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                        }
+                    });
+
         } catch (WriterException exception){
             Log.e("OrganizerActivity", "Qr code generation failed", exception);
         }

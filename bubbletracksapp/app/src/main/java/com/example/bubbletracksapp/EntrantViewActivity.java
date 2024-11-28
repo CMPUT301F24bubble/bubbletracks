@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
@@ -33,7 +34,9 @@ public class EntrantViewActivity extends AppCompatActivity {
 
     private ImageView posterImage;
     private TextView monthText, dateText, timeText, locationText, nameText, descriptionText,
-            capacityText, priceText, needsLocationText, registrationOpenText, registrationCloseText;
+            capacityText, priceText, needsLocationText, registrationOpenText, registrationCloseText,
+            loadingText;
+    private LinearLayout parentLayout;
     private Button joinButton;
     private ImageButton backButton;
 
@@ -57,6 +60,8 @@ public class EntrantViewActivity extends AppCompatActivity {
         registrationOpenText = findViewById(R.id.event_registration_open);
         registrationCloseText = findViewById(R.id.event_registration_close);
         backButton = findViewById(R.id.back_button);
+        parentLayout = findViewById(R.id.parent_layout);
+        loadingText = findViewById(R.id.loading_event_textview);
 
         Intent intent = getIntent();
         id = intent.getStringExtra("id");
@@ -110,7 +115,18 @@ public class EntrantViewActivity extends AppCompatActivity {
                 }
                 setViews();
             } else {
-                Toast.makeText(EntrantViewActivity.this, "Event does not exist", Toast.LENGTH_LONG).show();
+
+                setContentView(R.layout.event_not_found);
+                backButton = findViewById(R.id.back_button);
+
+                backButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        finish();
+                    }
+                });
+
+                Toast.makeText(EntrantViewActivity.this, "Event does not exist", Toast.LENGTH_SHORT).show();
             }
         }).exceptionally(e -> {
             Toast.makeText(EntrantViewActivity.this, "Failed to load event: " + e.getMessage(), Toast.LENGTH_LONG).show();
@@ -146,6 +162,9 @@ public class EntrantViewActivity extends AppCompatActivity {
         SimpleDateFormat formatter = new SimpleDateFormat("dd MMMM yyyy");
         registrationOpenText.setText("Registration Opens: " + formatter.format(event.getRegistrationOpen()));
         registrationCloseText.setText("Registration Closes: " + formatter.format(event.getRegistrationClose()));
+
+        loadingText.setVisibility(View.GONE);
+        parentLayout.setVisibility(View.VISIBLE);
 
     }
 

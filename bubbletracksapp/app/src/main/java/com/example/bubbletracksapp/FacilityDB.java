@@ -136,6 +136,7 @@ public class FacilityDB {
                         Log.d("FacilityDB", "DocumentSnapshot data: " + document.getData());
                     } else {
                         Log.d("FacilityDB", "No such document");
+                        returnCode.complete(null);
                     }
                 } else {
                     Log.d("FacilityDB", "get failed with ", task.getException());
