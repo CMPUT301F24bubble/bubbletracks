@@ -11,7 +11,8 @@
     <color name="background_bubble_blue">#AEE1F9</color>
     <color name="back_beige">#F7F1E1</color>
 
-    <color name="home_blue">#4DA8D3</color>
+    <color name="home_blue">#2196F3</color>
+    <color name="home_blue_2">#4DA8D3</color>
 
     <color name="button_soft_pink">#F9D7E9</color>
     <color name="button_light_mint_green">#A7F2D7</color>
@@ -21,6 +22,3 @@
     <color name="icon_white">#FFFFFF</color>
 </resources>
 
-
-
-    <!--    <color name="home_blue_og">#2196F3</color>-->

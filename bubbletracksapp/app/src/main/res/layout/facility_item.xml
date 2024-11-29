@@ -89,7 +89,7 @@
             android:layout_marginTop="8dp"
             android:background="@android:color/transparent"
             android:src="@drawable/baseline_delete_24"
-            app:tint="@color/text_dark_blue"
+            app:tint="@color/button_dark_blue"
             android:contentDescription="Delete facility"
             android:onClick="onDeleteFacilityClicked" />
     </RelativeLayout>
