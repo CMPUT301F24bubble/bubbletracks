@@ -42,11 +42,18 @@ public class NotificationDB {
     private Entrant entrant;
     private final String channelID = "channel_id";
 
+    /**
+     * Get database and notification collection from firestore
+     */
     public NotificationDB() {
         db = FirebaseFirestore.getInstance();
         notifsRef = db.collection("notifications");
     }
 
+    /**
+     * Add new notification to database
+     * @param notifications Notifications object
+     */
     public void addNotification(Notifications notifications) {
         Map<String, Object> newNotif = notifications.toMap();
         String docID = notifications.getId();
@@ -311,6 +318,8 @@ public class NotificationDB {
             }
         });
     }
+
+
 
 
 }

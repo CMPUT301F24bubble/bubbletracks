@@ -16,6 +16,8 @@ import com.example.bubbletracksapp.databinding.LotteryMainExtendBinding;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
+import java.util.UUID;
 
 /**
  * Organizer actions for entrants in waitlists. Allows the organizer to see who
@@ -33,6 +35,8 @@ public class OrganizerEntrantListActivity extends AppCompatActivity
     Event event;
     Entrant currentUser;
     EntrantDB entrantDB = new EntrantDB();
+    NotificationDB notificationDB = new NotificationDB();
+
 
     /**
      * waitList contains all the entrants that joined the waitlist
@@ -54,6 +58,9 @@ public class OrganizerEntrantListActivity extends AppCompatActivity
      * enrolledList contains all the entrants that were invited and accepted the invitation
      */
     ArrayList<Entrant> enrolledList = new ArrayList<>();
+
+    ArrayList<String> newInvitedList; // List of entrants to send invited notification to
+
 
     Context context = this;
     ListView waitlistListView;
@@ -246,7 +253,9 @@ public class OrganizerEntrantListActivity extends AppCompatActivity
 
         //TODO: ADD NEW ARRAY TO ADD
         invitedList.add(chosenEntrant);
+        newInvitedList.add(String.valueOf(chosenEntrant));
         UpdateListDisplay();
+        resendNotifications();
 
         chosenEntrant.addToEventsInvited(event.getId());
         chosenEntrant.updateEntrantFirebase();
@@ -282,6 +291,29 @@ public class OrganizerEntrantListActivity extends AppCompatActivity
         event.setCancelledListWithEvents(cancelledList);
         event.setEnrolledListWithEvents(enrolledList);
         event.updateEventFirebase();
+    }
+
+    /**
+     * Sends invited notifications to redrawn entrants
+     */
+    private void resendNotifications() {
+        if (event != null) {
+            Date timestamp = new Date();
+
+            if (newInvitedList != null) {
+                Notifications notification = new Notifications(
+                        newInvitedList,
+                        "Event " + event.getName() + " update!",
+                        "There has been a redraw for " + event.getName() + "and you are invited!",
+                        "Accept your invitation to confirm your registration.",
+                        UUID.randomUUID().toString(),
+                        timestamp
+                );
+                notificationDB.addNotification(notification);
+            } else {
+                Toast.makeText(this, "Warning: There are no invited entrants in your event!", Toast.LENGTH_LONG).show();
+            }
+        }
     }
 
 }

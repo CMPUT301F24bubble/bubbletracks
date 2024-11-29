@@ -18,7 +18,6 @@ import java.util.UUID;
 /**
  * Class for holding notifications
  * @author Erza
- * @version 1.0
  */
 public class Notifications implements Parcelable{
 
