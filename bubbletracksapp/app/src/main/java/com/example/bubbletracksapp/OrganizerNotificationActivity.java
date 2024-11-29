@@ -162,8 +162,8 @@ public class OrganizerNotificationActivity extends AppCompatActivity {
                 Notifications notification = new Notifications(
                         invitedList,
                         "Event Waitlist Update",
+                        "Thank you for your participation in joining the waitlist for " + event.getName() + ".",
                         "",
-                        "Thank you for your participation in joining the waitlist!.",
                         //"Thank you for confirming your attendance to " + event.getName() + "!"
                         UUID.randomUUID().toString(),
                         timestamp
@@ -216,7 +216,7 @@ public class OrganizerNotificationActivity extends AppCompatActivity {
         }
 
 
-        Toast.makeText(this, "Notifications sent!", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "Notification(s) sent!", Toast.LENGTH_LONG).show();
 
     }
 

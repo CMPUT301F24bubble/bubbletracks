@@ -240,6 +240,7 @@ public class OrganizerEntrantListActivity extends AppCompatActivity
      */
     public void redrawCancelledEntrant(Entrant entrant) {
         Entrant chosenEntrant = redrawEntrant();
+        //TODO: ADD NEW ARRAY TO ADD
         invitedList.add(chosenEntrant);
         UpdateListDisplay();
     }
