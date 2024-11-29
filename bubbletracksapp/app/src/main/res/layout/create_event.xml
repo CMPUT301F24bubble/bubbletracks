@@ -1,281 +1,300 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:background="#FFFFFF">
 
-    <LinearLayout
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/loading_textview"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp">
+        android:layout_gravity="center"
+        android:text="Loading..."
+        android:textSize="40sp"
+        android:textStyle="bold"
+        android:textColor="#555555"
+        android:visibility="gone" />
+
+    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/parent_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        xmlns:app="http://schemas.android.com/apk/res-auto">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center"
-            android:layout_marginTop="8dp"
-            android:paddingBottom="20dp">
+            android:orientation="vertical"
+            android:padding="16dp">
 
-            <!--button to go back to home screen-->
-            <ImageButton
-                android:id="@+id/back_button"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:background="@drawable/round_event"
-                android:backgroundTint="@color/home_blue"
-                android:src="@drawable/baseline_arrow_back_24"
-                android:layout_margin="8dp"/>
-
-            <!--text view for the title of the page-->
-            <TextView
-                android:id="@+id/rounded_textview"
-                android:layout_width="300dp"
-                android:layout_height="wrap_content"
-                android:text="EVENT CREATOR"
-                android:textColor="#FFFFFF"
-                android:backgroundTint="@color/home_blue"
-                android:textSize="30dp"
-                android:background="@drawable/round_event"
-                android:padding="8dp"
-                android:paddingBottom="16dp"
-                android:layout_gravity="end"
-                android:gravity= "center"/>
-
-        </LinearLayout>
-
-        <!--text view to indicate event name-->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Event name"/>
-
-        <!--edit text to enter event name-->
-        <EditText
-            android:id="@+id/textName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Event Name"
-            android:inputType="text"
-            android:textColor="#555555"
-            android:background="#EEEEEE"
-            android:padding="8dp"/>
-
-        <!--text view to indicate date and time-->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Date and Time"/>
-
-        <LinearLayout
-            android:id="@+id/layoutDateTime"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="16dp">
-
-            <!--image button to open a dialogue to select dateTime and time-->
-            <ImageButton
-                android:id="@+id/buttonDateTime"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:backgroundTint="@color/white"
-                android:src="@drawable/baseline_calendar_month_24"
-                app:tint="@color/black" />
-
-            <!--text view to show the selected dateTime and time-->
-            <TextView
-                android:id="@+id/textDateTime"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/not_selected"
-                android:backgroundTint="#EEEEEE"
-                android:background="@drawable/round_event"
-                android:gravity="center_vertical"
-                android:paddingStart="8dp"
-                android:paddingEnd="8dp"/>
-
-        </LinearLayout>
-
-        <!--text view to indicate the description-->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Event Description"/>
-
-        <!--edit text to enter the description-->
-        <EditText
-            android:id="@+id/textDescription"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Event Description"
-            android:inputType="textMultiLine"
-            android:minLines="3"
-            android:layout_marginTop="16dp" />
-
-        <!--text view to indicate registration open date-->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="Registration Open"/>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <!--image button to open a dialogue to select registration open date-->
-            <ImageButton
-                android:id="@+id/buttonRegistrationOpen"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:src = "@drawable/baseline_lock_open_24"
-                android:layout_marginTop="16dp"
-                android:backgroundTint="@color/white"
-                app:tint = "@color/black"/>
-
-            <!--text view to show registration open dateTime-->
-            <TextView
-                android:id="@+id/textRegistrationOpen"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/not_selected"
-                android:background="@drawable/round_event"
-                android:backgroundTint="#EEEEEE"
-                android:layout_marginTop="8dp" />
-
-        </LinearLayout>
-
-        <!--text view to indicate registration close date-->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text= "Registration Close"
-            />
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <!--image button to open a dialogue to select registration close dateTime-->
-            <ImageButton
-                android:id="@+id/buttonRegistrationClose"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Select Close Date"
-                android:src="@drawable/baseline_lock_outline_24"
-                android:layout_marginTop="16dp"
-                android:backgroundTint="@color/white"
-                app:tint = "@color/black"/>
-
-            <!--text view to show registration close dateTime-->
-            <TextView
-                android:id="@+id/textRegistrationClose"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/not_selected"
-                android:background="@drawable/round_event"
-                android:backgroundTint="#EEEEEE"
+                android:orientation="horizontal"
+                android:gravity="center"
                 android:layout_marginTop="8dp"
+                android:paddingBottom="20dp">
+
+                <!--button to go back to home screen-->
+                <ImageButton
+                    android:id="@+id/back_button"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/round_event"
+                    android:backgroundTint="@color/home_blue"
+                    android:src="@drawable/baseline_arrow_back_24"
+                    android:layout_margin="8dp"/>
+
+                <!--text view for the title of the page-->
+                <TextView
+                    android:id="@+id/rounded_textview"
+                    android:layout_width="300dp"
+                    android:layout_height="wrap_content"
+                    android:text="EVENT CREATOR"
+                    android:textColor="#FFFFFF"
+                    android:backgroundTint="@color/home_blue"
+                    android:textSize="30dp"
+                    android:background="@drawable/round_event"
+                    android:padding="8dp"
+                    android:paddingBottom="16dp"
+                    android:layout_gravity="end"
+                    android:gravity= "center"/>
+
+            </LinearLayout>
+
+            <!--text view to indicate event name-->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Event name"/>
+
+            <!--edit text to enter event name-->
+            <EditText
+                android:id="@+id/textName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Event Name"
+                android:inputType="text"
+                android:textColor="#555555"
+                android:background="#EEEEEE"
+                android:padding="8dp"/>
+
+            <!--text view to indicate date and time-->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Date and Time"/>
+
+            <LinearLayout
+                android:id="@+id/layoutDateTime"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="16dp">
+
+                <!--image button to open a dialogue to select dateTime and time-->
+                <ImageButton
+                    android:id="@+id/buttonDateTime"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:backgroundTint="@color/white"
+                    android:src="@drawable/baseline_calendar_month_24"
+                    app:tint="@color/black" />
+
+                <!--text view to show the selected dateTime and time-->
+                <TextView
+                    android:id="@+id/textDateTime"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/not_selected"
+                    android:backgroundTint="#EEEEEE"
+                    android:background="@drawable/round_event"
+                    android:gravity="center_vertical"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="8dp"/>
+
+            </LinearLayout>
+
+            <!--text view to indicate the description-->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Event Description"/>
+
+            <!--edit text to enter the description-->
+            <EditText
+                android:id="@+id/textDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Event Description"
+                android:inputType="textMultiLine"
+                android:minLines="3"
+                android:layout_marginTop="16dp" />
+
+            <!--text view to indicate registration open date-->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="Registration Open"/>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <!--image button to open a dialogue to select registration open date-->
+                <ImageButton
+                    android:id="@+id/buttonRegistrationOpen"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:src = "@drawable/baseline_lock_open_24"
+                    android:layout_marginTop="16dp"
+                    android:backgroundTint="@color/white"
+                    app:tint = "@color/black"/>
+
+                <!--text view to show registration open dateTime-->
+                <TextView
+                    android:id="@+id/textRegistrationOpen"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/not_selected"
+                    android:background="@drawable/round_event"
+                    android:backgroundTint="#EEEEEE"
+                    android:layout_marginTop="8dp" />
+
+            </LinearLayout>
+
+            <!--text view to indicate registration close date-->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text= "Registration Close"
                 />
 
-        </LinearLayout>
-
-        <!--text view to indicate optional info-->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Optional Info"/>
-
-        <!--edit text to enter the max capacity-->
-        <EditText
-            android:id="@+id/textMaxCapacity"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Max Capacity"
-            android:background="@drawable/round_event"
-            android:inputType="number"
-            android:layout_marginTop="16dp" />
-
-
-        <!--edit text to enter price-->
-        <EditText
-            android:id="@+id/textPrice"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Price"
-            android:background="@drawable/round_event"
-            android:inputType="number"
-            android:layout_marginTop="16dp" />
-
-        <!--edit text to optionally limit the number of entrants allowed in the waiting list-->
-        <EditText
-            android:id="@+id/textWaitListLimit"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Wait List Size Limit"
-            android:background="@drawable/round_event"
-            android:inputType="number"
-            android:layout_marginTop="16dp" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="16dp">
-
-            <!--check box to indicate if the entrant's geolocation is required-->
-            <CheckBox
-                android:id="@+id/checkBoxRequireGeolocation"
+            <LinearLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
-            <!--text view to indicate the usage of the check box-->
+                <!--image button to open a dialogue to select registration close dateTime-->
+                <ImageButton
+                    android:id="@+id/buttonRegistrationClose"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Select Close Date"
+                    android:src="@drawable/baseline_lock_outline_24"
+                    android:layout_marginTop="16dp"
+                    android:backgroundTint="@color/white"
+                    app:tint = "@color/black"/>
+
+                <!--text view to show registration close dateTime-->
+                <TextView
+                    android:id="@+id/textRegistrationClose"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/not_selected"
+                    android:background="@drawable/round_event"
+                    android:backgroundTint="#EEEEEE"
+                    android:layout_marginTop="8dp"
+                    />
+
+            </LinearLayout>
+
+            <!--text view to indicate optional info-->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Require entrant's geolocation"
-                android:paddingStart="8dp"
-                android:gravity="center_vertical" />
+                android:text="Optional Info"/>
+
+            <!--edit text to enter the max capacity-->
+            <EditText
+                android:id="@+id/textMaxCapacity"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Max Capacity"
+                android:background="@drawable/round_event"
+                android:inputType="number"
+                android:layout_marginTop="16dp" />
+
+
+            <!--edit text to enter price-->
+            <EditText
+                android:id="@+id/textPrice"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Price"
+                android:background="@drawable/round_event"
+                android:inputType="number"
+                android:layout_marginTop="16dp" />
+
+            <!--edit text to optionally limit the number of entrants allowed in the waiting list-->
+            <EditText
+                android:id="@+id/textWaitListLimit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Wait List Size Limit"
+                android:background="@drawable/round_event"
+                android:inputType="number"
+                android:layout_marginTop="16dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="16dp">
+
+                <!--check box to indicate if the entrant's geolocation is required-->
+                <CheckBox
+                    android:id="@+id/checkBoxRequireGeolocation"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <!--text view to indicate the usage of the check box-->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Require entrant's geolocation"
+                    android:paddingStart="8dp"
+                    android:gravity="center_vertical" />
+
+            </LinearLayout>
+
+            <!--button that allows the user to upload an image from device-->
+            <Button
+                android:id="@+id/buttonUploadPhoto"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Upload Photo"
+                android:layout_marginTop="16dp"
+                android:backgroundTint="@color/black"/>
+
+            <!--image view to show the uploaded image-->
+            <ImageView
+                android:id="@+id/imagePoster"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:layout_marginTop="8dp"
+                android:contentDescription="Uploaded Photo"
+                android:src="@drawable/baseline_image_search_24"
+                app:tint="@color/black"
+                android:scaleType="centerInside"
+                android:background="@drawable/image_border"
+                android:visibility="visible"/>
+
+
+            <!--button to create the event-->
+            <Button
+                android:id="@+id/buttonCreate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Create Event"
+                android:layout_marginTop="24dp"
+                android:backgroundTint="#64DD17"
+                android:layout_gravity="center_horizontal" />
 
         </LinearLayout>
 
-        <!--button that allows the user to upload an image from device-->
-        <Button
-            android:id="@+id/buttonUploadPhoto"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Upload Photo"
-            android:layout_marginTop="16dp"
-            android:backgroundTint="@color/black"/>
-
-        <!--image view to show the uploaded image-->
-        <ImageView
-            android:id="@+id/imagePoster"
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:layout_marginTop="8dp"
-            android:contentDescription="Uploaded Photo"
-            android:src="@drawable/baseline_image_search_24"
-            app:tint="@color/black"
-            android:scaleType="centerInside"
-            android:background="@drawable/image_border"
-            android:visibility="visible"/>
-
-
-        <!--button to create the event-->
-        <Button
-            android:id="@+id/buttonCreate"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Create Event"
-            android:layout_marginTop="24dp"
-            android:backgroundTint="#64DD17"
-            android:layout_gravity="center_horizontal" />
-
-    </LinearLayout>
-
-</ScrollView>
+    </ScrollView>
+</FrameLayout>

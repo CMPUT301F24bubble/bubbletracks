@@ -16,6 +16,7 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
@@ -48,10 +49,11 @@ public class OrganizerActivity extends AppCompatActivity {
     private Date curDate = new Date();
 
     // declare all views necessary
+    private ScrollView parentLayout;
     private EditText nameText, descriptionText, maxCapacityText, priceText, waitListLimitText;
     private ImageButton dateTimeButton, registrationOpenButton, registrationCloseButton;
     private Button uploadPhotoButton, createButton;
-    private TextView dateTimeText, registrationOpenText, registrationCloseText;
+    private TextView dateTimeText, registrationOpenText, registrationCloseText, loadingText;
     private ImageView posterImage;
     private CheckBox requireGeolocationCheckBox;
     private ImageButton backButton;
@@ -101,6 +103,8 @@ public class OrganizerActivity extends AppCompatActivity {
         posterImage = findViewById(R.id.imagePoster);
         createButton = findViewById(R.id.buttonCreate);
         backButton =  findViewById(R.id.back_button);
+        parentLayout = findViewById(R.id.parent_layout);
+        loadingText = findViewById(R.id.loading_textview);
 
         // handler to go back to homescreen
         backButton.setOnClickListener(new View.OnClickListener() {
@@ -305,7 +309,9 @@ public class OrganizerActivity extends AppCompatActivity {
      * (Firebase-related errors)
      */
     protected void createEvent(){
-        // input validation is not complete, all fields need to be filled otherwise there will be errors
+
+        loadingText.setVisibility(View.VISIBLE);
+        parentLayout.setVisibility(View.GONE);
 
         // extract all the text views
         String name = nameText.getText().toString().trim();
@@ -329,6 +335,7 @@ public class OrganizerActivity extends AppCompatActivity {
             if(curDate.after(dateTime) || curDate.after(registrationClose) || curDate.after(registrationOpen)){
                 Toast.makeText(OrganizerActivity.this, "Please enter valid date and " +
                         "times, the event and registration dates can't be in the past", Toast.LENGTH_LONG).show();
+                removeLoadingScreen();
                 return;
             }
 
@@ -336,6 +343,7 @@ public class OrganizerActivity extends AppCompatActivity {
                 Toast.makeText(OrganizerActivity.this, "Please enter valid date and " +
                         "times, registration open date needs to be before registration close date " +
                         "and registration close date needs to be before the event", Toast.LENGTH_LONG).show();
+                removeLoadingScreen();
                 return;
             }
 
@@ -349,11 +357,13 @@ public class OrganizerActivity extends AppCompatActivity {
                 event.setMaxCapacity(Integer.parseInt(maxCapacity));
             } catch (NumberFormatException e) {
                 Toast.makeText(OrganizerActivity.this, "Please enter a valid capacity", Toast.LENGTH_LONG).show();
+                removeLoadingScreen();
                 return;
             }
 
             if(Integer.parseInt(maxCapacity) < 0){
                 Toast.makeText(OrganizerActivity.this, "Please enter a valid capacity", Toast.LENGTH_LONG).show();
+                removeLoadingScreen();
                 return;
             }
 
@@ -367,11 +377,13 @@ public class OrganizerActivity extends AppCompatActivity {
                     event.setPrice(Integer.parseInt(price));
                 } catch (NumberFormatException e) {
                     Toast.makeText(OrganizerActivity.this, "Please enter a valid price", Toast.LENGTH_LONG).show();
+                    removeLoadingScreen();
                     return;
                 }
 
                 if(Integer.parseInt(price) < 0){
                     Toast.makeText(OrganizerActivity.this, "Please enter a valid price", Toast.LENGTH_LONG).show();
+                    removeLoadingScreen();
                     return;
                 }
 
@@ -384,11 +396,13 @@ public class OrganizerActivity extends AppCompatActivity {
                     event.setWaitListLimit(Integer.parseInt(waitListLimit));
                 } catch (NumberFormatException e) {
                     Toast.makeText(OrganizerActivity.this, "Please enter a valid waitlist limit", Toast.LENGTH_LONG).show();
+                    removeLoadingScreen();
                     return;
                 }
 
                 if(Integer.parseInt(price) < 0){
                     Toast.makeText(OrganizerActivity.this, "Please enter a valid waitlist limit", Toast.LENGTH_LONG).show();
+                    removeLoadingScreen();
                     return;
                 }
 
@@ -447,6 +461,7 @@ public class OrganizerActivity extends AppCompatActivity {
             }
 
         }
+        removeLoadingScreen();
     }
 
     /**
@@ -564,6 +579,11 @@ public class OrganizerActivity extends AppCompatActivity {
                 finish();
             }
         });
+    }
+
+    protected void removeLoadingScreen(){
+        loadingText.setVisibility(View.GONE);
+        parentLayout.setVisibility(View.VISIBLE);
     }
 
 }
