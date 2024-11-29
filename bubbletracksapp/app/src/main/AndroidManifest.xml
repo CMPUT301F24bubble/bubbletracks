@@ -34,6 +34,26 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity android:name=".AdminProfileViews"
+            android:exported="true"
+            android:theme="@style/Theme.Bubbletracksapp">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".AdminFacilityViews"
+            android:exported="true"
+            android:theme="@style/Theme.Bubbletracksapp">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
         <activity
             android:name=".QRScanner"
             android:exported="true"
@@ -80,9 +100,12 @@
             </intent-filter>
         </activity>
         <activity android:name=".OrganizerActivity" />
+        <activity android:name=".OrganizerFacilityActivity" />
+        <activity android:name=".OrganizerManageActivity" />
         <activity android:name=".EntrantViewActivity" />
         <activity android:name=".AppUserEventScreenGenerator" />
         <activity android:name=".OrganizerLocationsMap" />
+        <activity android:name=".OrganizerEventHosting" />
     </application>
 
 </manifest>

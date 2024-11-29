@@ -15,7 +15,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="152dp"
+        android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:paddingTop="16dp">
 
@@ -65,7 +65,7 @@
                 android:id="@+id/event_location"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Address"
+                android:text="Adress"
                 android:textColor="#555555"
                 android:textSize="14sp" />
 
@@ -81,9 +81,9 @@
 
         <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingEnd="16dp">
+            android:layout_height="85dp"
+            android:paddingEnd="16dp"
+            android:orientation="vertical">
 
 
             <ImageButton
@@ -98,19 +98,9 @@
                 android:id="@+id/see_people_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:backgroundTint="@color/white"
                 android:src="@drawable/baseline_groups_24"
-                app:tint="@color/black" />
-
-            <ImageButton
-                android:id="@+id/notification_button"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:backgroundTint="@color/white"
-                android:src="@drawable/baseline_notifications_24"
-                app:tint="@color/black" />
-
-
+                app:tint="@color/black"
+                android:backgroundTint="@color/white"/>
         </LinearLayout>
     </LinearLayout>
     <LinearLayout
@@ -144,13 +134,12 @@
             android:src="@drawable/qr_ex"
             />
         <ImageButton
-            android:id="@+id/delete_button"
+            android:id="@+id/delete_event"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/baseline_delete_forever_24"
             android:backgroundTint="@color/white"
             app:tint="@color/black"/>
-
 
     </LinearLayout>
 

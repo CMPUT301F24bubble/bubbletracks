@@ -1,147 +1,109 @@
 package com.example.bubbletracksapp;
-//
-//import android.content.Intent;
-//import android.os.Bundle;
-//import android.view.View;
-//
-//import androidx.annotation.Nullable;
-//import androidx.appcompat.app.AppCompatActivity;
-//
-//import com.example.bubbletracksapp.databinding.OrganizerEventHostingBinding;
-//
-//public class OrganizerEventHosting extends AppCompatActivity {
-//    private OrganizerEventHostingBinding binding;
-//
-//
-//    @Override
-//    protected void onCreate(@Nullable Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//        binding = OrganizerEventHostingBinding.inflate(getLayoutInflater());
-//        setContentView(binding.getRoot());
-//
-//
-//
-//        binding.waitlistButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Intent intent = new Intent(OrganizerEventHosting.this, OrganizerEditActivity.class);
-//                intent.putParcelableArrayListExtra("wait", waitList);
-//                intent.putParcelableArrayListExtra("invited", invitedList);
-//                intent.putParcelableArrayListExtra("rejected", rejectedList);
-//                intent.putParcelableArrayListExtra("cancelled", cancelledList);
-//
-//                startActivity(intent);
-//            }
-//        });
-//
-//    }
-//}
-
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
+import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.bubbletracksapp.databinding.ListsBinding;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.EventListener;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
+import com.example.bubbletracksapp.databinding.EventHostingListBinding;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 
 /**
  * Hold event that organizer is hosting
  * @author Chester
  */
-public class OrganizerEventHosting extends Fragment{
-    private ListsBinding binding;
+public class OrganizerEventHosting extends AppCompatActivity implements EventHostListAdapter.EventHostI {
+    private EventHostingListBinding binding;
 
-    EventDB eventDB = new EventDB();
-    ArrayList<Event> hostedEvents = new ArrayList<>();
+    private final EventDB eventDB = new EventDB();
+    private ArrayList<Event> hostedEvents = new ArrayList<>();
 
-    Context context;
-    public Entrant currentUser;
+    Entrant currentUser;
 
-
-    ListView eventListView;
-    EventHostListAdapter eventListAdapter;
+    private ListView eventListView;
+    private EventHostListAdapter eventListAdapter;
 
     /**
-     * Initialize the layout of the organizer user interface
-     * @param inflater The LayoutInflater object that can be used to inflate
-     * any views in the fragment,
-     * @param container If non-null, this is the parent view that the fragment's
-     * UI should be attached to.  The fragment should not add the view itself,
-     * but this can be used to generate the LayoutParams of the view.
-     * @param savedInstanceState If non-null, this fragment is being re-constructed
-     * from a previous saved state as given here.
+     * Set up creation of activity
      *
-     * @return binding of the layout
+     * @param savedInstanceState If the activity is being re-initialized after
+     *                           previously being shut down then this Bundle contains the data it most
+     *                           recently supplied in {@link #onSaveInstanceState}.  <b><i>Note: Otherwise it is null.</i></b>
      */
     @Override
-    public View onCreateView(
-            @NonNull LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState
-    ) {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
-        binding = ListsBinding.inflate(inflater, container, false);
-        return binding.getRoot();
+        binding = EventHostingListBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
-    }
-
-    /**
-     * Additional view creations
-     * @param view The View returned by {@link #onCreateView(LayoutInflater, ViewGroup, Bundle)}.
-     * @param savedInstanceState If non-null, this fragment is being re-constructed
-     * from a previous saved state as given here.
-     */
-    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-        context = getContext();
-        MainActivity mainActivity = (MainActivity)getActivity();
-        currentUser = mainActivity.currentUser;
+        Intent in = getIntent();
+        try {
+            currentUser = in.getParcelableExtra("user");
+        } catch (Exception e) {
+            Log.e("OrganizerEventHosting", "User extra was not passed correctly");
+            throw new RuntimeException(e);
+        }
 
         eventListView = binding.reusableListView;
 
-        eventDB.getEventList(currentUser.getEventsOrganized()).thenAccept(events -> {
-            if(events != null){
-                Log.d("AHHHHHHHHHHHHHHHHHHHHHHHHHHHH", "events is not null");
-                hostedEvents = events;
-                eventListAdapter = new EventHostListAdapter(this.getContext(), hostedEvents);
-                eventListView.setAdapter(eventListAdapter);
+        eventListAdapter = new EventHostListAdapter(OrganizerEventHosting.this, hostedEvents);
+        eventListView.setAdapter(eventListAdapter);
 
+        eventDB.getEventList(currentUser.getEventsOrganized()).thenAccept(events -> {
+            if (events != null) {
+                hostedEvents.clear();
+                hostedEvents.addAll(events);
+                eventListAdapter.notifyDataSetChanged();
+
+                Log.d("OrganizerEventHosting", "Hosted events loaded");
             } else {
-                Toast.makeText(context, "No hosted events", Toast.LENGTH_LONG).show();
-                Log.d("AHHHHHHHHHHHHHHHHHHHHHHHHHHHH", "this will catch my attention");
+                Toast.makeText(OrganizerEventHosting.this, "No hosted events", Toast.LENGTH_LONG).show();
+            }
+        });
+
+        binding.backButton.setOnClickListener(new View.OnClickListener() {
+            /**
+             * Go back to the home screen
+             * @param view The view that was clicked.
+             */
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(OrganizerEventHosting.this, MainActivity.class);
+                startActivity(intent);
             }
         });
 
     }
 
     /**
-     * destroy the view created
+     * Switches view to the view of the waitlist of entrants
+     * @param event event being viewed
      */
     @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        binding = null;
+    public void viewWaitlist(Event event) {
+        Intent intent = new Intent(OrganizerEventHosting.this, OrganizerEditActivity.class);
+        intent.putExtra("event", event);
+        intent.putExtra("user", currentUser);
+        startActivity(intent);
     }
 
-
+    /**
+     * Switches view to the view of editing the event
+     * @param event event being edited
+     */
+    @Override
+    public void editEvent(Event event) {
+//        Intent intent = new Intent(OrganizerEventHosting.this, OrganizerEditEventActivity.class);
+//        intent.putExtra("event", event);
+//        intent.putExtra("user", currentUser);
+//        startActivity(intent);
+    }
 }
