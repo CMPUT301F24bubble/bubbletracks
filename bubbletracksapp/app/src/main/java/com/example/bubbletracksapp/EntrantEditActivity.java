@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
@@ -53,6 +54,16 @@ public class EntrantEditActivity extends AppCompatActivity {
     private Entrant currentUser;
     private EntrantDB db = new EntrantDB();
     private FusedLocationProviderClient fusedLocationProviderClient;
+    private String ID;
+    // Initialize fields
+    private EditText entrantNameInput;
+    private EditText entrantEmailInput;
+    private EditText entrantPhoneInput;
+    private CheckBox entrantNotificationInput;
+
+    // Initialize views
+    private TextView deviceIDNote;
+    private TextView locationNote;
 
     /**
      * Start up activity for entrant to edit their profile
@@ -87,16 +98,16 @@ public class EntrantEditActivity extends AppCompatActivity {
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
 
-        EditText entrantNameInput = binding.entrantNameInput;
-        EditText entrantEmailInput = binding.entrantEmailInput;
-        EditText entrantPhoneInput = binding.entrantPhoneInput;
-        CheckBox entrantNotificationInput = binding.notificationToggle;
+        entrantNameInput = binding.entrantNameInput;
+        entrantEmailInput = binding.entrantEmailInput;
+        entrantPhoneInput = binding.entrantPhoneInput;
+        entrantNotificationInput = binding.notificationToggle;
 
-        TextView deviceIDNote = binding.deviceIDNote;
-        TextView locationNote = binding.locationNote;
+        deviceIDNote = binding.deviceIDNote;
+        locationNote = binding.locationNote;
 
         SharedPreferences localID = getSharedPreferences("LocalID", Context.MODE_PRIVATE);
-        String ID = localID.getString("ID", "Device ID not found");
+        ID = localID.getString("ID", "Device ID not found");
         String tempLocation = "No last location found. Allow location and update your profile";
 
         // Displays the user's profile
