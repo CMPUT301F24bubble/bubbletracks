@@ -55,6 +55,7 @@ public class QRScanner extends AppCompatActivity {
     }
 
     /**
+     * Get the permissions to access the camera
      * @param requestCode
      * @param permissions
      * @param grantResults
