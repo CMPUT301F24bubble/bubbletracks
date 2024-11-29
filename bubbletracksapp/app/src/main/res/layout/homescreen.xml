@@ -11,7 +11,7 @@
         android:layout_height="0dp"
         android:gravity="center"
         android:padding="16dp"
-        android:text="Homescreen"
+        android:text="Bubble Tracks"
         android:textColor="@color/home_blue"
         android:textSize="50dp"
         android:textStyle="bold"
