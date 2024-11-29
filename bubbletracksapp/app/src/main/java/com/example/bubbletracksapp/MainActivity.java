@@ -2,40 +2,27 @@ package com.example.bubbletracksapp;
 
 import static java.util.UUID.randomUUID;
 
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import com.example.bubbletracksapp.databinding.HomescreenBinding;
-import com.google.android.material.snackbar.Snackbar;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.util.Log;
 import android.view.View;
 
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
 
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.Toast;
 
-import java.util.UUID;
-import java.util.concurrent.CancellationException;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.function.Supplier;
-
 /**
- *Main Activity for the user.
+ *Main Activity for the user. Launches homescreen, with one tab for each user role.
  * @author Zoe
  */
 public class MainActivity extends AppCompatActivity {
@@ -63,10 +50,39 @@ public class MainActivity extends AppCompatActivity {
         currentDeviceID = getDeviceID();
         Log.d("DeviceID:",currentDeviceID);
 
+        Button entrantButton = binding.buttonEntrant;
+        Button organizerButton = binding.buttonOrganizer;
+        Button adminButton = binding.buttonAdmin;
+
+        // Find out the current user and set button visibility accordingly
+        Button createFacilityButton = binding.buttonCreateManageFacility;
+        Intent createFacilityIntent = new Intent(MainActivity.this, OrganizerFacilityActivity.class); //class where you are, then class where you wanan go
+        Intent manageFacilityIntent = new Intent(MainActivity.this, OrganizerManageActivity.class);
+
         db.getEntrant(currentDeviceID).thenAccept(user -> {
             if(user != null){
                 currentUser = user;
+                // Check user role
+                if(currentUser.getRole().equals("admin")){
+                    Log.d("User role:", "Woohoo, admin");
+                    adminButton.setVisibility(View.VISIBLE);
+                    organizerButton.setVisibility(View.VISIBLE);
+                } else if (currentUser.getRole().equals("organizer")) {
+                    Log.d("User role:", "Organizer");
+                    organizerButton.setVisibility(View.VISIBLE);
+                } else {
+                    Log.d("User role:", "Entrant");
+                }
+                // Check user facility
+                if(!user.getFacility().isEmpty()){
+                    manageFacilityIntent.putExtra("id", user.getFacility());
+                    switchActivityButton(createFacilityButton, manageFacilityIntent);
+                    createFacilityButton.setText("MANAGE FACILITY");
+                } else {
+                    switchActivityButton(createFacilityButton, createFacilityIntent);
+                }
             } else {
+                // Make a new entrant if they haven't launched the app before.
                 currentUser = new Entrant(currentDeviceID);
                 db.addEntrant(currentUser);
                 Log.d("Added new Entrant",currentUser.getID());}
@@ -75,30 +91,41 @@ public class MainActivity extends AppCompatActivity {
             return null;
         });
 
-        Button eventsButton = binding.buttonEvents;
-        Button createEventButton = binding.buttonCreateEvents;
-        Button scanButton = binding.buttonScan;
-        Button ticketsButton = binding.buttonTickets;
-        Button profileButton = binding.buttonProfile;
-        Button userEventsButton = binding.buttonEvents;
-        Button eventHostButton = binding.buttonEventHost;
+        // Code for the Organizer, Entrant, and Admin buttons
+        organizerButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fragmentContainerView, OrganizerFragment.class, null)
+                        .setReorderingAllowed(true)
+                        //.addToBackStack("") // Having this on the backstack can be annoying.
+                        .commit();
+                }
+            });
 
-        Intent createEventIntent = new Intent(MainActivity.this, OrganizerActivity.class); //class where you are, then class where you wanan go
-        switchActivityButton(createEventButton, createEventIntent);
+        entrantButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fragmentContainerView, EntrantFragment.class, null)
+                        .setReorderingAllowed(true)
+                        //.addToBackStack("") // Having this on the backstack can be annoying.
+                        .commit();
+            }
+        });
 
-        Intent scanIntent = new Intent(MainActivity.this, QRScanner.class);
-        switchActivityButton(scanButton, scanIntent);
-
-        Intent profileIntent = new Intent(MainActivity.this, EntrantEditActivity.class);
-        switchActivityButton(profileButton, profileIntent);
-
-        Intent userEventsIntent = new Intent(MainActivity.this, AppUserEventScreenGenerator.class);
-        switchActivityButton(userEventsButton, userEventsIntent);
-
-        Intent eventHostIntent = new Intent(MainActivity.this, OrganizerEventHosting.class);
-        switchActivityButton(eventHostButton, eventHostIntent);
-
+        adminButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fragmentContainerView, AdminFragment.class, null)
+                        .setReorderingAllowed(true)
+                        //.addToBackStack("") // Having this on the backstack can be annoying.
+                        .commit();
+            }
+        });
     }
+
     /**
      * Generalized code for buttons that use start(Activity()
      * @param button is the button that will be clicked

@@ -22,6 +22,7 @@ public class Event implements Parcelable{
     private Date dateTime;
     private String description;
     private String geolocation;
+    private String facility;
     private Date registrationOpen;
     private Date registrationClose;
     private int maxCapacity;
@@ -54,6 +55,7 @@ public class Event implements Parcelable{
         this.dateTime = document.getTimestamp("dateTime").toDate();
         this.description = document.getString("description");
         this.geolocation=  document.getString("geolocation");
+        this.facility = document.getString("facility");
         this.registrationOpen = document.getTimestamp("registrationOpen").toDate();
         this.registrationClose = document.getTimestamp("registrationClose").toDate();
         this.maxCapacity = document.getLong("maxCapacity").intValue();
@@ -69,12 +71,13 @@ public class Event implements Parcelable{
         this.enrolledList = (ArrayList<String>)document.getData().get("enrolled");
     }
 
-    public Event(String id, String name, Date dateTime, String description, String geolocation, Date registrationOpen, Date registrationClose, int maxCapacity, int price, int waitListLimit, boolean needsGeolocation, String image, String QRCode, ArrayList<String> waitList, ArrayList<String> invitedList, ArrayList<String> cancelledList, ArrayList<String> rejectedList, ArrayList<String> enrolledList) {
+    public Event(String id, String name, Date dateTime, String description, String geolocation, String facility, Date registrationOpen, Date registrationClose, int maxCapacity, int price, int waitListLimit, boolean needsGeolocation, String image, String QRCode, ArrayList<String> waitList, ArrayList<String> invitedList, ArrayList<String> cancelledList, ArrayList<String> rejectedList, ArrayList<String> enrolledList) {
         this.id = id;
         this.name = name;
         this.dateTime = dateTime;
         this.description = description;
         this.geolocation = geolocation;
+        this.facility = facility;
         this.registrationOpen = registrationOpen;
         this.registrationClose = registrationClose;
         this.maxCapacity = maxCapacity;
@@ -96,6 +99,7 @@ public class Event implements Parcelable{
         name = in.readString();
         description = in.readString();
         geolocation = in.readString();
+        facility = in.readString();
         maxCapacity = in.readInt();
         price = in.readInt();
         WaitListLimit = in.readInt();
@@ -132,6 +136,7 @@ public class Event implements Parcelable{
         newMap.put("dateTime", dateTime);
         newMap.put("description", description);
         newMap.put("geolocation", geolocation);
+        newMap.put("facility", facility);
         newMap.put("registrationOpen", registrationOpen);
         newMap.put("registrationClose", registrationClose);
         newMap.put("maxCapacity", maxCapacity);
@@ -167,6 +172,10 @@ public class Event implements Parcelable{
     public void setDescription(String description) { this.description = description; }
 
     public String getGeolocation() { return geolocation; }
+
+    public String getFacility() { return facility; }
+
+    public void setFacility(String facility) { this.facility = facility; }
 
     public void setGeolocation(String geoLocation) {
         this.geolocation = geoLocation;
@@ -375,6 +384,7 @@ public class Event implements Parcelable{
         parcel.writeString(name);
         parcel.writeString(description);
         parcel.writeString(geolocation);
+        parcel.writeString(facility);
         parcel.writeInt(maxCapacity);
         parcel.writeInt(price);
         parcel.writeInt(WaitListLimit);
