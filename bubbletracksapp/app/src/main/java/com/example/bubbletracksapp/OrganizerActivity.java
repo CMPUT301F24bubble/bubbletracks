@@ -53,12 +53,11 @@ public class OrganizerActivity extends AppCompatActivity {
     // declare all views necessary
     private ScrollView parentLayout;
     private EditText nameText, descriptionText, maxCapacityText, priceText, waitListLimitText;
-    private ImageButton dateTimeButton, registrationOpenButton, registrationCloseButton;
+    private ImageButton dateTimeButton, registrationOpenButton, registrationCloseButton, backButton;
     private Button uploadPhotoButton, createButton;
     private TextView dateTimeText, registrationOpenText, registrationCloseText, loadingText;
     private ImageView posterImage;
     private CheckBox requireGeolocationCheckBox;
-    private ImageButton backButton;
 
     // declare Date variables
     private Date dateTime, registrationClose;

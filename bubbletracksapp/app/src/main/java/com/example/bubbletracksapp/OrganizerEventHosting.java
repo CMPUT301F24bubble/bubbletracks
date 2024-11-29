@@ -54,6 +54,7 @@ public class OrganizerEventHosting extends AppCompatActivity implements EventHos
         binding = EventHostingListBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        // initialize activity launcher to upload new image
         uploadImageLauncher = registerForActivityResult(new ActivityResultContracts.GetContent(), uri -> {
             if (uri != null) {
                 uploadNewImage(uri);
@@ -123,42 +124,42 @@ public class OrganizerEventHosting extends AppCompatActivity implements EventHos
 //        startActivity(intent);
     }
 
+    /**
+     * Uploads new poster by launching activity launcher
+     * @param event event for which the poster is updated
+     */
     public void updatePoster(Event event){
-
         newEventImage = event;
         Intent intent = new Intent(MediaStore.ACTION_PICK_IMAGES);
         uploadImageLauncher.launch("image/*");
     }
 
+    /**
+     * Uploads the image and updates the event in the database
+     * @param uri uri of the image to be stored
+     */
     protected void uploadNewImage(Uri uri){
+
+        // get the file path
         String filename = "posters/" + newEventImage.getId() + "poster.jpg";
         StorageReference storageReference = FirebaseStorage.getInstance().getReference(filename);
 
         storageReference.putFile(uri)
+                // upload file
                 .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-
                         // get the download url of the image
                         storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-
                             @Override
                             public void onSuccess(Uri uri) {
-
-                                // store the download string in the event class
+                                // update the download string in the event class and update the event
                                 String downloadUrl = uri.toString();
                                 newEventImage.setImage(downloadUrl);
-
-
-
                                 eventDB.updateEvent(newEventImage);
-
                                 Toast.makeText(OrganizerEventHosting.this, "Poster has been updated", Toast.LENGTH_SHORT).show();
-
                             }
-
-                            // handle errors
+                        // handle errors
                         }).addOnFailureListener(new OnFailureListener() {
                             @Override
                             public void onFailure(@NonNull Exception e) {
@@ -166,8 +167,7 @@ public class OrganizerEventHosting extends AppCompatActivity implements EventHos
                             }
                         });
                     }
-
-                    // handle errors
+                // handle errors
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
