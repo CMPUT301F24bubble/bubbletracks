@@ -5,6 +5,7 @@
     android:layout_height="match_parent"
     android:background="#FFFFFF">
 
+    <!--text view to show the loading page-->
     <TextView
         android:id="@+id/loading_textview"
         android:layout_width="wrap_content"
@@ -16,6 +17,7 @@
         android:textColor="#555555"
         android:visibility="gone" />
 
+    <!--scroll view to create the event-->
     <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/parent_layout"
         android:layout_width="match_parent"
