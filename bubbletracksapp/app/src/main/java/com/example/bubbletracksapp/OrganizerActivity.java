@@ -73,7 +73,6 @@ public class OrganizerActivity extends AppCompatActivity {
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
 
         // set the layout to the create event page
@@ -159,7 +158,6 @@ public class OrganizerActivity extends AppCompatActivity {
                 createEvent();
             }
         });
-
     }
 
 

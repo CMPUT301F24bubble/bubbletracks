@@ -60,7 +60,7 @@ public class Entrant implements Parcelable {
      * @param eventsEnrolled events entrant is enrolled in
      * @param eventsWaitlist events entrant is in waitlist for
      */
-    public Entrant(String[] name, String email, String phone, String deviceID, Boolean notification, LatLng geolocation, String role, String facility, ArrayList<String> eventsOrganized, ArrayList<String> eventsInvited, ArrayList<String> eventsEnrolled, ArrayList<String> eventsWaitlist) {
+    public Entrant(String[] name, String email, String phone, String deviceID, Boolean notification, String role, String facility, LatLng geolocation, ArrayList<String> eventsOrganized, ArrayList<String> eventsInvited, ArrayList<String> eventsEnrolled, ArrayList<String> eventsWaitlist) {
         this.name = name;
         this.email = email;
         this.phone = phone;
@@ -187,8 +187,8 @@ public class Entrant implements Parcelable {
         map.put("email", email);
         map.put("phone", phone);
         map.put("role", role);
-        map.put("geolocation", latLngToGeoPoint(geolocation));
         map.put("facility", facility);
+        map.put("geolocation", latLngToGeoPoint(geolocation));
         map.put("notification", notification);
         map.put("ID", deviceID);
         map.put("organized", eventsOrganized);
@@ -297,6 +297,14 @@ public class Entrant implements Parcelable {
     }
 
     /**
+     * Get the user's hosted events.
+     * @return A list of the user's hosted events.
+     */
+    public ArrayList<String> getOrganized() {
+        return eventsOrganized;
+    }
+
+    /**
      * describes the content of the entrant
      * @return 0
      */
@@ -338,7 +346,7 @@ public class Entrant implements Parcelable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Entrant entrant = (Entrant) o;
-        return Objects.deepEquals(name, entrant.name) && Objects.equals(email, entrant.email) && Objects.equals(phone, entrant.phone) && Objects.equals(deviceID, entrant.deviceID) && Objects.equals(role, entrant.role);
+        return Objects.deepEquals(name, entrant.name) && Objects.equals(email, entrant.email) && Objects.equals(phone, entrant.phone) && Objects.equals(deviceID, entrant.deviceID) && Objects.equals(role, entrant.role) && Objects.equals(facility, entrant.facility);
     }
     /**
      * get hash code of entrant
