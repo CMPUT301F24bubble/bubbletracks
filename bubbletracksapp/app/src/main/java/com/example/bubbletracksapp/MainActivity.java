@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
-import com.example.bubbletracksapp.databinding.AdminBrowseEventsBinding;
 import com.example.bubbletracksapp.databinding.HomescreenBinding;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -92,15 +91,6 @@ public class MainActivity extends AppCompatActivity {
             return null;
         });
 
-        Button eventsButton = binding.buttonEvents;
-        Button scanButton = binding.buttonScan;
-        Button ticketsButton = binding.buttonTickets;
-        Button profileButton = binding.buttonProfile;
-        Button userEventsButton = binding.buttonEvents;
-        Button eventHostButton = binding.buttonEventHost;
-        Button adminProfileAccessButton = binding.buttonAdminProfiles;
-        Button browseEventsButton=binding.buttonBrowseEvent;
-        Button adminFacilityAccessButton = binding.buttonFacilityProfiles;
         // Code for the Organizer, Entrant, and Admin buttons
         organizerButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -136,19 +126,6 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-        Intent adminProfileIntent = new Intent(MainActivity.this, AdminProfileViews.class);
-        switchActivityButton(adminProfileAccessButton, adminProfileIntent);
-
-        // TAKES YOU TO THE BROWSE EVENTS TAB WHEN ADMIN
-        Intent adminEventBrowseIntent = new Intent(MainActivity.this, BrowseEventsScreenGenerator.class);
-        switchActivityButton(browseEventsButton, adminEventBrowseIntent);
-        Intent adminFacilityIntent = new Intent(MainActivity.this, AdminFacilityViews.class);
-        switchActivityButton(adminFacilityAccessButton, adminFacilityIntent);
-
-        Intent eventHostIntent = new Intent(MainActivity.this, OrganizerEventHosting.class);
-        switchActivityButton(eventHostButton, eventHostIntent);
-
-    }
     /**
      * Generalized code for buttons that use start(Activity()
      * @param button is the button that will be clicked
