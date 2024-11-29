@@ -42,6 +42,9 @@ public class EntrantViewActivity extends AppCompatActivity {
     private Button joinButton;
     private ImageButton backButton;
 
+    // declare dialog that will appear when joining/leaving a waitlist
+    private boolean showsDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,6 +74,9 @@ public class EntrantViewActivity extends AppCompatActivity {
         joinButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // Make sure that the dialog shows up only once
+                if (showsDialog) return;
+
                 // If the event needs a geolocation, make sure the entrant has a geolocation
                 if(!event.getNeedsGeolocation() || !Objects.equals(entrant.getGeolocation(), new LatLng(0, 0)))
                 {
@@ -156,6 +162,7 @@ public class EntrantViewActivity extends AppCompatActivity {
 
     protected void addEntrant(){
         AlertDialog joinDialog;
+        showsDialog = true;
         if (!inWaitlist) { // Entrant wants to join waitlist
             String message = "";
             if(event.getNeedsGeolocation()){
@@ -203,6 +210,12 @@ public class EntrantViewActivity extends AppCompatActivity {
                             dialogInterface.dismiss();
                         }
                     })
+                    .setOnDismissListener(new DialogInterface.OnDismissListener() {
+                        @Override
+                        public void onDismiss(DialogInterface dialogInterface) {
+                            showsDialog = false;
+                        }
+                    })
                     .create();
         }
         else { // Entrant wants to leave waitlist
@@ -227,6 +240,12 @@ public class EntrantViewActivity extends AppCompatActivity {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             dialogInterface.dismiss();
+                        }
+                    })
+                    .setOnDismissListener(new DialogInterface.OnDismissListener() {
+                        @Override
+                        public void onDismiss(DialogInterface dialogInterface) {
+                            showsDialog = false;
                         }
                     })
                     .create();
