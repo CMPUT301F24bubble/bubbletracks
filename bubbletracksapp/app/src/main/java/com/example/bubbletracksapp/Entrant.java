@@ -205,6 +205,10 @@ public class Entrant implements Parcelable {
      */
     public String getRole() { return role; }
 
+    /**
+     * retrieve id of entrant's facility
+     * @return id of entrant's facility
+     */
     public String getFacility() { return facility; }
 
     /**
@@ -255,6 +259,10 @@ public class Entrant implements Parcelable {
         this.email = email;
     }
 
+    /**
+     * set the entrant's facility
+     * @param facility id of the entrant's facility
+     */
     public void setFacility(String facility) { this.facility = facility; }
 
     /**

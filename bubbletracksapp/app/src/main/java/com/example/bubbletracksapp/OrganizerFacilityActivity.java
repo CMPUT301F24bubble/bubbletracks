@@ -23,20 +23,32 @@ import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * this class is an activity that allows organizers to create a facility
+ * @author Samyak
+ * @version 1.0
+ */
 public class OrganizerFacilityActivity extends AppCompatActivity {
 
+    // new facility to be created
     private Facility facility = new Facility();
 
+    // declare the views necessary
     private ImageButton backButton, locationButton;
     private EditText nameText;
     private TextView locationText;
     private Button createButton;
 
+    // Declares an ActivityResultLauncher that will handle the location selection action
     private ActivityResultLauncher<Intent> autocompleteLauncher;
 
     // fields to extract from the selected Location
     List<Place.Field> fields = Arrays.asList(Place.Field.ID, Place.Field.ADDRESS);
 
+    /**
+     * sets the layout, assigns all the views and sets up all the on click listeners
+     * @param savedInstanceState stores the state of the activity
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,6 +74,7 @@ public class OrganizerFacilityActivity extends AppCompatActivity {
                 }
         );
 
+        // handler to go back to home screen
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -69,7 +82,7 @@ public class OrganizerFacilityActivity extends AppCompatActivity {
             }
         });
 
-        // handler for button for selecting location
+        // handler for selecting location
         locationButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -87,6 +100,9 @@ public class OrganizerFacilityActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * starts the intent for the overlay of google autocomplete API
+     */
     protected void selectLocation() {
         // launch activity result launcher
         Intent intent = new Autocomplete.IntentBuilder(AutocompleteActivityMode.OVERLAY, fields)
@@ -94,10 +110,14 @@ public class OrganizerFacilityActivity extends AppCompatActivity {
         autocompleteLauncher.launch(intent);
     }
 
+    /**
+     * creates a facility and stores it in the database
+     */
     protected void createFacility() {
 
         String nameString = nameText.getText().toString().trim();
         String locationString = locationText.getText().toString().trim();
+        // check if name and location is present
         if(nameString.isEmpty() || locationString.equals("Location not set") ){
             Toast.makeText(OrganizerFacilityActivity.this, "Sorry, a facility needs" +
                     " to have a name and a location", Toast.LENGTH_LONG).show();
@@ -109,7 +129,11 @@ public class OrganizerFacilityActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * updates the organizer to have the facility's id
+     */
     protected void updateOrganizer(){
+        // get the id from shared preference
         SharedPreferences localID = getSharedPreferences("LocalID", Context.MODE_PRIVATE);
         String ID = localID.getString("ID", "Not Found");
         EntrantDB entrantDB = new EntrantDB();
@@ -117,19 +141,19 @@ public class OrganizerFacilityActivity extends AppCompatActivity {
         // get the entrant from the database
         entrantDB.getEntrant(ID).thenAccept(user -> {
             if(user != null){
-
                 // update facility's organizer to current entrant
                 facility.setOrganizer(user.getID());
                 user.setFacility(facility.getId());
                 entrantDB.updateEntrant(user);
 
+                // store the facility in the database
                 FacilityDB facilityDB = new FacilityDB();
                 facilityDB.addFacility(facility);
 
+                // go to facility's manage facility screen
                 Intent intent = new Intent(OrganizerFacilityActivity.this, OrganizerManageActivity.class);
                 intent.putExtra("id", facility.getId());
                 startActivity(intent);
-
             } else {
                 Toast.makeText(OrganizerFacilityActivity.this, "Could not load profile.", Toast.LENGTH_LONG).show();
             }
