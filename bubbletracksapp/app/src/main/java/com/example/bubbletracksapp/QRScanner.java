@@ -15,10 +15,19 @@ import androidx.core.app.ActivityCompat;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
+/**
+ * this class is an activity that allows a user to scan a QR Code
+ * @author Gwen
+ * @version 2.0
+ */
 public class QRScanner extends AppCompatActivity {
 
     private static final int PERMISSION_REQUEST_CAMERA = 1;
 
+    /**
+     * initializes the qr scanner and ask for permission based on API version
+     * @param savedInstanceState stores the state of the activity
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,6 +43,9 @@ public class QRScanner extends AppCompatActivity {
         }
     }
 
+    /**
+     * initializes the scanner
+     */
     private void initQRCodeScanner() {
         IntentIntegrator integrator = new IntentIntegrator(this);
         integrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE);
@@ -41,6 +53,12 @@ public class QRScanner extends AppCompatActivity {
         integrator.setPrompt("Scan a QR code");
         integrator.initiateScan();
     }
+
+    /**
+     * @param requestCode
+     * @param permissions
+     * @param grantResults
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -54,6 +72,12 @@ public class QRScanner extends AppCompatActivity {
         }
     }
 
+    /**
+     * sends the resultant string from the scan to the event view activity
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);

@@ -11,7 +11,8 @@ import com.google.zxing.qrcode.QRCodeWriter;
 /**
  * Hold ability to create QR code
  * Organizer use
- * @author
+ * @author Samyak
+ * @ version 1.0
  */
 public class QRGenerator {
 
