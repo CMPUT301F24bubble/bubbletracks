@@ -16,16 +16,27 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
+/**
+ * Holds database for Facility
+ * @author Samyak
+ */
 public class FacilityDB {
 
     FirebaseFirestore db;
     CollectionReference facilitiesRef;
 
+    /**
+     * Retrieves facility collection from firebase
+     */
     public FacilityDB() {
         db = FirebaseFirestore.getInstance();
         facilitiesRef = db.collection("facilities");
     }
 
+    /**
+     * Adds facility details to the database
+     * @param facility facility to be uploaded
+     */
     public void addFacility(Facility facility)
     {
         Map<String, Object> newFacility = facility.toMap();
@@ -56,6 +67,10 @@ public class FacilityDB {
                 });
     }
 
+    /**
+     * Deletes facility from database
+     * @param facility facility to be deleted
+     */
     public void deleteFacility(Facility facility)
     {
         String docID = facility.getId();
@@ -84,6 +99,10 @@ public class FacilityDB {
                 });
     }
 
+    /**
+     * Updates facility details to the database
+     * @param facility new facility details
+     */
     public void updateFacility(Facility facility)
     {
         Map<String, Object> newFacilityMap = facility.toMap();
@@ -114,6 +133,11 @@ public class FacilityDB {
                 });
     }
 
+    /**
+     * Allows to get facility document from database
+     * @param ID facility ID
+     * @return return code
+     */
     public CompletableFuture<Facility> getFacility(String ID)
     {
         CompletableFuture<Facility> returnCode = new CompletableFuture<>();
