@@ -288,15 +288,15 @@ public class Admin {
     }
 
     /**
-     * Removes the hash QRCode data
-     * @param context
-     * @param event
+     * Removes The hash QRCode data
+     * @param context The context this deletion occurs
+     * @param event The event who's QR code is to be deleted
      */
     public void removeHashData(Context context, Event event) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         DocumentReference eventRef = db.collection("events").document(event.getId());
 
-        eventRef.update("QrCode", FieldValue.delete())
+        eventRef.update("QRCode", FieldValue.delete())
                 .addOnSuccessListener(aVoid -> {
                     Toast.makeText(context, "QrCode removed successfully", Toast.LENGTH_SHORT).show();
                 })

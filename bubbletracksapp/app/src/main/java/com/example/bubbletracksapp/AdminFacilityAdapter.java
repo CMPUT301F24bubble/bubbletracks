@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,7 +44,7 @@ public class AdminFacilityAdapter extends ArrayAdapter<Facility> {
         TextView facilityIdText = convertView.findViewById(R.id.facility_id);
         TextView facilityLocationText = convertView.findViewById(R.id.facility_location);
         TextView facilityOrganizerText = convertView.findViewById(R.id.facility_organizer);
-        Button deleteButton = convertView.findViewById(R.id.delete_facility_button);
+        ImageButton deleteButton = convertView.findViewById(R.id.delete_facility_button);
         TextView eventsTextView = convertView.findViewById(R.id.organized);
 
         if (facility != null) {

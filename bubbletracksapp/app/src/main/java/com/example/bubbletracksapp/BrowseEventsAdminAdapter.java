@@ -7,6 +7,8 @@
 
 package com.example.bubbletracksapp;
 
+import static android.system.Os.remove;
+
 import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -62,7 +64,7 @@ public class BrowseEventsAdminAdapter extends RecyclerView.Adapter<BrowseEventsA
             eventDescription = itemView.findViewById(R.id.browseEventDescription);
             eventPic = itemView.findViewById(R.id.browseEventPoster);
             eventParent = itemView.findViewById(R.id.browseEventXMLID);
-            //overflowImageButton = itemView.findViewById(R.id.browseOverflowMenu);
+            overflowImageButton = itemView.findViewById(R.id.browseOverflowMenu);
         }
     }
 
@@ -151,14 +153,14 @@ public class BrowseEventsAdminAdapter extends RecyclerView.Adapter<BrowseEventsA
                 popupMenu.setOnMenuItemClickListener(item -> {
                     int id = item.getItemId();
                     if (id == R.id.action_delete_event) {
-                        handleDeleteEventAction(this, event);
+                        handleDeleteEventAction(event);
                         popupMenu.dismiss();
                         return true;
-                    } /*else if (id == R.id.action_delete_QR_data) {
-                            handleDeleteQRDataAction(event);
+                    } else if (id == R.id.action_delete_QR_data) {
+                        handleDeleteQRDataAction(event);
                             popupMenu.dismiss();
                             return true;
-                        } else if (id == R.id.action_delete_poster) {
+                        } /*else if (id == R.id.action_delete_poster) {
                             handleDeletePosterAction(event);
                             popupMenu.dismiss();
                             return true;
@@ -185,14 +187,35 @@ public class BrowseEventsAdminAdapter extends RecyclerView.Adapter<BrowseEventsA
         return allTheEvents == null ? 0 : allTheEvents.size();
     }
 
-    private void handleDeleteEventAction(Context context, DocumentReference event) {
+    private void handleDeleteEventAction(Event event) {
 
         // DELETES EVENT FROM DATABASE: should cascade so that the event will not appear in any waitlist/registered/hosting list
         Admin admin = new Admin(context);
         admin.deleteEvent(context, event);
+        allTheEvents.remove(event);
+        notifyDataSetChanged();
         // OPTIONAL:  SENDS NOTIFICATION TO HOST THAT THEIR EVENT HAS BEEN DELETED ex: Admin has deleted "<Name of event>" on <Date of Event>. Please contact us at <email> in case you have any further questions.
     }
 
+    /**
+     * Handles the action of canceling an event.
+     *
+     * This method is triggered when the "Cancel Event" option in the overflow menu is selected.
+     * It will set the QR code data to be a page that says "Sorry! Event is canceled!".
+     * Updates the database.
+     * It will send a notification to the organizer that their event has been canceled.
+     *
+     * @param event The {@link Event} object representing the event to be canceled.
+     */
+    private void handleDeleteQRDataAction(Event event) {
+        // GOES INTO DATABASE
+
+        // CHANGES QR CODE OF THE EVENT SO THAT A POSTER ORIGINALLY PUT UP WILL GO TO EVENT CANCELED PAGE
+        Admin admin = new Admin(context);
+        admin.removeHashData(context, event);
+
+        // OPTIONAL: SENDS NOTIFICATION TO HOST THAT THEIR EVENT HAS BEEN CANCELED ex: Admin has successfully canceled "<Name of event>" on <Date of Event>.
+    }
 
 
 }
@@ -216,26 +239,9 @@ public class BrowseEventsAdminAdapter extends RecyclerView.Adapter<BrowseEventsA
      */
 
 
-/*
 
 
-/**
- * Handles the action of canceling an event.
- *
- * This method is triggered when the "Cancel Event" option in the overflow menu is selected.
- * It will set the QR code data to be a page that says "Sorry! Event is canceled!".
- * Updates the database.
- * It will send a notification to the organizer that their event has been canceled.
- *
- * @param event The {@link Event} object representing the event to be canceled.
- */
-/*private void handleDeleteQRDataAction(Event event) {
-    // GOES INTO DATABASE
 
-    // CHANGES QR CODE OF THE EVENT SO THAT A POSTER ORIGINALLY PUT UP WILL GO TO EVENT CANCELED PAGE
-
-    // OPTIONAL: SENDS NOTIFICATION TO HOST THAT THEIR EVENT HAS BEEN CANCELED ex: Admin has successfully canceled "<Name of event>" on <Date of Event>.
-}*/
 
 
     /*
