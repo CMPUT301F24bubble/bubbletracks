@@ -2,23 +2,46 @@ package com.example.bubbletracksapp;
 
 import static java.util.UUID.randomUUID;
 
+import android.Manifest;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 
 import com.example.bubbletracksapp.databinding.HomescreenBinding;
+import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FieldValue;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QuerySnapshot;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.util.Log;
 import android.view.View;
 
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.Toast;
 
 /**
@@ -31,6 +54,12 @@ public class MainActivity extends AppCompatActivity {
     private HomescreenBinding binding;
     private Entrant currentUser;
     private String currentDeviceID;
+    private final String channelID = "channel_id";
+
+    private Notifications notifications;
+    private NotificationDB notificationDB;
+    private ActivityResultLauncher<String> requestPermissionLauncher;
+
 
     /**
      * Set up creation of activity
@@ -92,6 +121,9 @@ public class MainActivity extends AppCompatActivity {
             return null;
         });
 
+        notificationDB = new NotificationDB();
+        notificationDB.listenForNotifications(currentDeviceID, this);
+
         // Code for the Organizer, Entrant, and Admin buttons
         organizerButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -125,6 +157,8 @@ public class MainActivity extends AppCompatActivity {
                         .commit();
             }
         });
+
+        createNotificationChannel(); // Set notification channel for entrant user
     }
 
     /**
@@ -194,4 +228,60 @@ public class MainActivity extends AppCompatActivity {
         };
         return ID;
     }
+
+    /**
+     * Sets notification channel for user to receive notifications while in the app
+     */
+    private void createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = "Entrant Notification Channel";
+            String description = "Notification channel for the entrant user to be notified about updates to their event";
+            int importance = NotificationManager.IMPORTANCE_HIGH;
+            NotificationChannel channel = new NotificationChannel(channelID, name, importance);
+            channel.setDescription(description);
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+    }
+
+    /**
+     * Show the notification for user to be given
+     * @param newNotification notification details from database
+     */
+    public void showNotification(Notifications newNotification) {
+        Intent intent = new Intent(this, OrganizerNotificationActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
+
+        NotificationCompat.Builder invitedBuilder = new NotificationCompat.Builder(this, channelID)
+                .setSmallIcon(R.drawable.baseline_notifications_24)
+                .setContentTitle(newNotification.getTitle())
+                .setContentText(newNotification.getSmallText())
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setStyle(new NotificationCompat.BigTextStyle()
+                        .bigText(newNotification.getBigText()))
+                // Set the intent that fires when the user taps the notification.
+                .setContentIntent(pendingIntent)
+                .setAutoCancel(true);
+
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+        try {
+            long timestamp = System.currentTimeMillis();
+            int notificationID = (currentDeviceID + timestamp).hashCode();
+            notificationManager.notify(notificationID, invitedBuilder.build()); // TODO: Notification id is the user id
+            notificationDB.markNotificationAsDelivered(newNotification.getId(), currentDeviceID);
+        }catch (SecurityException e) {
+                // Log the exception or handle it if the notification couldn't be posted
+                Log.e("Notification", "Permission denied for posting notification: " + e.getMessage());
+        }
+    }
+
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
+
+
 }
