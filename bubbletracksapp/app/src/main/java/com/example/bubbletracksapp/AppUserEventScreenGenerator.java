@@ -43,14 +43,10 @@ public class AppUserEventScreenGenerator extends AppCompatActivity {
 
     private RecyclerView eventsplace;
     private AppEventAdapter eventAdapter;
-    private List<Event> waitlistEvents = new ArrayList<>();
-    private List<Event> registeredEvents = new ArrayList<>();
-    private Button accept, decline;
     private TextView locationView, timeView;
     private ImageButton backButton;
     EntrantDB entrantDB = new EntrantDB();
     EventDB eventDB = new EventDB();
-    private List<String> otherOption = Arrays.asList("Waitlist", "Registered");
     private Spinner statusSpinner;
     private Entrant currentUser;
     List<Event> eventList = new ArrayList<>();
@@ -281,7 +277,7 @@ public class AppUserEventScreenGenerator extends AppCompatActivity {
      * Empty the text views of time and location.
      * It is used when no event is being displayed
      */
-    public void setDefaultActivityText() {
+    private void setDefaultActivityText() {
         timeView.setText(" ");
         locationView.setText(" ");
     }

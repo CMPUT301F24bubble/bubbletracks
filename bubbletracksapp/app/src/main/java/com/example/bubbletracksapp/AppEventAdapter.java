@@ -27,10 +27,10 @@ import java.util.List;
 public class AppEventAdapter extends RecyclerView.Adapter<AppEventAdapter.EventViewHolder>{
 
     // ATTRIBUTES
-    Context context;
-    List<Event> eventList;
-    Entrant user;
-    Event event;
+    private Context context;
+    private List<Event> eventList;
+    private Entrant user;
+    private Event event;
 
     public AppEventAdapter (Context context, List<Event> eventList, Entrant user) {
         this.context = context;
