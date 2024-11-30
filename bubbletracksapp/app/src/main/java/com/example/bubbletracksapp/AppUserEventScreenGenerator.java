@@ -1,3 +1,9 @@
+/**
+ *
+ * @author Sarah, Chester
+ * @version 1.0
+ */
+
 package com.example.bubbletracksapp;
 
 import android.content.Context;
@@ -25,7 +31,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SnapHelper;
 import com.github.rubensousa.gravitysnaphelper.GravitySnapHelper;
-import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -36,17 +41,18 @@ import java.util.List;
  */
 public class AppUserEventScreenGenerator extends AppCompatActivity {
 
+    // ATTRIBUTES
     private RecyclerView eventsplace;
     private AppEventAdapter eventAdapter;
     private List<Event> waitlistEvents = new ArrayList<>();
     private List<Event> registeredEvents = new ArrayList<>();
     private Button accept, decline;
-    EntrantDB entrantDB = new EntrantDB();
-    EventDB eventDB = new EventDB();
+    private EntrantDB entrantDB = new EntrantDB();
+    private EventDB eventDB = new EventDB();
     private List<String> otherOption = Arrays.asList("Waitlist", "Registered");
     private Spinner statusSpinner;
     private Entrant user;
-    List<Event> eventList;
+    private List<Event> eventList;
 
     /**
      * Initializes main components of the screen: drop down menu, the event display,
@@ -87,7 +93,6 @@ public class AppUserEventScreenGenerator extends AppCompatActivity {
         eventsplace.setHasFixedSize(true);
 
         // Initialize a flag outside the listener to control the loop
-
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);

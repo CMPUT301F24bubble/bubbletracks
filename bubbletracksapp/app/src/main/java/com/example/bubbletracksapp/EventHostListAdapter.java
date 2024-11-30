@@ -134,8 +134,7 @@ public class EventHostListAdapter extends ArrayAdapter<Event>{
                         .setTitle("Delete Event")
                         .setMessage("Are you sure you want to delete this event?")
                         .setPositiveButton("Yes", (dialog, which) -> {
-                            DocumentReference eventRef = db.collection("events").document(event.getId());
-                            admin.deleteEvent(getContext(), eventRef);
+                            admin.deleteEvent(getContext(), event);
                             remove(event);
                             notifyDataSetChanged();
                         })
