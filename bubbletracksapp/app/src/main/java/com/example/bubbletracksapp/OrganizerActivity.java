@@ -65,6 +65,8 @@ public class OrganizerActivity extends AppCompatActivity {
     // declare uri variable
     private Uri posterUri;
 
+    private Boolean inCreation = false;
+
     /**
      * sets the layout, assigns all the views and sets up all the on click listeners
      * @param savedInstanceState stores the state of the activity
@@ -151,7 +153,6 @@ public class OrganizerActivity extends AppCompatActivity {
         createButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setContentView(R.layout.loading);
                 createEvent();
             }
         });
@@ -284,6 +285,10 @@ public class OrganizerActivity extends AppCompatActivity {
      */
     protected void createEvent(){
 
+        if(inCreation){ return; }
+
+        inCreation = true;
+
         // extract the necessary fields
         String name = nameText.getText().toString().trim();
         String dateTimeString = dateTimeText.getText().toString().trim();
@@ -315,7 +320,7 @@ public class OrganizerActivity extends AppCompatActivity {
             if(curDate.after(dateTime) || curDate.after(registrationClose) || curDate.after(registrationOpen)){
                 Toast.makeText(OrganizerActivity.this, "The event and registration " +
                         "dates can't be in the past", Toast.LENGTH_LONG).show();
-                setContentView(R.layout.create_event);
+                inCreation = false;
                 return;
             }
 
@@ -324,7 +329,7 @@ public class OrganizerActivity extends AppCompatActivity {
                 Toast.makeText(OrganizerActivity.this, "Registration open date needs to " +
                         "be before registration close date and registration close date needs to be " +
                         "before the event", Toast.LENGTH_LONG).show();
-                setContentView(R.layout.create_event);
+                inCreation = false;
                 return;
             }
 
@@ -333,14 +338,14 @@ public class OrganizerActivity extends AppCompatActivity {
                 event.setMaxCapacity(Integer.parseInt(maxCapacity));
             } catch (NumberFormatException e) {
                 Toast.makeText(OrganizerActivity.this, "Please enter a valid capacity", Toast.LENGTH_LONG).show();
-                setContentView(R.layout.create_event);
+                inCreation = false;
                 return;
             }
 
             // check to see if capacity is not negative
             if(Integer.parseInt(maxCapacity) < 0){
                 Toast.makeText(OrganizerActivity.this, "Capacity cannot be negative", Toast.LENGTH_LONG).show();
-                setContentView(R.layout.create_event);
+                inCreation = false;
                 return;
             }
 
@@ -353,14 +358,14 @@ public class OrganizerActivity extends AppCompatActivity {
                     event.setPrice(Integer.parseInt(price));
                 } catch (NumberFormatException e) {
                     Toast.makeText(OrganizerActivity.this, "Please enter a valid price", Toast.LENGTH_LONG).show();
-                    setContentView(R.layout.create_event);
+                    inCreation = false;
                     return;
                 }
 
                 // check if the price is positive
                 if(Integer.parseInt(price) < 0){
                     Toast.makeText(OrganizerActivity.this, "Price cannot be negative", Toast.LENGTH_LONG).show();
-                    setContentView(R.layout.create_event);
+                    inCreation = false;
                     return;
                 }
             }
@@ -374,14 +379,14 @@ public class OrganizerActivity extends AppCompatActivity {
                     event.setWaitListLimit(Integer.parseInt(waitListLimit));
                 } catch (NumberFormatException e) {
                     Toast.makeText(OrganizerActivity.this, "Please enter a valid waitlist limit", Toast.LENGTH_LONG).show();
-                    setContentView(R.layout.create_event);
+                    inCreation = false;
                     return;
                 }
 
                 // check if waitlist limit is positive
                 if(Integer.parseInt(price) < 0){
                     Toast.makeText(OrganizerActivity.this, "Waitlist limit cannot be negative", Toast.LENGTH_LONG).show();
-                    setContentView(R.layout.create_event);
+                    inCreation = false;
                     return;
                 }
             }
