@@ -45,6 +45,7 @@ dependencies {
     implementation(libs.navigation.fragment)
     implementation(libs.navigation.ui)
     implementation(libs.zxing.android.embedded)
+    implementation("com.journeyapps:zxing-android-embedded:4.3.0")
     implementation(libs.core)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
