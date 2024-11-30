@@ -16,7 +16,6 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
@@ -49,11 +48,10 @@ public class OrganizerActivity extends AppCompatActivity {
     private Date curDate = new Date();
 
     // declare all views necessary
-    private ScrollView parentLayout;
     private EditText nameText, descriptionText, maxCapacityText, priceText, waitListLimitText;
     private ImageButton dateTimeButton, registrationOpenButton, registrationCloseButton, backButton;
     private Button uploadPhotoButton, createButton;
-    private TextView dateTimeText, registrationOpenText, registrationCloseText, loadingText;
+    private TextView dateTimeText, registrationOpenText, registrationCloseText;
     private ImageView posterImage;
     private CheckBox requireGeolocationCheckBox;
 
@@ -100,8 +98,6 @@ public class OrganizerActivity extends AppCompatActivity {
         posterImage = findViewById(R.id.imagePoster);
         createButton = findViewById(R.id.buttonCreate);
         backButton =  findViewById(R.id.back_button);
-        parentLayout = findViewById(R.id.parent_layout);
-        loadingText = findViewById(R.id.loading_textview);
 
         // initialize the activity result launcher for the image picker
         uploadImageLauncher = registerForActivityResult(new ActivityResultContracts.GetContent(), uri -> {
@@ -155,6 +151,7 @@ public class OrganizerActivity extends AppCompatActivity {
         createButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                setContentView(R.layout.loading);
                 createEvent();
             }
         });
@@ -286,9 +283,6 @@ public class OrganizerActivity extends AppCompatActivity {
      * (Firebase-related errors)
      */
     protected void createEvent(){
-        // change the visibility of the views to show a loading page
-        loadingText.setVisibility(View.VISIBLE);
-        parentLayout.setVisibility(View.GONE);
 
         // extract the necessary fields
         String name = nameText.getText().toString().trim();
@@ -321,7 +315,7 @@ public class OrganizerActivity extends AppCompatActivity {
             if(curDate.after(dateTime) || curDate.after(registrationClose) || curDate.after(registrationOpen)){
                 Toast.makeText(OrganizerActivity.this, "The event and registration " +
                         "dates can't be in the past", Toast.LENGTH_LONG).show();
-                removeLoadingScreen();          // return from the loading page
+                setContentView(R.layout.create_event);
                 return;
             }
 
@@ -330,7 +324,7 @@ public class OrganizerActivity extends AppCompatActivity {
                 Toast.makeText(OrganizerActivity.this, "Registration open date needs to " +
                         "be before registration close date and registration close date needs to be " +
                         "before the event", Toast.LENGTH_LONG).show();
-                removeLoadingScreen();          // return from the loading page
+                setContentView(R.layout.create_event);
                 return;
             }
 
@@ -339,14 +333,14 @@ public class OrganizerActivity extends AppCompatActivity {
                 event.setMaxCapacity(Integer.parseInt(maxCapacity));
             } catch (NumberFormatException e) {
                 Toast.makeText(OrganizerActivity.this, "Please enter a valid capacity", Toast.LENGTH_LONG).show();
-                removeLoadingScreen();         // return form the loading page
+                setContentView(R.layout.create_event);
                 return;
             }
 
             // check to see if capacity is not negative
             if(Integer.parseInt(maxCapacity) < 0){
                 Toast.makeText(OrganizerActivity.this, "Capacity cannot be negative", Toast.LENGTH_LONG).show();
-                removeLoadingScreen();      // return form the loading page
+                setContentView(R.layout.create_event);
                 return;
             }
 
@@ -359,14 +353,14 @@ public class OrganizerActivity extends AppCompatActivity {
                     event.setPrice(Integer.parseInt(price));
                 } catch (NumberFormatException e) {
                     Toast.makeText(OrganizerActivity.this, "Please enter a valid price", Toast.LENGTH_LONG).show();
-                    removeLoadingScreen();      // return from the loading page
+                    setContentView(R.layout.create_event);
                     return;
                 }
 
                 // check if the price is positive
                 if(Integer.parseInt(price) < 0){
                     Toast.makeText(OrganizerActivity.this, "Price cannot be negative", Toast.LENGTH_LONG).show();
-                    removeLoadingScreen();      // return from the loading page
+                    setContentView(R.layout.create_event);
                     return;
                 }
             }
@@ -380,14 +374,14 @@ public class OrganizerActivity extends AppCompatActivity {
                     event.setWaitListLimit(Integer.parseInt(waitListLimit));
                 } catch (NumberFormatException e) {
                     Toast.makeText(OrganizerActivity.this, "Please enter a valid waitlist limit", Toast.LENGTH_LONG).show();
-                    removeLoadingScreen();
+                    setContentView(R.layout.create_event);
                     return;
                 }
 
                 // check if waitlist limit is positive
                 if(Integer.parseInt(price) < 0){
                     Toast.makeText(OrganizerActivity.this, "Waitlist limit cannot be negative", Toast.LENGTH_LONG).show();
-                    removeLoadingScreen();
+                    setContentView(R.layout.create_event);
                     return;
                 }
             }
@@ -431,7 +425,6 @@ public class OrganizerActivity extends AppCompatActivity {
                         });
             }
         }
-        removeLoadingScreen();
     }
 
     /**
@@ -530,14 +523,6 @@ public class OrganizerActivity extends AppCompatActivity {
                 finish();
             }
         });
-    }
-
-    /**
-     * removes the loading screen to go back to the event creation screen
-     */
-    protected void removeLoadingScreen(){
-        loadingText.setVisibility(View.GONE);
-        parentLayout.setVisibility(View.VISIBLE);
     }
 
     /**

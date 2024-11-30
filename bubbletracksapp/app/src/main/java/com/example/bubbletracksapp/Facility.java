@@ -1,16 +1,23 @@
 package com.example.bubbletracksapp;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import androidx.annotation.NonNull;
+
 import com.google.firebase.firestore.DocumentSnapshot;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
  * this tracks the information of a given facility
  */
-public class Facility {
+public class Facility implements Parcelable {
 
     private String id;
     private String name;
@@ -25,6 +32,39 @@ public class Facility {
         this.id = UUID.randomUUID().toString();
         this.eventList = new ArrayList<>();
     }
+
+    public Facility(String id, String name, String location, String organizer, ArrayList<String> eventList) {
+        this.id = id;
+        this.name = name;
+        this.location = location;
+        this.organizer = organizer;
+        this.eventList = eventList;
+    }
+
+    protected Facility(Parcel in){
+        id = in.readString();
+        name = in.readString();
+        location = in.readString();
+        organizer = in.readString();
+        eventList = in.createStringArrayList();
+    }
+
+    public static final Creator<Facility> CREATOR = new Creator<Facility>() {
+        @Override
+        public Facility createFromParcel(Parcel in) {
+            return new Facility(in);
+        }
+        /**
+         * Create new array of the Facility details
+         * @param size Size of the array.
+         * @return array of the Facility details
+         */
+
+        @Override
+        public Facility[] newArray(int size) {
+            return new Facility[size];
+        }
+    };
 
     /**
      * constructor that creates a facility from a document snapshot
@@ -135,6 +175,52 @@ public class Facility {
      */
     public void clearEventList() {
         this.eventList.clear();
+    }
+
+    /**
+     * Writes to the parcel that holds the facility details
+     * @param parcel The Parcel in which the object should be written.
+     * @param i Additional flags about how the object should be written.
+     * May be 0 or {@link #PARCELABLE_WRITE_RETURN_VALUE}.
+     */
+    @Override
+    public void writeToParcel(@NonNull Parcel parcel, int i) {
+        parcel.writeString(id);
+        parcel.writeString(name);
+        parcel.writeString(location);
+        parcel.writeString(organizer);
+        parcel.writeStringList(eventList);
+    }
+
+    /**
+     * Find the facility in list of entrants (checks for id)
+     * @param o facility object
+     * @return a boolean to find the entrant
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Facility facility = (Facility) o;
+        return Objects.equals(id, facility.getId()) && Objects.equals(name, facility.getName()) && Objects.equals(location, facility.getLocation()) && Objects.equals(organizer, facility.getOrganizer()) && Objects.deepEquals(eventList, facility.getEventList());
+    }
+
+    /**
+     * get hash code of facility
+     * @return has code of facility
+     */
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, location, organizer);
+    }
+
+    /**
+     * describes the content of the entrant
+     * @return 0
+     */
+    @Override
+    public int describeContents() {
+        return 0;
     }
 
 }

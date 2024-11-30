@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,8 +24,9 @@ public class OrganizerManageActivity extends AppCompatActivity {
 
     // declare the views necessary
     private ImageButton backButton;
-    private TextView nameText, locationText;
-    private Button createEventButton;
+    private TextView nameText, locationText, loadingText;
+    private Button createEventButton, editFacilityButton;
+    private ScrollView parentLayout;
 
     /**
      * sets the layout, assigns all the views and sets up all the on click listeners
@@ -42,6 +44,9 @@ public class OrganizerManageActivity extends AppCompatActivity {
         nameText = findViewById(R.id.facility_name_text);
         locationText = findViewById(R.id.facility_location_text);
         createEventButton = findViewById(R.id.create_event_button);
+        editFacilityButton = findViewById(R.id.edit_facility_button);
+        loadingText = findViewById(R.id.loading_facility_textview);
+        parentLayout = findViewById(R.id.parent_layout);
 
         // get the id of facility
         Intent intent = getIntent();
@@ -71,6 +76,16 @@ public class OrganizerManageActivity extends AppCompatActivity {
             }
         });
 
+        // handler to edit your facility
+        editFacilityButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent editFacilityIntent = new Intent(OrganizerManageActivity.this, OrganizerEditFacilityActivity.class);
+                editFacilityIntent.putExtra("facility", facility);
+                startActivity(editFacilityIntent);
+            }
+        });
+
     }
 
     /**
@@ -81,6 +96,8 @@ public class OrganizerManageActivity extends AppCompatActivity {
         facilityDB.getFacility(id).thenAccept(curFacility -> {
             if(curFacility != null){
                 facility = curFacility;
+                loadingText.setVisibility(View.GONE);
+                parentLayout.setVisibility(View.VISIBLE);
                 location = curFacility.getLocation();
                 setViews();
             } else {
