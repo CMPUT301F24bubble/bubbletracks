@@ -216,12 +216,14 @@ public class OrganizerActivity extends AppCompatActivity {
         DatePickerDialog datePickerDialog = new DatePickerDialog(OrganizerActivity.this,
                 (view, selectedYear, selectedMonth, selectedDay) -> {
                     // show the selected date and default time
-                    calendar.set(Calendar.YEAR, selectedYear);
-                    calendar.set(Calendar.MONTH, selectedMonth);
-                    calendar.set(Calendar.DAY_OF_MONTH, selectedDay);
-                    calendar.set(Calendar.HOUR_OF_DAY, 0);
-                    calendar.set(Calendar.MINUTE, 0);
-                    calendar.set(Calendar.SECOND, 0);
+                    if(selectedYear != year || selectedMonth != month || selectedDay != day){
+                        calendar.set(Calendar.YEAR, selectedYear);
+                        calendar.set(Calendar.MONTH, selectedMonth);
+                        calendar.set(Calendar.DAY_OF_MONTH, selectedDay);
+                        calendar.set(Calendar.HOUR_OF_DAY, 0);
+                        calendar.set(Calendar.MINUTE, 0);
+                        calendar.set(Calendar.SECOND, 0);
+                    }
 
                     // set the selected date
                     registrationOpen = calendar.getTime();
