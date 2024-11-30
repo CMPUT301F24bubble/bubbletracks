@@ -37,6 +37,8 @@ public class EntrantActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.content);
 
+
+
         Button waitlistButton = findViewById(R.id.join_waitlist_button);
         // Change button text depending if the entrant has joined the waitlist or not
         waitlistButton.setOnClickListener(view -> {
