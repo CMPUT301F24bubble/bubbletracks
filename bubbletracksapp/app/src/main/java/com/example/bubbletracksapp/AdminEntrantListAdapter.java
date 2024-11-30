@@ -128,7 +128,7 @@ public class AdminEntrantListAdapter extends ArrayAdapter<Entrant> {
 
         String facilityId = entrant.getFacility();
 
-        if (facilityId != null) {
+        if (facilityId != null && !facilityId.isEmpty()) {
             DocumentReference facilityRef = db.collection("facilities").document(facilityId);
 
             facilityRef.get().addOnSuccessListener(documentSnapshot -> {
