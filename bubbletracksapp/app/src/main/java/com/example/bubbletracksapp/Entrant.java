@@ -1,6 +1,8 @@
 package com.example.bubbletracksapp;
 
 
+import static java.util.Map.entry;
+
 import android.util.Log;
 
 import android.os.Parcel;
@@ -302,6 +304,31 @@ public class Entrant implements Parcelable {
      */
     public String getProfilePicture() { return profilePicture; }
 
+
+    /**
+     * From a map of urls that contain default profile pictures with letters, it selects one from the
+     * first name and sets the URL to the firebase.
+     * Credits of profile pictures: <a href="https://github.com/eladnava/material-letter-icons/tree/master/dist/png">...</a>
+     * @return String of the new profile picture URL
+     */
+     public String setDefaultPicture() {
+         String firstLetter = "other";
+         if(!Objects.equals(name[0], ""))
+         {
+             firstLetter = String.valueOf(name[0].charAt(0));
+             if (Character.isLetter(firstLetter.charAt(0))) {
+                 firstLetter = firstLetter.toUpperCase();
+             }
+             else
+             {
+                 firstLetter = "other";
+             }
+         }
+        Map<String,String> alphabetMap = generateAlphabetMap();
+        this.profilePicture = alphabetMap.get(firstLetter);
+        return profilePicture;
+    }
+
     /**
      * Sets whether entrant allows for notification or not
      * @param notification boolean if entrant allows for notification
@@ -581,6 +608,42 @@ public class Entrant implements Parcelable {
     public void acceptEvent(String event) {
         eventsEnrolled.add(event);
         updateEntrantFirebase();
+    }
+
+    /**
+     * Creates a Map with the URL's related to each letter.
+     * It is not the best implementation but it is easy and we don't expect to change the URL.
+     * @return The map with the letters and URLs.
+     */
+    private Map<String,String> generateAlphabetMap() {
+        Map<String,String> alphabetMap = Map.ofEntries(entry("A","https://firebasestorage.googleapis.com/v0/b/bubbletracks-bubble.firebasestorage.app/o/profile-pictures%2FA.png?alt=media&token=ea317f60-a0a9-4980-8e62-b08ac6c7b333"),
+                entry("B","https://firebasestorage.googleapis.com/v0/b/bubbletracks-bubble.firebasestorage.app/o/profile-pictures%2FB.png?alt=media&token=9553b0b7-9c3f-49d3-89d9-1a64252c11c4"),
+                entry("C","https://firebasestorage.googleapis.com/v0/b/bubbletracks-bubble.firebasestorage.app/o/profile-pictures%2FC.png?alt=media&token=30986a09-bcba-44df-a10f-3f48a44d22d1"),
+                entry("D","https://firebasestorage.googleapis.com/v0/b/bubbletracks-bubble.firebasestorage.app/o/profile-pictures%2FD.png?alt=media&token=deb2730c-8eda-4d48-811c-91db15d00041"),
+                entry("E","https://firebasestorage.googleapis.com/v0/b/bubbletracks-bubble.firebasestorage.app/o/profile-pictures%2FE.png?alt=media&token=72f4c2ee-75f3-4c07-859e-7bb9189fc078"),
+                entry("F","https://firebasestorage.googleapis.com/v0/b/bubbletracks-bubble.firebasestorage.app/o/profile-pictures%2FF.png?alt=media&token=1867d9d8-9d7a-458f-bcf6-4436b5247771"),
+                entry("G","https://firebasestorage.googleapis.com/v0/b/bubbletracks-bubble.firebasestorage.app/o/profile-pictures%2FG.png?alt=media&token=26278ec2-e0e3-4970-9608-650ce580990a"),
+                entry("H","https://firebasestorage.googleapis.com/v0/b/bubbletracks-bubble.firebasestorage.app/o/profile-pictures%2FH.png?alt=media&token=7192d433-638a-440d-844c-e488b8027d84"),
+                entry("I","https://firebasestorage.googleapis.com/v0/b/bubbletracks-bubble.firebasestorage.app/o/profile-pictures%2FI.png?alt=media&token=8773b341-df57-4443-8790-6a52c63e70d0"),
+                entry("J","https://firebasestorage.googleapis.com/v0/b/bubbletracks-bubble.firebasestorage.app/o/profile-pictures%2FJ.png?alt=media&token=d1725572-d79f-41dc-ab88-322baba3c088"),
+                entry("K","https://firebasestorage.googleapis.com/v0/b/bubbletracks-bubble.firebasestorage.app/o/profile-pictures%2FK.png?alt=media&token=1e8b48ca-2c76-41b3-8df3-7aeadb88e858"),
+                entry("L","https://firebasestorage.googleapis.com/v0/b/bubbletracks-bubble.firebasestorage.app/o/profile-pictures%2FL.png?alt=media&token=8c7bf98f-b596-4954-9a06-50ab53e5967a"),
+                entry("M","https://firebasestorage.googleapis.com/v0/b/bubbletracks-bubble.firebasestorage.app/o/profile-pictures%2FM.png?alt=media&token=7c670671-3912-47e8-8e2d-4322691d4863"),
+                entry("N","https://firebasestorage.googleapis.com/v0/b/bubbletracks-bubble.firebasestorage.app/o/profile-pictures%2FN.png?alt=media&token=4f4c330d-4388-49e9-bead-9fbaca940ca8"),
+                entry("O","https://firebasestorage.googleapis.com/v0/b/bubbletracks-bubble.firebasestorage.app/o/profile-pictures%2FO.png?alt=media&token=7265da6e-0a65-444b-ac9e-c504f61bfbdc"),
+                entry("P","https://firebasestorage.googleapis.com/v0/b/bubbletracks-bubble.firebasestorage.app/o/profile-pictures%2FP.png?alt=media&token=d1cd089b-969c-42ea-9f6a-8705953e8011"),
+                entry("Q","https://firebasestorage.googleapis.com/v0/b/bubbletracks-bubble.firebasestorage.app/o/profile-pictures%2FQ.png?alt=media&token=dc027cd6-ab70-403d-b7e2-b715bb145e3e"),
+                entry("R","https://firebasestorage.googleapis.com/v0/b/bubbletracks-bubble.firebasestorage.app/o/profile-pictures%2FR.png?alt=media&token=f6970e54-edff-4472-a991-a38446d38381"),
+                entry("S","https://firebasestorage.googleapis.com/v0/b/bubbletracks-bubble.firebasestorage.app/o/profile-pictures%2FS.png?alt=media&token=5db2210b-1835-47d6-a2f8-e1e8331246b6"),
+                entry("T","https://firebasestorage.googleapis.com/v0/b/bubbletracks-bubble.firebasestorage.app/o/profile-pictures%2FT.png?alt=media&token=bb42bcb3-56b9-41de-b420-8bc057ab546d"),
+                entry("U","https://firebasestorage.googleapis.com/v0/b/bubbletracks-bubble.firebasestorage.app/o/profile-pictures%2FU.png?alt=media&token=62a923e3-05b2-48c7-91c2-dc7605939ddf"),
+                entry("V","https://firebasestorage.googleapis.com/v0/b/bubbletracks-bubble.firebasestorage.app/o/profile-pictures%2FV.png?alt=media&token=463cb3dd-2229-4888-b367-283be378466b"),
+                entry("W","https://firebasestorage.googleapis.com/v0/b/bubbletracks-bubble.firebasestorage.app/o/profile-pictures%2FW.png?alt=media&token=d63e78f3-a0f7-4d0c-be84-f1df3333e027"),
+                entry("X","https://firebasestorage.googleapis.com/v0/b/bubbletracks-bubble.firebasestorage.app/o/profile-pictures%2FX.png?alt=media&token=6001425f-69af-43f7-a8ee-327d1c97a55c"),
+                entry("Y","https://firebasestorage.googleapis.com/v0/b/bubbletracks-bubble.firebasestorage.app/o/profile-pictures%2FY.png?alt=media&token=e4323e24-b0b6-44f1-bdf7-e7cd00c758b4"),
+                entry("Z","https://firebasestorage.googleapis.com/v0/b/bubbletracks-bubble.firebasestorage.app/o/profile-pictures%2FZ.png?alt=media&token=9638cf7d-3c91-4822-af1f-76ce04332402"),
+                entry("other","https://firebasestorage.googleapis.com/v0/b/bubbletracks-bubble.firebasestorage.app/o/profile-pictures%2Fother.png?alt=media&token=72b8e1a2-c619-4c8c-b98b-656a899a9e36"));
+        return alphabetMap;
     }
 
 }
