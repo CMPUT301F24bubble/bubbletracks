@@ -11,6 +11,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.WriteBatch;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -153,9 +154,30 @@ public class Admin {
         // the associated facility if present
         String facilityId = entrantToDelete.getFacility();
         if (facilityId != null && !facilityId.isEmpty()) {
-            DocumentReference facilityRef = db.collection("facility").document(facilityId);
-            deleteFacility(context, facilityRef);
+            // Get a reference to the facility document in Firestore
+            DocumentReference facilityRef = db.collection("facilities").document(facilityId);
+
+            // Fetch the document asynchronously
+            facilityRef.get().addOnSuccessListener(documentSnapshot -> {
+                if (documentSnapshot.exists()) {
+                    // Convert the document snapshot to a Facility object
+                    Facility facility = documentSnapshot.toObject(Facility.class);
+
+                    // If a Facility object is retrieved, delete it using FacilityDB
+                    if (facility != null) {
+                        FacilityDB facilityDB = new FacilityDB();
+                        facilityDB.deleteFacility(facility); // Delete the facility
+                    } else {
+                        Log.e("DeleteFacility", "Failed to convert document to Facility object");
+                    }
+                } else {
+                    Log.e("DeleteFacility", "Facility document not found");
+                }
+            }).addOnFailureListener(e -> {
+                Log.e("DeleteFacility", "Error fetching facility document: ", e);
+            });
         }
+
 
         profileRef.get()
                 .addOnSuccessListener(documentSnapshot -> {
@@ -248,6 +270,7 @@ public class Admin {
                                             if (event != null) {
                                                 event.setId(eventDocumentSnapshot.getId());
                                                 deleteEvent(context, event);
+                                                Log.e("deleting good", "nice");
                                             } else {
                                                 Log.e("EventID to object", "Event object failed for eventId: " + eventId);
                                             }
@@ -264,21 +287,34 @@ public class Admin {
 
                     if (organizerId != null) {
                         DocumentReference organizerRef = db.collection("entrants").document(organizerId);
-                        batch.update(organizerRef, "facility", null);
-                        batch.update(organizerRef, "role", "entrant"); // turn role to entrant
+                        Map<String, Object> updates = new HashMap<>();
+                        updates.put("facility", "");
+                        updates.put("role", "entrant");
+                        organizerRef.update(updates);
                     }
                 }
 
-                batch.delete(facilityRef);
+                facilityRef.get().addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        // Convert the document snapshot to a Facility object
+                        Facility facility = documentSnapshot.toObject(Facility.class);
 
-                batch.commit().addOnSuccessListener(aVoid -> {
-                    Toast.makeText(context, "Facility and related data deleted successfully", Toast.LENGTH_SHORT).show();
+                        // If a Facility object is retrieved, delete it using FacilityDB
+                        if (facility != null) {
+                            FacilityDB facilityDB = new FacilityDB();
+                            facilityDB.deleteFacility(facility); // Delete the facility
+                        } else {
+                            Log.e("DeleteFacility", "Failed to convert document to Facility object");
+                        }
+                    } else {
+                        Log.e("DeleteFacility", "Facility document not found");
+                    }
                 }).addOnFailureListener(e -> {
-                    Log.e("DeleteFacility", "Error deleting facility or related data: ", e);
-                    Toast.makeText(context, "Failed to delete facility. Try again.", Toast.LENGTH_SHORT).show();
+                    Log.e("DeleteFacility", "Error fetching facility document: ", e);
                 });
 
-            } else {
+
+        } else {
                 Toast.makeText(context, "Facility not found!", Toast.LENGTH_SHORT).show();
             }
         }).addOnFailureListener(e -> {
@@ -296,7 +332,8 @@ public class Admin {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         DocumentReference eventRef = db.collection("events").document(event.getId());
 
-        eventRef.update("QRCode", FieldValue.delete())
+        // Replace the QRCode field with an empty string
+        eventRef.update("QRCode", "")
                 .addOnSuccessListener(aVoid -> {
                     Toast.makeText(context, "QrCode removed successfully", Toast.LENGTH_SHORT).show();
                 })
@@ -305,6 +342,7 @@ public class Admin {
                     Toast.makeText(context, "Failed to remove QrCode. Please try again.", Toast.LENGTH_SHORT).show();
                 });
     }
+
 
 
 
@@ -358,6 +396,3 @@ public class Admin {
 //    }
 //
 //}
-
-
-
