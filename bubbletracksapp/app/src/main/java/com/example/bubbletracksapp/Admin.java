@@ -177,6 +177,7 @@ public class Admin {
                 Log.e("DeleteFacility", "Error fetching facility document: ", e);
             });
         }
+        /// deleting user from waitlists
 //        List<String> subcategories = Arrays.asList("cancelled","enrolled", "invited", "rejected", "wait");
 //        // delete entrant references in events
 //        db.collection("events")
@@ -303,7 +304,6 @@ public class Admin {
                                             if (event != null) {
                                                 event.setId(eventDocumentSnapshot.getId());
                                                 deleteEvent(context, event);
-                                                Log.e("deleting good", "nice");
                                             } else {
                                                 Log.e("EventID to object", "Event object failed for eventId: " + eventId);
                                             }
@@ -379,53 +379,4 @@ public class Admin {
 
 
 
-} // remove this bracket later when implemented profile pictures
-
-
-
-//
-//    //**Profiles Picture**//
-////Replace pfp with default image?
-////Make sure there is a pfp getter and setter
-////Make sure there actually is a pfp in the database?
-//    public void resetProfileImage(int position) {
-//        Entrant profile = getItem(position);
-//        if (profile == null) {
-//            return;
-//        }
-//
-//        new AlertDialog.Builder(getContext())
-//                .setTitle("Confirm Profile Image Reset")
-//                .setMessage("Are you sure you want to reset this profile image? It will be replaced with the default image.")
-//                .setPositiveButton("Reset Image", (dialog, which) -> {
-//                    FirebaseFirestore db = FirebaseFirestore.getInstance();
-//                    String profileId = profile.getID();  // Profile ID to update
-//
-//                    WriteBatch batch = db.batch();
-//
-//                    DocumentReference profileRef = db.collection("entrants").document(profileId);
-//
-//                    String defaultImageUrl = "bubbletracksapp/app/src/main/res/drawable/pfp_placeholder.png"; // Adjust the URL if needed
-//                    profile.setPfp(defaultImageUrl);  // Change to default pfp
-//
-//                    batch.update(profileRef, "pfp", profile.getPfp()); // Change "pfp" to whatever the picture is named in the firebase
-//
-//                    batch.commit()
-//                            .addOnSuccessListener(aVoid -> {
-//                                // No need to remove from adapter, just refresh the UI
-//                                notifyDataSetChanged();
-//                                Toast.makeText(getContext(), "Profile image reset to default successfully", Toast.LENGTH_SHORT).show();
-//                            })
-//                            .addOnFailureListener(e -> {
-//                                Log.e("ResetProfileImage", "Error resetting profile image: ", e);
-//                                Toast.makeText(getContext(), "Failed to reset profile image. Try again.", Toast.LENGTH_SHORT).show();
-//                            });
-//
-//                    dialog.dismiss();
-//                })
-//                .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
-//                .create()
-//                .show();
-//    }
-//
-//}
+}
