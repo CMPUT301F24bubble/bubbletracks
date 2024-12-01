@@ -206,8 +206,8 @@ public class Entrant implements Parcelable {
     public String getRole() { return role; }
 
     /**
-     * Retrieve the user's facility.
-     * @return the name of the facility as a string
+     * retrieve id of entrant's facility
+     * @return id of entrant's facility
      */
     public String getFacility() { return facility; }
 
@@ -260,8 +260,8 @@ public class Entrant implements Parcelable {
     }
 
     /**
-     * Set the user's facility.
-     * @param facility a string of the facility name
+     * set the entrant's facility
+     * @param facility id of the entrant's facility
      */
     public void setFacility(String facility) { this.facility = facility; }
 
@@ -346,7 +346,7 @@ public class Entrant implements Parcelable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Entrant entrant = (Entrant) o;
-        return Objects.deepEquals(name, entrant.name) && Objects.equals(email, entrant.email) && Objects.equals(phone, entrant.phone) && Objects.equals(deviceID, entrant.deviceID) && Objects.equals(role, entrant.role) && Objects.equals(facility, entrant.facility);
+        return Objects.deepEquals(name, entrant.name) && Objects.equals(email, entrant.email) && Objects.equals(phone, entrant.phone) && Objects.equals(deviceID, entrant.deviceID) && Objects.equals(role, entrant.role);
     }
     /**
      * get hash code of entrant

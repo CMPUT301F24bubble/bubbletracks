@@ -84,6 +84,7 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 // Make a new entrant if they haven't launched the app before.
                 currentUser = new Entrant(currentDeviceID);
+                switchActivityButton(createFacilityButton, createFacilityIntent);
                 db.addEntrant(currentUser);
                 Log.d("Added new Entrant",currentUser.getID());}
         }).exceptionally(e -> {

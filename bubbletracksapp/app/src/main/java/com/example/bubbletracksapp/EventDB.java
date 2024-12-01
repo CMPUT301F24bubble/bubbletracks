@@ -202,6 +202,7 @@ public class EventDB {
                         returnCode.complete(newEvent);
                         Log.d("EventDB", "DocumentSnapshot data: " + document.getData());
                     } else {
+                        returnCode.complete(null);
                         Log.d("EventDB", "No such document");
                     }
                 } else {
