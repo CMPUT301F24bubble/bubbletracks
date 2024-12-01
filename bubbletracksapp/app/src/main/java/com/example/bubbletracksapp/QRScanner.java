@@ -1,19 +1,15 @@
 package com.example.bubbletracksapp;
 // https://reintech.io/blog/implementing-android-app-qr-code-scanner
 // https://www.youtube.com/watch?v=mdpxaLwzPHg
-import android.Manifest;
+// https://github.com/journeyapps/zxing-android-embedded/blob/master/sample/src/main/java/example/zxing/CustomScannerActivity.java
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Bundle;
-import android.widget.Toast;
-
-import androidx.annotation.NonNull;
+import android.view.View;
+import android.widget.ImageButton;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-
-import com.google.zxing.integration.android.IntentIntegrator;
-import com.google.zxing.integration.android.IntentResult;
+import com.journeyapps.barcodescanner.BarcodeCallback;
+import com.journeyapps.barcodescanner.BarcodeResult;
+import com.journeyapps.barcodescanner.DecoratedBarcodeView;
 
 /**
  * this class is an activity that allows a user to scan a QR Code
@@ -22,7 +18,7 @@ import com.google.zxing.integration.android.IntentResult;
  */
 public class QRScanner extends AppCompatActivity {
 
-    private static final int PERMISSION_REQUEST_CAMERA = 1;
+    private DecoratedBarcodeView barcodeScannerView;
 
     /**
      * initializes the qr scanner and ask for permission based on API version
@@ -31,69 +27,39 @@ public class QRScanner extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.qr_scanner);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, PERMISSION_REQUEST_CAMERA);
-            } else {
-                initQRCodeScanner();
-            }
-        } else {
-            initQRCodeScanner();
-        }
-    }
-
-    /**
-     * initializes the scanner
-     */
-    private void initQRCodeScanner() {
-        IntentIntegrator integrator = new IntentIntegrator(this);
-        integrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE);
-        integrator.setOrientationLocked(true);
-        integrator.setPrompt("Scan a QR code");
-        integrator.initiateScan();
-    }
-
-    /**
-     * Get the permissions to access the camera
-     * @param requestCode
-     * @param permissions
-     * @param grantResults
-     */
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == PERMISSION_REQUEST_CAMERA) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                initQRCodeScanner();
-            } else {
-                Toast.makeText(this, "Camera permission is required", Toast.LENGTH_LONG).show();
+        ImageButton backButton = findViewById(R.id.back_button);
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
                 finish();
             }
-        }
-    }
+        });
 
-    /**
-     * sends the resultant string from the scan to the event view activity
-     * @param requestCode
-     * @param resultCode
-     * @param data
-     */
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
-        if (result != null) {
-            if (result.getContents() == null) {
-                Toast.makeText(this, "Scan cancelled", Toast.LENGTH_LONG).show();
-            } else {
-                String id = result.getContents();
-                Intent intent = new Intent(QRScanner.this, EntrantViewActivity.class);
-                intent.putExtra("id", id);
-                startActivity(intent);
-                finish();
+        barcodeScannerView = findViewById(R.id.barcode_scanner);
+        barcodeScannerView.decodeContinuous(new BarcodeCallback() {
+            @Override
+            public void barcodeResult(BarcodeResult result) {
+                // Handle the scanned QR code result
+                if (result != null && result.getText() != null) {
+                    String id = result.getText();
+                    Intent intent = new Intent(QRScanner.this, EntrantViewActivity.class);
+                    intent.putExtra("id", id);
+                    startActivity(intent);
+                    finish(); // Close the scanner activity
+                }
             }
-        } else {
-            super.onActivityResult(requestCode, resultCode, data);
-        }
+        });}
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        barcodeScannerView.resume(); // Resume scanner
+    }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        barcodeScannerView.pause(); // Pause scanner
     }
 }
