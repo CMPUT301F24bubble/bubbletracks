@@ -40,6 +40,7 @@ public class Entrant implements Parcelable {
     private LatLng geolocation;
     private String role;
     private String facility;
+    private String profilePicture;
     private ArrayList<String> eventsOrganized = new ArrayList<>();
     private ArrayList<String> eventsInvited = new ArrayList<>();
     private ArrayList<String> eventsEnrolled = new ArrayList<>();
@@ -55,12 +56,13 @@ public class Entrant implements Parcelable {
      * @param role Denotes role; takes on either 'admin', 'organizer', or ''
      * @param facility facility ID to determine which facility belongs to this entrant
      * @param geolocation Denotes the geolocation when the entrant last updated their profile
+     * @param profilePicture stores the download link for the profile picture of the entrant
      * @param eventsOrganized events from the organizer
      * @param eventsInvited events entrant is invited to
      * @param eventsEnrolled events entrant is enrolled in
      * @param eventsWaitlist events entrant is in waitlist for
      */
-    public Entrant(String[] name, String email, String phone, String deviceID, Boolean notification, String role, String facility, LatLng geolocation, ArrayList<String> eventsOrganized, ArrayList<String> eventsInvited, ArrayList<String> eventsEnrolled, ArrayList<String> eventsWaitlist) {
+    public Entrant(String[] name, String email, String phone, String deviceID, Boolean notification, String role, String facility, LatLng geolocation, String profilePicture, ArrayList<String> eventsOrganized, ArrayList<String> eventsInvited, ArrayList<String> eventsEnrolled, ArrayList<String> eventsWaitlist) {
         this.name = name;
         this.email = email;
         this.phone = phone;
@@ -87,6 +89,7 @@ public class Entrant implements Parcelable {
         this.role = "";
         this.facility = "";
         this.notification = false;
+        this.profilePicture = "";
         this.geolocation = new LatLng(0,0);
         this.eventsOrganized = new ArrayList<>();
         this.eventsInvited = new ArrayList<>();
@@ -106,6 +109,7 @@ public class Entrant implements Parcelable {
         this.role = "";
         this.facility = "";
         this.notification = false;
+        this.profilePicture = "";
         this.geolocation = new LatLng(0,0);
         this.eventsOrganized = new ArrayList<>();
         this.eventsInvited = new ArrayList<>();
@@ -129,6 +133,7 @@ public class Entrant implements Parcelable {
         this.geolocation = geoPointToLatLng(document.getGeoPoint("geolocation"));
         this.role = document.getString("role");
         this.facility = document.getString("facility");
+        this.profilePicture = document.getString("profilePicture");
         this.eventsOrganized = (ArrayList<String>)document.getData().get("organized");
         this.eventsInvited = (ArrayList<String>)document.getData().get("invited");
         this.eventsEnrolled = (ArrayList<String>)document.getData().get("enrolled");
@@ -151,6 +156,7 @@ public class Entrant implements Parcelable {
         geolocation = in.readParcelable(LatLng.class.getClassLoader());
         role = in.readString();
         facility = in.readString();
+        profilePicture = in.readString();
         eventsOrganized = in.createStringArrayList();
         eventsInvited = in.createStringArrayList();
         eventsEnrolled = in.createStringArrayList();
@@ -192,6 +198,7 @@ public class Entrant implements Parcelable {
         map.put("geolocation", latLngToGeoPoint(geolocation));
         map.put("notification", notification);
         map.put("ID", deviceID);
+        map.put("profilePicture", profilePicture);
         map.put("organized", eventsOrganized);
         map.put("invited", eventsInvited);
         map.put("enrolled", eventsEnrolled);
@@ -207,8 +214,8 @@ public class Entrant implements Parcelable {
     public String getRole() { return role; }
 
     /**
-     * Retrieve the user's facility.
-     * @return the name of the facility as a string
+     * retrieve id of entrant's facility
+     * @return id of entrant's facility
      */
     public String getFacility() { return facility; }
 
@@ -261,8 +268,8 @@ public class Entrant implements Parcelable {
     }
 
     /**
-     * Set the user's facility.
-     * @param facility a string of the facility name
+     * set the entrant's facility
+     * @param facility id of the entrant's facility
      */
     public void setFacility(String facility) { this.facility = facility; }
 
@@ -288,6 +295,12 @@ public class Entrant implements Parcelable {
      * @return boolean if entrant allows notification
      */
     public Boolean getNotification() { return notification;}
+
+    /**
+     * Gets the download link for the entrant's profile picture
+     * @return download link for the entrant's profile picture
+     */
+    public String getProfilePicture() { return profilePicture; }
 
     /**
      * Sets whether entrant allows for notification or not
@@ -330,6 +343,7 @@ public class Entrant implements Parcelable {
         parcel.writeParcelable(geolocation, i);
         parcel.writeString(role);
         parcel.writeString(facility);
+        parcel.writeString(profilePicture);
         parcel.writeStringList(eventsOrganized);
         parcel.writeStringList(eventsInvited);
         parcel.writeStringList(eventsEnrolled);
@@ -347,7 +361,7 @@ public class Entrant implements Parcelable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Entrant entrant = (Entrant) o;
-        return Objects.deepEquals(name, entrant.name) && Objects.equals(email, entrant.email) && Objects.equals(phone, entrant.phone) && Objects.equals(deviceID, entrant.deviceID) && Objects.equals(role, entrant.role) && Objects.equals(facility, entrant.facility);
+        return Objects.deepEquals(name, entrant.name) && Objects.equals(email, entrant.email) && Objects.equals(phone, entrant.phone) && Objects.equals(deviceID, entrant.deviceID) && Objects.equals(role, entrant.role) && Objects.equals(profilePicture, entrant.profilePicture);
     }
     /**
      * get hash code of entrant
@@ -355,7 +369,7 @@ public class Entrant implements Parcelable {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(Arrays.hashCode(name), email, phone, deviceID);
+        return Objects.hash(Arrays.hashCode(name), email, phone, deviceID, profilePicture);
     }
 
     /**
@@ -372,6 +386,14 @@ public class Entrant implements Parcelable {
      */
     public void setID(String deviceID) {
         this.deviceID = deviceID;
+    }
+
+    /**
+     * sets the download link for the profile picture
+     * @param profilePicture download link for the profile picture
+     */
+    public void setProfilePicture(String profilePicture) {
+        this.profilePicture = profilePicture;
     }
 
     /**
