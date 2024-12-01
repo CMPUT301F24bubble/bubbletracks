@@ -195,7 +195,7 @@ public class EntrantViewActivity extends AppCompatActivity {
 
         // if no poster is present then change the visibility of the imageview otherwise show the poster
         if(event.getImage() == null){
-            posterImage.setVisibility(View.GONE);
+            posterImage.setImageResource(R.drawable.default_event);
         } else {
             Picasso.get()
                     .load(event.getImage())
