@@ -67,6 +67,20 @@
                     android:text="Item description goes here."
                     android:textSize="14sp"
                     android:textColor="@android:color/darker_gray" />
+                <TextView
+                    android:id="@+id/browseEventID"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Insert Event ID"
+                    android:textSize="14sp"
+                    android:textColor="@android:color/darker_gray" />
+                <TextView
+                    android:id="@+id/browseEventOrganizer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Insert Event Organizer"
+                    android:textSize="14sp"
+                    android:textColor="@android:color/darker_gray" />
             </LinearLayout>
 
             <!-- Overflow Menu -->
