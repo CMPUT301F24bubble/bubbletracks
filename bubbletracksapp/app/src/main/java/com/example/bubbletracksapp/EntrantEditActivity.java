@@ -5,17 +5,21 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
@@ -29,7 +33,11 @@ import com.google.android.gms.location.Priority;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.CancellationTokenSource;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import android.Manifest; // For importing notification permissions
 import android.widget.Toast;
@@ -53,6 +61,8 @@ public class EntrantEditActivity extends AppCompatActivity {
     private Entrant currentUser;
     private EntrantDB db = new EntrantDB();
     private FusedLocationProviderClient fusedLocationProviderClient;
+    private ActivityResultLauncher<String> uploadImageLauncher;
+    private Uri profilePictureUri;
 
     /**
      * Start up activity for entrant to edit their profile
@@ -91,9 +101,19 @@ public class EntrantEditActivity extends AppCompatActivity {
         EditText entrantEmailInput = binding.entrantEmailInput;
         EditText entrantPhoneInput = binding.entrantPhoneInput;
         CheckBox entrantNotificationInput = binding.notificationToggle;
+        ImageView profilePictureImage = binding.profileImage;
 
         TextView deviceIDNote = binding.deviceIDNote;
         TextView locationNote = binding.locationNote;
+
+        // initialize the activity result launcher for the image picker
+        uploadImageLauncher = registerForActivityResult(new ActivityResultContracts.GetContent(), uri -> {
+            if (uri != null) {
+                profilePictureImage.setImageURI(uri);
+                profilePictureImage.setImageTintList(null);
+                profilePictureUri = uri;
+            }
+        });
 
         SharedPreferences localID = getSharedPreferences("LocalID", Context.MODE_PRIVATE);
         String ID = localID.getString("ID", "Device ID not found");
@@ -199,8 +219,42 @@ public class EntrantEditActivity extends AppCompatActivity {
                                             String stringLocation = String.format("Your last location: (%f,%f)", lat, lng);
                                             locationNote.setText(stringLocation);
 
-                                            db.updateEntrant(currentUser);
-                                            Log.d("getCurrentLocation", newGeolocation.toString());
+                                            if(profilePictureUri != null){
+                                                // get the file path
+                                                String filename = "profile-pictures/" + currentUser.getID() + "profilePicture.jpg";
+                                                StorageReference storageReference = FirebaseStorage.getInstance().getReference(filename);
+
+                                                storageReference.putFile(profilePictureUri)
+                                                        // upload file
+                                                        .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                                                            @Override
+                                                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                                                // get the download url of the image
+                                                                storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                                                    @Override
+                                                                    public void onSuccess(Uri uri) {
+                                                                        // update the download string in the event class and update the event
+                                                                        String downloadUrl = uri.toString();
+                                                                        currentUser.setProfilePicture(downloadUrl);
+                                                                        db.updateEntrant(currentUser);
+                                                                        Log.d("getCurrentLocation", newGeolocation.toString());
+                                                                    }
+                                                                    // handle errors
+                                                                }).addOnFailureListener(new OnFailureListener() {
+                                                                    @Override
+                                                                    public void onFailure(@NonNull Exception e) {
+                                                                        Toast.makeText(EntrantEditActivity.this, "Failed to get download URL: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                                                    }
+                                                                });
+                                                            }
+                                                            // handle errors
+                                                        }).addOnFailureListener(new OnFailureListener() {
+                                                            @Override
+                                                            public void onFailure(@NonNull Exception e) {
+                                                                Toast.makeText(EntrantEditActivity.this, "Upload failed: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                                                            }
+                                                        });
+                                            }
                                         }
                                         else
                                         {
@@ -219,6 +273,17 @@ public class EntrantEditActivity extends AppCompatActivity {
                     Toast.makeText(EntrantEditActivity.this, "Failed to load user: " + e.getMessage(), Toast.LENGTH_LONG).show();
                     return null;
                 });
+            }
+        });
+
+        // handler for uploading profile picture
+        Button updatePictureButton = binding.pictureUpdate;
+        updatePictureButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // launch activity result launcher
+                Intent intent = new Intent(MediaStore.ACTION_PICK_IMAGES);
+                uploadImageLauncher.launch("image/*");
             }
         });
     }
