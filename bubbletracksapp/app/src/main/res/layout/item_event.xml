@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
 
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/eventParent"
     android:orientation="vertical"
     android:scaleX="0.9"
@@ -46,53 +47,58 @@
 
     <!-- ACCESSIBILITY ERROR-->
     <LinearLayout
-        android:orientation ="horizontal"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
 
         <TextView
             android:id="@+id/eventRegStatus"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
             android:layout_marginTop="12dp"
-            android:layout_marginStart="16dp"
+            android:layout_marginEnd="5dp"
             android:layout_marginBottom="10dp"
-            android:padding = "8dp"
-            android:text = "INVITED"
+            android:layout_weight="0"
+            android:background="@drawable/statusitem_custom"
+            android:padding="8dp"
+            android:text="INVITED"
             android:textColor="#FFB95A"
-            android:textSize = "14sp"
-            android:textStyle="bold"
-            android:background = "@drawable/statusitem_custom"/>
+            android:textSize="14sp"
+            android:textStyle="bold" />
 
 
         <Button
             android:id="@+id/accept"
-            android:layout_width="50dp"
+            android:layout_width="wrap_content"
             android:layout_height="40dp"
+            android:layout_marginStart="5dp"
             android:layout_marginTop="12dp"
-            android:layout_marginStart="16dp"
+            android:layout_marginEnd="5dp"
             android:layout_marginBottom="10dp"
-            android:padding = "8dp"
-            android:backgroundTint = "#A4D4AE"
-            android:text = "Accept!"
-            android:textSize = "10sp"
-            android:visibility="gone" >
-        </Button>
+            android:layout_weight="1"
+            android:backgroundTint="#A4D4AE"
+            android:padding="0dp"
+            android:text="Accept!"
+            android:textSize="10sp"
+            android:visibility="gone"
+            tools:visibility="visible"></Button>
 
         <Button
             android:id="@+id/decline"
-            android:layout_width="50dp"
+            android:layout_width="wrap_content"
             android:layout_height="40dp"
+            android:layout_marginStart="5dp"
             android:layout_marginTop="12dp"
-            android:layout_marginStart="16dp"
+            android:layout_marginEnd="10dp"
             android:layout_marginBottom="10dp"
-            android:padding = "8dp"
-            android:backgroundTint = "#E57373"
-            android:text = "Decline"
-            android:textSize = "10sp"
-            android:visibility="gone" >
-        </Button>
-
+            android:layout_weight="1"
+            android:backgroundTint="#E57373"
+            android:padding="0dp"
+            android:text="Decline"
+            android:textSize="10sp"
+            android:visibility="gone"
+            tools:visibility="visible"></Button>
 
 
     </LinearLayout>
