@@ -38,31 +38,16 @@
         <activity android:name=".AdminProfileViews"
             android:exported="true"
             android:theme="@style/Theme.Bubbletracksapp">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity android:name=".AdminFacilityViews"
             android:exported="true"
             android:theme="@style/Theme.Bubbletracksapp">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
 
         <activity
             android:name=".QRScanner"
             android:exported="true"
             android:theme="@style/Theme.Bubbletracksapp">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
 
 
@@ -70,11 +55,6 @@
             android:name=".EntrantActivity"
             android:exported="true"
             android:theme="@style/Theme.Bubbletracksapp">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
 
         <activity android:name=".OrganizerEntrantListActivity"/>
@@ -83,11 +63,6 @@
             android:name=".EntrantEditActivity"
             android:exported="true"
             android:theme="@style/Theme.Bubbletracksapp">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
             android:name=".OrganizerNotificationActivity"
