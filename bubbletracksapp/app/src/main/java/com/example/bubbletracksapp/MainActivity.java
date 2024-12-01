@@ -90,6 +90,11 @@ public class MainActivity extends AppCompatActivity {
 
         db.getEntrant(currentDeviceID).thenAccept(user -> {
             if(user != null){
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fragmentContainerView, EntrantFragment.class, null)
+                        .setReorderingAllowed(true)
+                        //.addToBackStack("") // Having this on the backstack can be annoying.
+                        .commit();
                 currentUser = user;
                 // Check user role
                 if(currentUser.getRole().equals("admin")){
@@ -115,6 +120,11 @@ public class MainActivity extends AppCompatActivity {
                 currentUser = new Entrant(currentDeviceID);
                 switchActivityButton(createFacilityButton, createFacilityIntent);
                 db.addEntrant(currentUser);
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fragmentContainerView, EntrantFragment.class, null)
+                        .setReorderingAllowed(true)
+                        //.addToBackStack("") // Having this on the backstack can be annoying.
+                        .commit();
                 Log.d("Added new Entrant",currentUser.getID());}
         }).exceptionally(e -> {
             Toast.makeText(MainActivity.this, "Failed to load user: " + e.getMessage(), Toast.LENGTH_LONG).show();
