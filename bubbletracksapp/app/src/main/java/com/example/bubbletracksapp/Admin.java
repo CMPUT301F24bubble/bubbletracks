@@ -177,7 +177,40 @@ public class Admin {
                 Log.e("DeleteFacility", "Error fetching facility document: ", e);
             });
         }
-
+//        List<String> subcategories = Arrays.asList("cancelled","enrolled", "invited", "rejected", "wait");
+//        // delete entrant references in events
+//        db.collection("events")
+//                .get()
+//                .addOnSuccessListener(querySnapshot -> {
+//                    for (DocumentSnapshot eventDoc : querySnapshot.getDocuments()) {
+//                        DocumentReference eventRef = eventDoc.getReference();
+//                        Map<String, Object>eventData = eventDoc.getData();
+//
+//                        if (eventData != null) {
+//                            for (String subcategory : subcategories) {
+//                                if (eventData.containsKey(subcategory)) {
+//                                    List<String> eventList = (List<String>) eventData.get(subcategory);
+//                                    if (eventList != null && eventList.contains(profileId)) {
+//                                        eventList.remove(profileId);
+//                                        batch.update(eventRef, subcategory, eventList);
+//                                    }
+//                                }
+//                            }
+//                        }
+//                    }
+//
+//                    // Commit the batch after removing references from events
+//                    batch.commit()
+//                            .addOnSuccessListener(aVoid -> {
+//                                Log.d("RemoveEntrantFromEvents", "Successfully removed profileId from event subcategories.");
+//                            })
+//                            .addOnFailureListener(e -> {
+//                                Log.e("RemoveEntrantFromEvents", "Error removing profileId from event subcategories.", e);
+//                            });
+//                })
+//                .addOnFailureListener(e -> {
+//                    Log.e("RemoveEntrantFromEvents", "Error fetching event documents: ", e);
+//                });
 
         profileRef.get()
                 .addOnSuccessListener(documentSnapshot -> {
