@@ -76,6 +76,7 @@
         </activity>
         <activity android:name=".OrganizerActivity" />
         <activity android:name=".OrganizerFacilityActivity" />
+        <activity android:name=".OrganizerEditFacilityActivity" />
         <activity android:name=".OrganizerManageActivity" />
         <activity android:name=".EntrantViewActivity" />
         <activity android:name=".AppUserEventScreenGenerator" />
