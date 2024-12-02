@@ -56,7 +56,8 @@ public class EntrantEditActivity extends AppCompatActivity {
     private FusedLocationProviderClient fusedLocationProviderClient;
     private String ID;
     // Initialize fields
-    private EditText entrantNameInput;
+    private EditText entrantFirstNameInput;
+    private EditText entrantLastNameInput;
     private EditText entrantEmailInput;
     private EditText entrantPhoneInput;
     private CheckBox entrantNotificationInput;
@@ -112,7 +113,8 @@ public class EntrantEditActivity extends AppCompatActivity {
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
 
-        entrantNameInput = binding.entrantNameInput;
+        entrantFirstNameInput = binding.entrantNameInput;
+        entrantLastNameInput = binding.entrantNameInput2;
         entrantEmailInput = binding.entrantEmailInput;
         entrantPhoneInput = binding.entrantPhoneInput;
         entrantNotificationInput = binding.notificationToggle;
@@ -167,7 +169,8 @@ public class EntrantEditActivity extends AppCompatActivity {
         ID = localID.getString("ID", "Device ID not found");
         String tempLocation = "No last location found. Allow location and update your profile";
 
-        deviceIDNote.setText(ID);
+        // Displays the user's profile
+        deviceIDNote.setText(String.format("Device ID: %s", ID));
         locationNote.setText(tempLocation);
         db.getEntrant(ID).thenAccept(user -> {
             if(user != null){
@@ -176,11 +179,17 @@ public class EntrantEditActivity extends AppCompatActivity {
                 if(!currentUser.getProfilePicture().isEmpty()){
                     Picasso.get().load(currentUser.getProfilePicture()).into(profilePictureImage);
                 }
-                if (!currentUser.getNameAsString().isBlank()) {entrantNameInput.setText(currentUser.getNameAsString()); }
+                if (!currentUser.getName()[0].isBlank()) {
+                    entrantFirstNameInput.setText(currentUser.getName()[0]); }
 
-                if (!currentUser.getNameAsString().isBlank()) {entrantNameInput.setText(currentUser.getNameAsString()); }
+                if(!currentUser.getName()[1].isBlank()) {
+                    entrantLastNameInput.setText(currentUser.getName()[1]);  }
 
-                if (!currentUser.getNameAsString().isBlank()) {entrantNameInput.setText(currentUser.getNameAsString()); }
+                if (!currentUser.getEmail().isBlank()) {
+                    entrantEmailInput.setText(currentUser.getEmail()); }
+
+                if (!currentUser.getPhone().isBlank()) {
+                    entrantPhoneInput.setText(currentUser.getPhone()); }
 
                 entrantNotificationInput.setChecked(currentUser.getNotification());
 
@@ -240,12 +249,11 @@ public class EntrantEditActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                String[] newFullName = entrantNameInput.getText().toString().split(" ");
-                String newFirst = newFullName[0], newLast = newFullName[1];
+                String newFirst = entrantFirstNameInput.getText().toString();
+                String newLast = entrantLastNameInput.getText().toString();
                 String newEmail = entrantEmailInput.getText().toString();
                 String newPhone = entrantPhoneInput.getText().toString();
                 boolean notificationPermission = entrantNotificationInput.isChecked();
-
 
                 db.getEntrant(ID).thenAccept(user -> {
                     if(user != null){
@@ -253,17 +261,27 @@ public class EntrantEditActivity extends AppCompatActivity {
 
                         currentUser.setName(newFirst, newLast);
                         currentUser.setPhone(newPhone);
-                        currentUser.setEmail(newEmail);
+
+                        // Extremely loose input validation; make sure email contains a "@" and "."
+                        if (!newEmail.isBlank()) {
+                            if (!((newEmail.length() - newEmail.replace("@", "").length()) == 1)
+                                    || !((newEmail.length() - newEmail.replace(".", "").length()) == 1)) {
+                                Toast.makeText(EntrantEditActivity.this, "Invalid email", Toast.LENGTH_LONG).show();
+                                currentUser.setEmail("");
+                            } else {
+                                Log.d("new email", newEmail);
+                                currentUser.setEmail(newEmail);
+                            }
+                        }
 
                         if(currentUser.isDefaultPicture()){
                             Picasso.get().load(currentUser.setDefaultPicture()).into(profilePictureImage);
                         }
 
-                        if (!notificationPermission){
+                        if (!notificationPermission) {
                             currentUser.setNotification(false);
                             Log.d("Notification check", "User opted out of notifications");
-                        }
-                        else {
+                        } else {
                             checkNotificationPermission(currentUser);
                         }
 
@@ -287,11 +305,11 @@ public class EntrantEditActivity extends AppCompatActivity {
                                                 locationNote.setText(stringLocation);
 
                                                 db.updateEntrant(currentUser);
+                                                Toast.makeText(EntrantEditActivity.this, "Profile updated!", Toast.LENGTH_LONG).show();
                                                 Log.d("getCurrentLocation", newGeolocation.toString());
-                                            }
-                                            else
-                                            {
+                                            } else {
                                                 db.updateEntrant(currentUser);
+                                                Toast.makeText(EntrantEditActivity.this, "Profile updated!", Toast.LENGTH_LONG).show();
                                                 Log.w("EntrantEditActivity", "No location could be found. Location was not updated");
                                             }
                                             Log.d("New user name:", currentUser.getNameAsString());
