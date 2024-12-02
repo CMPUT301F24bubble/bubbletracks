@@ -101,12 +101,10 @@ public class EntrantEditActivity extends AppCompatActivity {
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
 
-        entrantFirstNameInput = binding.entrantNameInput;
-        entrantLastNameInput = binding.entrantNameInput2;
+        entrantNameInput = binding.entrantNameInput;
         entrantEmailInput = binding.entrantEmailInput;
         entrantPhoneInput = binding.entrantPhoneInput;
         entrantNotificationInput = binding.notificationToggle;
-
 
         deviceIDNote = binding.deviceIDNote;
         locationNote = binding.locationNote;

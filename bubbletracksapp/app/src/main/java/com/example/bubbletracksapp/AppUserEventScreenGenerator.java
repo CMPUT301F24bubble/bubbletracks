@@ -49,17 +49,13 @@ public class AppUserEventScreenGenerator extends AppCompatActivity {
     // ATTRIBUTES
     private RecyclerView eventsplace;
     private AppEventAdapter eventAdapter;
-    private List<Event> waitlistEvents = new ArrayList<>();
-    private List<Event> registeredEvents = new ArrayList<>();
-    private Button accept, decline;
     private EntrantDB entrantDB = new EntrantDB();
     private EventDB eventDB = new EventDB();
     private List<String> otherOption = Arrays.asList("Waitlist", "Registered");
     private TextView locationView, timeView;
     private ImageButton backButton;
     private Spinner statusSpinner;
-    private Entrant user;
-    private List<Event> eventList;
+    private List<Event> eventList = new ArrayList<>();
     private Entrant currentUser;
 
 
