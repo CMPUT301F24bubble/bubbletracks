@@ -313,6 +313,7 @@ public class EntrantDB {
 
 
     public void deleteProfilePic(String ID, String defaultImage) {
+
         entrantsRef.document(ID)
                 .update("image", defaultImage)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
