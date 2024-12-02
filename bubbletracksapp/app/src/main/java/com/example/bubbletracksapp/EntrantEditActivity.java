@@ -62,13 +62,13 @@ public class EntrantEditActivity extends AppCompatActivity {
     private CheckBox entrantNotificationInput;
     private ImageView profilePictureImage;
     private ImageButton updatePictureButton;
+    private ImageButton deletePictureButton;
 
     // Initialize views
     private TextView deviceIDNote;
     private TextView locationNote;
 
     private ActivityResultLauncher<String> uploadImageLauncher;
-    private Uri profilePictureUri;
 
     /**
      * Start up activity for entrant to edit their profile
@@ -118,12 +118,45 @@ public class EntrantEditActivity extends AppCompatActivity {
         entrantNotificationInput = binding.notificationToggle;
         profilePictureImage = binding.profileImage;
         updatePictureButton = binding.pictureUpdate;
+        deletePictureButton = binding.deleteProfilePicture;
 
         // initialize the activity result launcher for the image picker
         uploadImageLauncher = registerForActivityResult(new ActivityResultContracts.GetContent(), uri -> {
             if (uri != null) {
-                profilePictureImage.setImageURI(uri);
-                profilePictureUri = uri;
+                String filename = "profile-pictures/" + currentUser.getID() + "profilePicture.jpg";
+                StorageReference storageReference = FirebaseStorage.getInstance().getReference(filename);
+
+                storageReference.putFile(uri)
+                        // upload file
+                        .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                            @Override
+                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                // get the download url of the image
+                                storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                    @Override
+                                    public void onSuccess(Uri downloadUri) {
+                                        // update the download string in the event class and update the event
+                                        Toast.makeText(EntrantEditActivity.this, "Profile Picture updated", Toast.LENGTH_SHORT).show();
+                                        String downloadUrl = downloadUri.toString();
+                                        currentUser.setProfilePicture(downloadUrl);
+                                        db.updateEntrant(currentUser);
+                                        profilePictureImage.setImageURI(uri);
+                                    }
+                                    // handle errors
+                                }).addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Toast.makeText(EntrantEditActivity.this, "Failed to get download URL: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                            }
+                            // handle errors
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Toast.makeText(EntrantEditActivity.this, "Upload failed: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                            }
+                        });
             }
         });
 
@@ -174,6 +207,19 @@ public class EntrantEditActivity extends AppCompatActivity {
             }
         });
 
+        deletePictureButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(currentUser.isDefaultPicture()){
+                    Toast.makeText(EntrantEditActivity.this, "Cannot delete default profile picture", Toast.LENGTH_SHORT).show();
+                } else {
+                    currentUser.deleteProfilePic();
+                    Picasso.get().load(currentUser.getProfilePicture()).into(profilePictureImage);
+                    Toast.makeText(EntrantEditActivity.this, "Deleted Profile Picture", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
         updatePictureButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -209,8 +255,6 @@ public class EntrantEditActivity extends AppCompatActivity {
                         currentUser.setPhone(newPhone);
                         currentUser.setEmail(newEmail);
 
-                        currentUser.setDefaultPicture();
-
                         if (!notificationPermission){
                             currentUser.setNotification(false);
                             Log.d("Notification check", "User opted out of notifications");
@@ -238,51 +282,12 @@ public class EntrantEditActivity extends AppCompatActivity {
                                                 String stringLocation = String.format("Your last location: (%f,%f)", lat, lng);
                                                 locationNote.setText(stringLocation);
 
-                                                if(profilePictureUri != null){
-                                                    // get the file path
-                                                    String filename = "profile-pictures/" + currentUser.getID() + "profilePicture.jpg";
-                                                    StorageReference storageReference = FirebaseStorage.getInstance().getReference(filename);
-
-                                                    storageReference.putFile(profilePictureUri)
-                                                            // upload file
-                                                            .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                                                                @Override
-                                                                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                                                                    // get the download url of the image
-                                                                    storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                                                                        @Override
-                                                                        public void onSuccess(Uri uri) {
-                                                                            // update the download string in the event class and update the event
-                                                                            String downloadUrl = uri.toString();
-                                                                            currentUser.setProfilePicture(downloadUrl);
-                                                                            db.updateEntrant(currentUser);
-                                                                            Log.d("getCurrentLocation", newGeolocation.toString());
-                                                                        }
-                                                                        // handle errors
-                                                                    }).addOnFailureListener(new OnFailureListener() {
-                                                                        @Override
-                                                                        public void onFailure(@NonNull Exception e) {
-                                                                            Toast.makeText(EntrantEditActivity.this, "Failed to get download URL: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                                                                        }
-                                                                    });
-                                                                }
-                                                                // handle errors
-                                                            }).addOnFailureListener(new OnFailureListener() {
-                                                                @Override
-                                                                public void onFailure(@NonNull Exception e) {
-                                                                    Toast.makeText(EntrantEditActivity.this, "Upload failed: " + e.getMessage(), Toast.LENGTH_LONG).show();
-                                                                }
-                                                            });
-                                                } else {
-                                                    Picasso.get().load(currentUser.getProfilePicture()).into(profilePictureImage);
-                                                    db.updateEntrant(currentUser);
-                                                    Log.d("getCurrentLocation", newGeolocation.toString());
-                                                }
+                                                db.updateEntrant(currentUser);
+                                                Log.d("getCurrentLocation", newGeolocation.toString());
                                             }
                                             else
                                             {
                                                 db.updateEntrant(currentUser);
-
                                                 Log.w("EntrantEditActivity", "No location could be found. Location was not updated");
                                             }
                                             Log.d("New user name:", currentUser.getNameAsString());

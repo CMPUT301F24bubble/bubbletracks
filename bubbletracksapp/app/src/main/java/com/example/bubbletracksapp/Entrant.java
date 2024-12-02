@@ -655,4 +655,13 @@ public class Entrant implements Parcelable {
         return generateAlphabetMap().values().stream().anyMatch(profilePicture::equals);
     }
 
+    /**
+     * Deletes profile pic of entrant
+     */
+    public void deleteProfilePic() {
+        EntrantDB db = new EntrantDB();
+        db.deleteProfilePic(deviceID, setDefaultPicture());
+    }
+
+
 }

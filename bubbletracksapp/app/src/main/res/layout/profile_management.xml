@@ -64,6 +64,16 @@
                 android:src="@drawable/baseline_add_circle_24"
                 app:tint="@color/button_dark_blue"
                 />
+            <ImageButton
+                android:id="@+id/deleteProfilePicture"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="bottom|end"
+                android:background="@null"
+                android:contentDescription="Delete Icon"
+                android:src="@drawable/baseline_delete_24"
+                app:tint="@color/button_dark_blue" />
+
         </FrameLayout>
 
         <EditText
