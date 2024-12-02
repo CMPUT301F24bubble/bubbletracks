@@ -154,19 +154,15 @@ public class Admin {
         // the associated facility if present
         String facilityId = entrantToDelete.getFacility();
         if (facilityId != null && !facilityId.isEmpty()) {
-            // Get a reference to the facility document in Firestore
             DocumentReference facilityRef = db.collection("facilities").document(facilityId);
 
-            // Fetch the document asynchronously
             facilityRef.get().addOnSuccessListener(documentSnapshot -> {
                 if (documentSnapshot.exists()) {
-                    // Convert the document snapshot to a Facility object
                     Facility facility = documentSnapshot.toObject(Facility.class);
 
-                    // If a Facility object is retrieved, delete it using FacilityDB
                     if (facility != null) {
                         FacilityDB facilityDB = new FacilityDB();
-                        facilityDB.deleteFacility(facility); // Delete the facility
+                        facilityDB.deleteFacility(facility);
                     } else {
                         Log.e("DeleteFacility", "Failed to convert document to Facility object");
                     }
@@ -318,13 +314,22 @@ public class Admin {
 
                     }
 
+
                     if (organizerId != null) {
                         DocumentReference organizerRef = db.collection("entrants").document(organizerId);
-                        Map<String, Object> updates = new HashMap<>();
-                        updates.put("facility", "");
-                        updates.put("role", "entrant");
-                        organizerRef.update(updates);
+                        organizerRef.get().addOnSuccessListener(documentSnapshot -> {
+                            if (documentSnapshot.exists()) {
+                                Map<String, Object> updates = new HashMap<>();
+                                updates.put("facility", "");
+
+                                if (!"admin".equals(documentSnapshot.getString("role"))) {
+                                    updates.put("role", "entrant");
+                                }
+                                organizerRef.update(updates);
+                            }
+                        }).addOnFailureListener(e -> Log.e("Firestore", "Error fetching document", e));
                     }
+
                 }
 
                 facilityRef.get().addOnSuccessListener(documentSnapshot -> {
