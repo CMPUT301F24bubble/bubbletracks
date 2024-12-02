@@ -38,9 +38,10 @@ public class EntrantTest {
         eventsWaitlist.add("Event6");
         eventsWaitlist.add("Event7");
 
-        Entrant newEntrant = new Entrant(name, email, phone, deviceID, notification, geolocation, role,
-                eventsOrganized, eventsInvited, eventsEnrolled, eventsWaitlist);
-        return newEntrant;
+//        Entrant newEntrant = new Entrant(name, email, phone, deviceID, notification, geolocation, role,
+//                eventsOrganized, eventsInvited, eventsEnrolled, eventsWaitlist);
+//        return newEntrant;
+        return null;
     }
 
 
