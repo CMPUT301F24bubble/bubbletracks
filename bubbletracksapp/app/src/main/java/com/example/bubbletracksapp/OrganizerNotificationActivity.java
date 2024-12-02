@@ -129,7 +129,7 @@ public class OrganizerNotificationActivity extends AppCompatActivity {
                         Notifications notification = new Notifications(
                                 invitedList,
                                 "You Are Invited!",
-                                "Congratulations, you are invited to the event" + event.getName() + "!",
+                                "Congratulations, you are invited to the event " + event.getName() + "!",
                                 "Accept your invitation to confirm your registration.",
                                 //"Thank you for confirming your attendance to " + event.getName() + "!"
                                 UUID.randomUUID().toString(),
@@ -169,16 +169,16 @@ public class OrganizerNotificationActivity extends AppCompatActivity {
                     Log.d("Notification(confirmed)", "This is confirmed action: ");
                     ArrayList<String> confirmedList = event.getEnrolledList();
                     if (confirmedList != null) {
+                        Log.d("Notification(confirmed)", "check list: " + confirmedList);
                         Notifications notification = new Notifications(
                                 confirmedList,
                                 "Thank you for confirming your attendance to " + event.getName() + "!",
                                 "Mark your calendars for your event details.",
                                 "",
-                                //"Thank you for confirming your attendance to " + event.getName() + "!"
                                 UUID.randomUUID().toString(),
                                 timestamp
                         );
-
+                        db.addNotification(notification);
                     } else {
                         Toast.makeText(OrganizerNotificationActivity.this, "There are no confirmed entrants in your event!", Toast.LENGTH_LONG).show();
                     }
