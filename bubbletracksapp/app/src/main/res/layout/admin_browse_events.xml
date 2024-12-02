@@ -4,28 +4,40 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:background ="@color/home_blue"
-        android:padding = "8dp"
-        android:paddingStart="20dp"
-        android:text="bubbletracks"
-        android:textColor="@color/white"
-        android:textStyle="bold"
-        android:textSize="35sp">
-    </TextView>
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginTop="20dp"
+        android:paddingBottom="20dp">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:background ="@color/home_blue"
-        android:padding = "8dp"
-        android:text="Event Database"
-        android:textColor="@color/white"
-        android:textStyle="bold"
-        android:textSize="35sp">
-    </TextView>
+        <!--button to go back to home screen-->
+        <ImageButton
+            android:id="@+id/back_button"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/round_event"
+            android:backgroundTint="@color/button_dark_blue"
+            android:src="@drawable/baseline_arrow_back_24"
+            android:layout_margin="8dp"/>
+
+        <!--text view for the title of the page-->
+        <TextView
+            android:id="@+id/rounded_textview"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:text="EVENT DATABASE"
+            android:textColor="#FFFFFF"
+            android:backgroundTint="@color/home_blue"
+            android:textSize="30dp"
+            android:background="@drawable/round_event"
+            android:padding="8dp"
+            android:paddingBottom="16dp"
+            android:layout_gravity="end"
+            android:gravity= "center"/>
+
+    </LinearLayout>
 
     <TextView
         android:id="@+id/no_events_in_db"

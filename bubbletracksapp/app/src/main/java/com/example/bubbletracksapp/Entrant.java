@@ -73,6 +73,7 @@ public class Entrant implements Parcelable {
         this.geolocation = geolocation;
         this.role = role;
         this.facility = facility;
+        this.profilePicture = profilePicture;
         this.eventsOrganized = eventsOrganized;
         this.eventsInvited = eventsInvited;
         this.eventsEnrolled = eventsEnrolled;
@@ -91,7 +92,7 @@ public class Entrant implements Parcelable {
         this.role = "";
         this.facility = "";
         this.notification = false;
-        this.profilePicture = "";
+        this.profilePicture = setDefaultPicture();
         this.geolocation = new LatLng(0,0);
         this.eventsOrganized = new ArrayList<>();
         this.eventsInvited = new ArrayList<>();
@@ -111,7 +112,7 @@ public class Entrant implements Parcelable {
         this.role = "";
         this.facility = "";
         this.notification = false;
-        this.profilePicture = "";
+        this.profilePicture = setDefaultPicture();
         this.geolocation = new LatLng(0,0);
         this.eventsOrganized = new ArrayList<>();
         this.eventsInvited = new ArrayList<>();
@@ -652,6 +653,14 @@ public class Entrant implements Parcelable {
         EntrantDB db = new EntrantDB();
         db.deleteProfilePic(deviceID);
 
+    }
+
+    /**
+     * checks if the profile picture of the entrant is the default picture
+     * @return boolean to indicate profile picture is default picture or not
+     */
+    public Boolean isDefaultPicture(){
+        return generateAlphabetMap().values().stream().anyMatch(profilePicture::equals);
     }
 
 }

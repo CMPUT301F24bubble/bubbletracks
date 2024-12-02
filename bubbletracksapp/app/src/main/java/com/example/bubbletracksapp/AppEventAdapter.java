@@ -8,6 +8,7 @@ package com.example.bubbletracksapp;
 
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +21,9 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.squareup.picasso.Picasso;
+
+import java.util.Date;
 import java.util.List;
 
 
@@ -29,16 +33,19 @@ import java.util.List;
 public class AppEventAdapter extends RecyclerView.Adapter<AppEventAdapter.EventViewHolder>{
 
     // ATTRIBUTES
-    Context context;
-    List<Event> eventList;
-    Entrant user;
-    Integer eventPicInteger;
+    private Context context;
+    private List<Event> eventList;
+    private Entrant user;
+    private Event event;
 
-    public AppEventAdapter (Context context, List<Event> eventList, Entrant user, Integer eventPicInteger) {
+    public AppEventAdapter (Context context, List<Event> eventList, Entrant user) {
         this.context = context;
         this.eventList = eventList;
         this.user = user;
-        this.eventPicInteger = eventPicInteger;
+    }
+
+    public void setUser(Entrant user) {
+        this.user = user;
     }
 
     // CONSTRUCTOR THAT MATCHES SUPER CLASS
@@ -56,8 +63,6 @@ public class AppEventAdapter extends RecyclerView.Adapter<AppEventAdapter.EventV
 
             eventTitle = itemView.findViewById(R.id.eventTitle);
             eventRegStatus = itemView.findViewById(R.id.eventRegStatus);
-            eventDateTime = itemView.findViewById(R.id.eventDateTime);
-            eventLocation = itemView.findViewById(R.id.eventLocation);
             eventPic = itemView.findViewById(R.id.eventPic);
             eventParent = itemView.findViewById(R.id.eventParent);
             accept = itemView.findViewById(R.id.accept);
@@ -101,7 +106,7 @@ public class AppEventAdapter extends RecyclerView.Adapter<AppEventAdapter.EventV
      */
     @Override
     public void onBindViewHolder(@NonNull EventViewHolder holder, int position) {
-        Event event = eventList.get(position);
+        event = eventList.get(position);
 
         // Set up the accept button with an OnClickListener, passing the event object
         holder.accept.setOnClickListener(v -> {
@@ -142,18 +147,11 @@ public class AppEventAdapter extends RecyclerView.Adapter<AppEventAdapter.EventV
         else if(user.getEventsWaitlist().contains(event.getId()) && user.getEventsWaitlist()!=null)
         {
             regStatus = "WAITLISTED";
-        } else {
-            holder.eventRegStatus.setText(regStatus != null ? regStatus : "unknown");
         }
-
-        // SETS EVENT LOCATION
-        //holder.eventLocation.setText();
-
-        //SET EVENT TIME
-        //holder.eventDateTime.setText();
+        holder.eventRegStatus.setText(regStatus != null ? regStatus : "unknown");
 
         // SETS EVENT IMAGE
-        holder.eventPic.setImageResource(R.drawable.default_image); // Replace with a default drawable
+        Picasso.get().load(event.getImage()).into(holder.eventPic);
 
 
         // DETERMINES EVENT DISPLAY SIZE

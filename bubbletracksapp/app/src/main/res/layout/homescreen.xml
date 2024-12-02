@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:gravity="center|top"
         android:padding="16dp"
-        android:text="Homescreen"
+        android:text="BubbleTracks"
         android:textColor="@color/home_blue"
         android:textSize="50dp"
         android:textStyle="bold" />
@@ -24,7 +24,6 @@
     <!-- This is where each activity will go like "your Events" "Your Tickets" "admin Access" every screen will use this and just change the content -->
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/fragmentContainerView"
-        android:name="com.example.bubbletracksapp.EntrantFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="1" />
@@ -48,7 +47,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/rounded_corners_half"
-            android:backgroundTint="#236CA8"
+            android:backgroundTint="@color/button_dark_blue"
             android:drawableRight="@drawable/baseline_image_search_24"
             android:drawablePadding="8dp"
             android:gravity="center_horizontal|center_vertical"

@@ -24,7 +24,7 @@
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:background="@drawable/round_event"
-                android:backgroundTint="@color/button_dark_blue"
+                android:backgroundTint="@color/home_blue"
                 android:src="@drawable/baseline_arrow_back_24"
                 android:layout_margin="8dp"/>
 
@@ -33,7 +33,7 @@
                 android:id="@+id/rounded_textview"
                 android:layout_width="300dp"
                 android:layout_height="wrap_content"
-                android:text="FACILITY CREATOR"
+                android:text="FACILITY EDITOR"
                 android:textColor="#FFFFFF"
                 android:backgroundTint="@color/home_blue"
                 android:textSize="30dp"
@@ -102,10 +102,10 @@
         </LinearLayout>
 
         <Button
-            android:id="@+id/create_button"
+            android:id="@+id/update_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Create Facility"
+            android:text="Update Facility"
             android:layout_marginTop="24dp"
             android:backgroundTint="@color/bubble_green"
             android:layout_gravity="center_horizontal" />

@@ -11,11 +11,14 @@
         android:layout_height="match_parent"
         android:padding="16dp">
 
-        <Button
+        <ImageButton
             android:id="@+id/profileBack"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Back"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/round_event"
+            android:backgroundTint="@color/button_dark_blue"
+            android:src="@drawable/baseline_arrow_back_24"
+            android:layout_margin="8dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -25,9 +28,51 @@
             android:layout_height="200dp"
             android:src="@drawable/ic_launcher_foreground"
             app:tint="#85C534"
+            app:layout_constraintTop_toTopOf="parent"/>
+        <TextView
+            android:id="@+id/rounded_textview"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:text="Profile Editor"
+            android:textColor="#FFFFFF"
+            android:backgroundTint="@color/home_blue"
+            android:textSize="30sp"
+            android:background="@drawable/round_event"
+            android:padding="8dp"
+            android:paddingBottom="16dp"
+            android:layout_gravity="end"
+            android:layout_marginStart="10dp"
+            android:gravity="center"
+            app:layout_constraintStart_toEndOf="@id/profileBack"/>
+
+        <FrameLayout
+            android:id="@+id/imageFrame"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_marginEnd="18dp"
+            android:layout_marginTop="20dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/profileBack" />
+            app:layout_constraintTop_toBottomOf="@id/profileBack"
+            app:layout_constraintBottom_toTopOf="@+id/entrantNameInput">
+
+            <ImageView
+                android:id="@+id/profileImage"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:src="@drawable/pfp_placeholder" />
+
+            <ImageButton
+                android:id="@+id/pictureUpdate"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_gravity="top|end"
+                android:background="@android:color/transparent"
+                android:src="@drawable/baseline_add_circle_24"
+                app:tint="@color/button_dark_blue"
+                />
+        </FrameLayout>
 
         <!-- Garbage Icon -->
         <ImageButton
@@ -44,16 +89,28 @@
             android:id="@+id/entrantNameInput"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="TextView"
+            android:hint="Enter Your name"
+            android:textColor="#555555"
+            android:background="#EEEEEE"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="3dp"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="3dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/profileImage" />
+            app:layout_constraintTop_toBottomOf="@+id/imageFrame" />
 
         <EditText
             android:id="@+id/entrantEmailInput"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:hint="Enter your email"
+            android:textColor="#555555"
+            android:background="#EEEEEE"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="3dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/entrantNameInput" />
@@ -63,6 +120,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:hint="Enter your phone number"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="3dp"
+            android:textColor="#555555"
+            android:background="#EEEEEE"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/entrantEmailInput" />
@@ -71,7 +134,7 @@
             android:id="@+id/notificationToggle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Do not allow notifications from app or event organizers"
+            android:text="Allow notifications from app or event organizers"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/entrantPhoneInput" />
@@ -94,22 +157,15 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/locationNote" />
 
-        <Button
-            android:id="@+id/pictureUpdate"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Update profile Picture"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/deviceIDNote" />
 
         <Button
             android:id="@+id/profileUpdate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Update"
+            android:backgroundTint="@color/bubble_green"
+            app:layout_constraintTop_toBottomOf="@id/deviceIDNote"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/pictureUpdate" />
+            app:layout_constraintEnd_toEndOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>

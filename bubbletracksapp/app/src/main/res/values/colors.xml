@@ -2,9 +2,24 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="home_blue">#2196F3</color>
     <color name="home">#F0F321</color>
     <color name="search">#99ACEC</color>
     <color name="positive">#FF018104</color>
     <color name="neutral">#9DA7AC</color>
+
+    <!-- Bubble Colors -->
+    <color name="background_bubble_blue">#AEE1F9</color>
+    <color name="back_beige">#F7F1E1</color>
+
+    <color name="home_blue">#2196F3</color>
+    <color name="home_blue_2">#4DA8D3</color>
+
+    <color name="button_soft_pink">#F9D7E9</color>
+    <color name="button_light_mint_green">#A7F2D7</color>
+
+    <color name="button_neutral_gray">#BDBDBD</color>
+    <color name="button_dark_blue">#1E3A5F</color>
+    <color name="icon_white">#FFFFFF</color>
+    <color name="bubble_green">#8AEA92</color>
 </resources>
+

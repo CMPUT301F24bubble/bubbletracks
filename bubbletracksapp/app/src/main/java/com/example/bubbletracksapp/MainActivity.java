@@ -15,7 +15,6 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 
-import com.example.bubbletracksapp.databinding.AdminBrowseEventsBinding;
 import com.example.bubbletracksapp.databinding.HomescreenBinding;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.firestore.CollectionReference;
@@ -91,12 +90,19 @@ public class MainActivity extends AppCompatActivity {
 
         db.getEntrant(currentDeviceID).thenAccept(user -> {
             if(user != null){
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fragmentContainerView, EntrantFragment.class, null)
+                        .setReorderingAllowed(true)
+                        //.addToBackStack("") // Having this on the backstack can be annoying.
+                        .commit();
                 currentUser = user;
                 // Check user role
                 if(currentUser.getRole().equals("admin")){
                     Log.d("User role:", "Woohoo, admin");
+                    if(!currentUser.getFacility().isEmpty()){
+                        organizerButton.setVisibility(View.VISIBLE);
+                    }
                     adminButton.setVisibility(View.VISIBLE);
-                    organizerButton.setVisibility(View.VISIBLE);
                 } else if (currentUser.getRole().equals("organizer")) {
                     Log.d("User role:", "Organizer");
                     organizerButton.setVisibility(View.VISIBLE);
@@ -114,7 +120,13 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 // Make a new entrant if they haven't launched the app before.
                 currentUser = new Entrant(currentDeviceID);
+                switchActivityButton(createFacilityButton, createFacilityIntent);
                 db.addEntrant(currentUser);
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fragmentContainerView, EntrantFragment.class, null)
+                        .setReorderingAllowed(true)
+                        //.addToBackStack("") // Having this on the backstack can be annoying.
+                        .commit();
                 Log.d("Added new Entrant",currentUser.getID());}
         }).exceptionally(e -> {
             Toast.makeText(MainActivity.this, "Failed to load user: " + e.getMessage(), Toast.LENGTH_LONG).show();
@@ -158,7 +170,6 @@ public class MainActivity extends AppCompatActivity {
 
         Intent userEventsIntent = new Intent(MainActivity.this, AppUserEventScreenGenerator.class);
         switchActivityButton(userEventsButton, userEventsIntent);
-
         Intent adminProfileIntent = new Intent(MainActivity.this, AdminProfileViews.class);
         switchActivityButton(adminProfileAccessButton, adminProfileIntent);
 
@@ -171,8 +182,6 @@ public class MainActivity extends AppCompatActivity {
         Intent eventHostIntent = new Intent(MainActivity.this, OrganizerEventHosting.class);
         switchActivityButton(eventHostButton, eventHostIntent);
         adminButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.fragmentContainerView, AdminFragment.class, null)
                         .setReorderingAllowed(true)

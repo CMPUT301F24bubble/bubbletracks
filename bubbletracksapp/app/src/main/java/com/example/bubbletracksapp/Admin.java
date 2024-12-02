@@ -11,6 +11,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.WriteBatch;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -153,9 +154,60 @@ public class Admin {
         // the associated facility if present
         String facilityId = entrantToDelete.getFacility();
         if (facilityId != null && !facilityId.isEmpty()) {
-            DocumentReference facilityRef = db.collection("facility").document(facilityId);
-            deleteFacility(context, facilityRef);
+            DocumentReference facilityRef = db.collection("facilities").document(facilityId);
+
+            facilityRef.get().addOnSuccessListener(documentSnapshot -> {
+                if (documentSnapshot.exists()) {
+                    Facility facility = documentSnapshot.toObject(Facility.class);
+
+                    if (facility != null) {
+                        FacilityDB facilityDB = new FacilityDB();
+                        facilityDB.deleteFacility(facility);
+                    } else {
+                        Log.e("DeleteFacility", "Failed to convert document to Facility object");
+                    }
+                } else {
+                    Log.e("DeleteFacility", "Facility document not found");
+                }
+            }).addOnFailureListener(e -> {
+                Log.e("DeleteFacility", "Error fetching facility document: ", e);
+            });
         }
+        /// deleting user from waitlists
+//        List<String> subcategories = Arrays.asList("cancelled","enrolled", "invited", "rejected", "wait");
+//        // delete entrant references in events
+//        db.collection("events")
+//                .get()
+//                .addOnSuccessListener(querySnapshot -> {
+//                    for (DocumentSnapshot eventDoc : querySnapshot.getDocuments()) {
+//                        DocumentReference eventRef = eventDoc.getReference();
+//                        Map<String, Object>eventData = eventDoc.getData();
+//
+//                        if (eventData != null) {
+//                            for (String subcategory : subcategories) {
+//                                if (eventData.containsKey(subcategory)) {
+//                                    List<String> eventList = (List<String>) eventData.get(subcategory);
+//                                    if (eventList != null && eventList.contains(profileId)) {
+//                                        eventList.remove(profileId);
+//                                        batch.update(eventRef, subcategory, eventList);
+//                                    }
+//                                }
+//                            }
+//                        }
+//                    }
+//
+//                    // Commit the batch after removing references from events
+//                    batch.commit()
+//                            .addOnSuccessListener(aVoid -> {
+//                                Log.d("RemoveEntrantFromEvents", "Successfully removed profileId from event subcategories.");
+//                            })
+//                            .addOnFailureListener(e -> {
+//                                Log.e("RemoveEntrantFromEvents", "Error removing profileId from event subcategories.", e);
+//                            });
+//                })
+//                .addOnFailureListener(e -> {
+//                    Log.e("RemoveEntrantFromEvents", "Error fetching event documents: ", e);
+//                });
 
         profileRef.get()
                 .addOnSuccessListener(documentSnapshot -> {
@@ -262,23 +314,45 @@ public class Admin {
 
                     }
 
+
                     if (organizerId != null) {
                         DocumentReference organizerRef = db.collection("entrants").document(organizerId);
-                        batch.update(organizerRef, "facility", null);
-                        batch.update(organizerRef, "role", "entrant"); // turn role to entrant
+                        organizerRef.get().addOnSuccessListener(documentSnapshot -> {
+                            if (documentSnapshot.exists()) {
+                                Map<String, Object> updates = new HashMap<>();
+                                updates.put("facility", "");
+
+                                if (!"admin".equals(documentSnapshot.getString("role"))) {
+                                    updates.put("role", "entrant");
+                                }
+                                organizerRef.update(updates);
+                            }
+                        }).addOnFailureListener(e -> Log.e("Firestore", "Error fetching document", e));
                     }
+
                 }
 
-                batch.delete(facilityRef);
+                facilityRef.get().addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        // Convert the document snapshot to a Facility object
+                        Facility facility = documentSnapshot.toObject(Facility.class);
 
-                batch.commit().addOnSuccessListener(aVoid -> {
-                    Toast.makeText(context, "Facility and related data deleted successfully", Toast.LENGTH_SHORT).show();
+                        // If a Facility object is retrieved, delete it using FacilityDB
+                        if (facility != null) {
+                            FacilityDB facilityDB = new FacilityDB();
+                            facilityDB.deleteFacility(facility); // Delete the facility
+                        } else {
+                            Log.e("DeleteFacility", "Failed to convert document to Facility object");
+                        }
+                    } else {
+                        Log.e("DeleteFacility", "Facility document not found");
+                    }
                 }).addOnFailureListener(e -> {
-                    Log.e("DeleteFacility", "Error deleting facility or related data: ", e);
-                    Toast.makeText(context, "Failed to delete facility. Try again.", Toast.LENGTH_SHORT).show();
+                    Log.e("DeleteFacility", "Error fetching facility document: ", e);
                 });
 
-            } else {
+
+        } else {
                 Toast.makeText(context, "Facility not found!", Toast.LENGTH_SHORT).show();
             }
         }).addOnFailureListener(e -> {
@@ -288,15 +362,16 @@ public class Admin {
     }
 
     /**
-     * Removes the hash QRCode data
-     * @param context
-     * @param event
+     * Removes The hash QRCode data
+     * @param context The context this deletion occurs
+     * @param event The event who's QR code is to be deleted
      */
     public void removeHashData(Context context, Event event) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         DocumentReference eventRef = db.collection("events").document(event.getId());
 
-        eventRef.update("QrCode", FieldValue.delete())
+        // Replace the QRCode field with an empty string
+        eventRef.update("QRCode", "")
                 .addOnSuccessListener(aVoid -> {
                     Toast.makeText(context, "QrCode removed successfully", Toast.LENGTH_SHORT).show();
                 })
@@ -308,56 +383,5 @@ public class Admin {
 
 
 
-} // remove this bracket later when implemented profile pictures
 
-
-
-//
-//    //**Profiles Picture**//
-////Replace pfp with default image?
-////Make sure there is a pfp getter and setter
-////Make sure there actually is a pfp in the database?
-//    public void resetProfileImage(int position) {
-//        Entrant profile = getItem(position);
-//        if (profile == null) {
-//            return;
-//        }
-//
-//        new AlertDialog.Builder(getContext())
-//                .setTitle("Confirm Profile Image Reset")
-//                .setMessage("Are you sure you want to reset this profile image? It will be replaced with the default image.")
-//                .setPositiveButton("Reset Image", (dialog, which) -> {
-//                    FirebaseFirestore db = FirebaseFirestore.getInstance();
-//                    String profileId = profile.getID();  // Profile ID to update
-//
-//                    WriteBatch batch = db.batch();
-//
-//                    DocumentReference profileRef = db.collection("entrants").document(profileId);
-//
-//                    String defaultImageUrl = "bubbletracksapp/app/src/main/res/drawable/pfp_placeholder.png"; // Adjust the URL if needed
-//                    profile.setPfp(defaultImageUrl);  // Change to default pfp
-//
-//                    batch.update(profileRef, "pfp", profile.getPfp()); // Change "pfp" to whatever the picture is named in the firebase
-//
-//                    batch.commit()
-//                            .addOnSuccessListener(aVoid -> {
-//                                // No need to remove from adapter, just refresh the UI
-//                                notifyDataSetChanged();
-//                                Toast.makeText(getContext(), "Profile image reset to default successfully", Toast.LENGTH_SHORT).show();
-//                            })
-//                            .addOnFailureListener(e -> {
-//                                Log.e("ResetProfileImage", "Error resetting profile image: ", e);
-//                                Toast.makeText(getContext(), "Failed to reset profile image. Try again.", Toast.LENGTH_SHORT).show();
-//                            });
-//
-//                    dialog.dismiss();
-//                })
-//                .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
-//                .create()
-//                .show();
-//    }
-//
-//}
-
-
-
+}
