@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:gravity="center|top"
         android:padding="16dp"
-        android:text="Homescreen"
+        android:text="BubbleTracks"
         android:textColor="@color/home_blue"
         android:textSize="50dp"
         android:textStyle="bold" />
@@ -47,7 +47,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/rounded_corners_half"
-            android:backgroundTint="#236CA8"
+            android:backgroundTint="@color/button_dark_blue"
             android:drawableRight="@drawable/baseline_image_search_24"
             android:drawablePadding="8dp"
             android:gravity="center_horizontal|center_vertical"

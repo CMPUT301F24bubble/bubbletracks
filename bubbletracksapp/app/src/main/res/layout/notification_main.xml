@@ -23,6 +23,7 @@
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:background="@drawable/round_event"
+                android:backgroundTint="@color/button_dark_blue"
                 android:src="@drawable/baseline_arrow_back_24"
                 android:layout_margin="8dp"/>
             <TextView
@@ -78,7 +79,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:backgroundTint="#00FF00"
+            android:backgroundTint="@color/bubble_green"
             android:text="Send a Default Notification" />
 
 
@@ -145,7 +146,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:backgroundTint="#00FF00"
+            android:backgroundTint="@color/bubble_green"
             android:text="Send Custom Notification" />
     </LinearLayout>
 </ScrollView>

@@ -25,7 +25,7 @@
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:background="@drawable/round_event"
-                android:backgroundTint="@color/home_blue"
+                android:backgroundTint="@color/button_dark_blue"
                 android:src="@drawable/baseline_arrow_back_24"
                 android:layout_margin="8dp"/>
 
@@ -274,7 +274,7 @@
             android:layout_height="wrap_content"
             android:text="Create Event"
             android:layout_marginTop="24dp"
-            android:backgroundTint="#64DD17"
+            android:backgroundTint="@color/bubble_green"
             android:layout_gravity="center_horizontal" />
 
     </LinearLayout>
