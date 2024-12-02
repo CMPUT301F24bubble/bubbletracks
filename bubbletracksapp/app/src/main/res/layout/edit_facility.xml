@@ -107,7 +107,7 @@
             android:layout_height="wrap_content"
             android:text="Update Facility"
             android:layout_marginTop="24dp"
-            android:backgroundTint="#64DD17"
+            android:backgroundTint="@color/bubble_green"
             android:layout_gravity="center_horizontal" />
 
     </LinearLayout>

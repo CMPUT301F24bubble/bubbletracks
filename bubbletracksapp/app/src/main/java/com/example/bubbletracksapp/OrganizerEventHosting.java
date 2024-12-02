@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
@@ -39,6 +40,7 @@ public class OrganizerEventHosting extends AppCompatActivity implements EventHos
 
     private ActivityResultLauncher<String> uploadImageLauncher;
     private Event newEventImage;
+    private ImageView posterImage;
 
     /**
      * Set up creation of activity
@@ -128,8 +130,9 @@ public class OrganizerEventHosting extends AppCompatActivity implements EventHos
      * Uploads new poster by launching activity launcher
      * @param event event for which the poster is updated
      */
-    public void updatePoster(Event event){
+    public void updatePoster(Event event, ImageView posterImage){
         newEventImage = event;
+        this.posterImage = posterImage;
         Intent intent = new Intent(MediaStore.ACTION_PICK_IMAGES);
         uploadImageLauncher.launch("image/*");
     }
@@ -152,11 +155,12 @@ public class OrganizerEventHosting extends AppCompatActivity implements EventHos
                         // get the download url of the image
                         storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                             @Override
-                            public void onSuccess(Uri uri) {
+                            public void onSuccess(Uri downloadUri) {
                                 // update the download string in the event class and update the event
-                                String downloadUrl = uri.toString();
+                                String downloadUrl = downloadUri.toString();
                                 newEventImage.setImage(downloadUrl);
                                 eventDB.updateEvent(newEventImage);
+                                posterImage.setImageURI(uri);
                                 Toast.makeText(OrganizerEventHosting.this, "Poster has been updated", Toast.LENGTH_SHORT).show();
                             }
                         // handle errors

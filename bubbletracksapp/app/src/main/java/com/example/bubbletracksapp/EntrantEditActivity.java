@@ -1,36 +1,43 @@
 package com.example.bubbletracksapp;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
-
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.example.bubbletracksapp.databinding.ProfileManagementBinding;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.Priority;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.CancellationTokenSource;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.Picasso;
 import android.Manifest; // For importing notification permissions
 import android.widget.Toast;
-
 import java.util.Map;
 
 /**
@@ -53,10 +60,15 @@ public class EntrantEditActivity extends AppCompatActivity {
     private EditText entrantEmailInput;
     private EditText entrantPhoneInput;
     private CheckBox entrantNotificationInput;
+    private ImageView profilePictureImage;
+    private ImageButton updatePictureButton;
+    private ImageButton deletePictureButton;
 
     // Initialize views
     private TextView deviceIDNote;
     private TextView locationNote;
+
+    private ActivityResultLauncher<String> uploadImageLauncher;
 
     /**
      * Start up activity for entrant to edit their profile
@@ -104,6 +116,49 @@ public class EntrantEditActivity extends AppCompatActivity {
         entrantEmailInput = binding.entrantEmailInput;
         entrantPhoneInput = binding.entrantPhoneInput;
         entrantNotificationInput = binding.notificationToggle;
+        profilePictureImage = binding.profileImage;
+        updatePictureButton = binding.pictureUpdate;
+        deletePictureButton = binding.deleteProfilePicture;
+
+        // initialize the activity result launcher for the image picker
+        uploadImageLauncher = registerForActivityResult(new ActivityResultContracts.GetContent(), uri -> {
+            if (uri != null) {
+                String filename = "profile-pictures/" + currentUser.getID() + "profilePicture.jpg";
+                StorageReference storageReference = FirebaseStorage.getInstance().getReference(filename);
+
+                storageReference.putFile(uri)
+                        // upload file
+                        .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                            @Override
+                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                // get the download url of the image
+                                storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                    @Override
+                                    public void onSuccess(Uri downloadUri) {
+                                        // update the download string in the event class and update the event
+                                        Toast.makeText(EntrantEditActivity.this, "Profile Picture updated", Toast.LENGTH_SHORT).show();
+                                        String downloadUrl = downloadUri.toString();
+                                        currentUser.setProfilePicture(downloadUrl);
+                                        db.updateEntrant(currentUser);
+                                        profilePictureImage.setImageURI(uri);
+                                    }
+                                    // handle errors
+                                }).addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Toast.makeText(EntrantEditActivity.this, "Failed to get download URL: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                            }
+                            // handle errors
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Toast.makeText(EntrantEditActivity.this, "Upload failed: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                            }
+                        });
+            }
+        });
 
         deviceIDNote = binding.deviceIDNote;
         locationNote = binding.locationNote;
@@ -112,12 +167,15 @@ public class EntrantEditActivity extends AppCompatActivity {
         ID = localID.getString("ID", "Device ID not found");
         String tempLocation = "No last location found. Allow location and update your profile";
 
-        // Displays the user's profile
         deviceIDNote.setText(ID);
         locationNote.setText(tempLocation);
         db.getEntrant(ID).thenAccept(user -> {
             if(user != null){
                 currentUser = user;
+                // Displays the user's profile
+                if(!currentUser.getProfilePicture().isEmpty()){
+                    Picasso.get().load(currentUser.getProfilePicture()).into(profilePictureImage);
+                }
                 if (!currentUser.getNameAsString().isBlank()) {entrantNameInput.setText(currentUser.getNameAsString()); }
 
                 if (!currentUser.getNameAsString().isBlank()) {entrantNameInput.setText(currentUser.getNameAsString()); }
@@ -140,11 +198,34 @@ public class EntrantEditActivity extends AppCompatActivity {
         });
 
         // Handler to go back to homescreen
-        Button backButton = binding.profileBack;
+        ImageButton backButton = binding.profileBack;
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                finish();
+                Intent intent = new Intent(EntrantEditActivity.this, MainActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        deletePictureButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(currentUser.isDefaultPicture()){
+                    Toast.makeText(EntrantEditActivity.this, "Cannot delete default profile picture", Toast.LENGTH_SHORT).show();
+                } else {
+                    currentUser.deleteProfilePic();
+                    Picasso.get().load(currentUser.getProfilePicture()).into(profilePictureImage);
+                    Toast.makeText(EntrantEditActivity.this, "Deleted Profile Picture", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        updatePictureButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // launch activity result launcher
+                Intent intent = new Intent(MediaStore.ACTION_PICK_IMAGES);
+                uploadImageLauncher.launch("image/*");
             }
         });
 
@@ -173,6 +254,10 @@ public class EntrantEditActivity extends AppCompatActivity {
                         currentUser.setName(newFirst, newLast);
                         currentUser.setPhone(newPhone);
                         currentUser.setEmail(newEmail);
+
+                        if(currentUser.isDefaultPicture()){
+                            Picasso.get().load(currentUser.setDefaultPicture()).into(profilePictureImage);
+                        }
 
                         if (!notificationPermission){
                             currentUser.setNotification(false);
@@ -207,7 +292,6 @@ public class EntrantEditActivity extends AppCompatActivity {
                                             else
                                             {
                                                 db.updateEntrant(currentUser);
-
                                                 Log.w("EntrantEditActivity", "No location could be found. Location was not updated");
                                             }
                                             Log.d("New user name:", currentUser.getNameAsString());

@@ -9,16 +9,22 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.WriteBatch;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -57,8 +63,12 @@ public class AdminEntrantListAdapter extends ArrayAdapter<Entrant> {
         TextView entrantNameText = convertView.findViewById(R.id.user_name);
         TextView entrantDeviceText = convertView.findViewById(R.id.user_device);
         ImageButton deleteEntrantButton = convertView.findViewById(R.id.delete_button);
-        ImageButton replaceProfilePicture = convertView.findViewById(R.id.profile_picture); // for later
+        ImageButton deleteProfilePicture = convertView.findViewById(R.id.picture_delete); // for later
+        ImageView profilePictureImage = convertView.findViewById(R.id.profile_picture);
 
+        if(!entrant.getProfilePicture().isEmpty()){
+            Picasso.get().load(entrant.getProfilePicture()).into(profilePictureImage);
+        }
         entrantNameText.setText("User: "+String.join(" ", entrant.getNameAsList()));
         entrantDeviceText.setText(entrant.getID());
 
@@ -73,6 +83,39 @@ public class AdminEntrantListAdapter extends ArrayAdapter<Entrant> {
                         admin.deleteEntrant(getContext(), entrant);
                         remove(entrant);
                         notifyDataSetChanged();
+                    })
+                    .setNegativeButton("No", (dialog, which) -> dialog.dismiss())
+                    .create()
+                    .show();
+        });
+
+        deleteProfilePicture.setOnClickListener(view -> {
+            new AlertDialog.Builder(getContext())
+                    .setTitle("Delete Profile Picture")
+                    .setMessage("Are you sure you want to delete this user's profile picture?")
+                    .setPositiveButton("yes", (dialog, which) -> {
+                        if(entrant.isDefaultPicture()){
+                            Toast.makeText(getContext(), "User has default profile picture", Toast.LENGTH_LONG).show();
+                        } else {
+                            String profilePictureFilename = "profile-pictures/" + entrant.getID() + "profilePicture.jpg";
+                            StorageReference posterStorageReference = FirebaseStorage.getInstance().getReference(profilePictureFilename);
+
+                            posterStorageReference.delete()
+                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void unused) {
+                                            Toast.makeText(getContext(), "Profile Picture deleted successfully", Toast.LENGTH_SHORT).show();
+                                            Picasso.get().load(entrant.setDefaultPicture()).into(profilePictureImage);
+                                            //entrant.setDefaultPicture();
+                                            new EntrantDB().updateEntrant(entrant);
+                                        }
+                                    }).addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            Toast.makeText(getContext(), "Error in deleting poster: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                                        }
+                                    });
+                        }
                     })
                     .setNegativeButton("No", (dialog, which) -> dialog.dismiss())
                     .create()

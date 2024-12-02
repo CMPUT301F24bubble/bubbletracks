@@ -56,7 +56,7 @@
                         android:layout_margin="10dp"
                         android:layout_weight="1"
                         android:background="@drawable/rounded_corners"
-                        android:backgroundTint="@color/home_blue"
+                        android:backgroundTint="@color/home_blue_2"
                         android:drawableTop="@drawable/baseline_qr_code_scanner_24"
                         android:gravity="center_horizontal|center_vertical"
                         android:padding="15dp"
@@ -71,7 +71,7 @@
                         android:layout_margin="10dp"
                         android:layout_weight="1"
                         android:background="@drawable/rounded_corners"
-                        android:backgroundTint="@color/home_blue"
+                        android:backgroundTint="@color/home_blue_2"
                         android:drawableTop="@drawable/events_icon"
                         android:padding="15dp"
                         android:text="Your Events"
@@ -85,7 +85,7 @@
                         android:layout_margin="10dp"
                         android:layout_weight="1"
                         android:background="@drawable/rounded_corners"
-                        android:backgroundTint="@color/home_blue"
+                        android:backgroundTint="@color/home_blue_2"
                         android:drawableTop="@drawable/baseline_groups_24"
                         android:padding="20dp"
                         android:text="Profile" />
@@ -124,7 +124,7 @@
                         android:layout_margin="10dp"
                         android:layout_weight="1"
                         android:background="@drawable/rounded_corners"
-                        android:backgroundTint="@color/home_blue"
+                        android:backgroundTint="@color/home_blue_2"
                         android:padding="15dp"
                         android:visibility="invisible" />
 
@@ -136,7 +136,7 @@
                         android:layout_margin="10dp"
                         android:layout_weight="1"
                         android:background="@drawable/rounded_corners"
-                        android:backgroundTint="@color/home_blue"
+                        android:backgroundTint="@color/home_blue_2"
                         android:padding="15dp"
                         android:visibility="invisible"
                         tools:visibility="invisible" />

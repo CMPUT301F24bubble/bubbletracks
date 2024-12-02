@@ -14,13 +14,28 @@
         android:orientation="horizontal"
         android:padding="16dp">
 
-        <ImageButton
-            android:id="@+id/profile_picture"
+        <FrameLayout
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:layout_marginEnd="16dp"
-            android:src="@drawable/pfp_placeholder"
-             />
+            android:layout_marginEnd="18dp">
+
+            <ImageView
+                android:id="@+id/profile_picture"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:src="@drawable/pfp_placeholder"
+                />
+
+            <ImageButton
+                android:id="@+id/picture_delete"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_gravity="top|end"
+                android:background="@android:color/transparent"
+                android:src="@drawable/baseline_remove_circle_24"
+                app:tint="@color/button_dark_blue" />
+        </FrameLayout>
 
         <LinearLayout
             android:layout_width="0dp"
@@ -55,7 +70,7 @@
             android:background="@android:color/transparent"
             android:src="@drawable/baseline_delete_24"
             app:tint="@color/button_dark_blue"
-            android:contentDescription="Delete facility"
+            android:contentDescription="Delete profile"
             android:onClick="onDeleteFacilityClicked" />
     </LinearLayout>
 </androidx.cardview.widget.CardView>
