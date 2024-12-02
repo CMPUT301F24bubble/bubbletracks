@@ -74,6 +74,7 @@ public class AdminFragment extends Fragment {
 
         Button browseFacilitiesButton = view.findViewById(R.id.button_admin_facilities);
         Button browseProfilesButton = view.findViewById(R.id.button_admin_profiles);
+        Button browseEventsButton = view.findViewById(R.id.button_eventEdit);
         loadingText = view.findViewById(R.id.loading_textview);
         parentLayout = view.findViewById(R.id.parent_layout);
 
@@ -82,6 +83,9 @@ public class AdminFragment extends Fragment {
 
         Intent adminFacilityIntent = new Intent(getActivity(), AdminFacilityViews.class);
         switchActivityButton(browseFacilitiesButton, adminFacilityIntent);
+
+        Intent adminEventsIntent = new Intent(getActivity(), BrowseEventsScreenGenerator.class);
+        switchActivityButton(browseEventsButton, adminEventsIntent);
 
         // Inflate the layout for this fragment
         return view;

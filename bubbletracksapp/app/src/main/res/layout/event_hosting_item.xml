@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Still wip -->
+<!-- Still wip
+
+ 1) Not keeping QR code
+ 2) Possible change: adding actions into an overflow menu if possible-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:gravity="center_horizontal">
 
     <View
         android:layout_width="match_parent"
@@ -117,32 +121,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
-        <!-- words -->
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Event QR Code"
-                android:textStyle="bold"/>
-            <TextView
-                android:layout_width="200dp"
-                android:layout_height="wrap_content"
-                android:text="Entrants must scan this QR code to join your event"/>
-
-
-        </LinearLayout>
-
-        <ImageView
-            android:layout_width="75dp"
-            android:layout_height="75dp"
-            android:backgroundTint="@color/white"
-            android:paddingEnd="16dp"
-            android:src="@drawable/qr_ex"
-            />
         <ImageButton
             android:id="@+id/delete_button"
             android:layout_width="wrap_content"
@@ -151,6 +130,14 @@
             android:backgroundTint="@color/white"
             app:tint="@color/black"/>
 
+        <Button
+            android:id="@+id/update_poster_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Update Poster"
+            android:textSize="12sp"
+            android:backgroundTint="@color/home_blue"
+            android:layout_marginTop="8dp" />
 
     </LinearLayout>
 

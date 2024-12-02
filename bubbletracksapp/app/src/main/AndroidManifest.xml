@@ -2,7 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
     <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-feature android:name="android.hardware.camera" />
     <uses-feature android:name="android.hardware.camera.autofocus" />
 
@@ -38,31 +37,16 @@
         <activity android:name=".AdminProfileViews"
             android:exported="true"
             android:theme="@style/Theme.Bubbletracksapp">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity android:name=".AdminFacilityViews"
             android:exported="true"
             android:theme="@style/Theme.Bubbletracksapp">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
 
         <activity
             android:name=".QRScanner"
             android:exported="true"
             android:theme="@style/Theme.Bubbletracksapp">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
 
 
@@ -70,11 +54,6 @@
             android:name=".EntrantActivity"
             android:exported="true"
             android:theme="@style/Theme.Bubbletracksapp">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
 
         <activity android:name=".OrganizerEntrantListActivity"/>
@@ -83,11 +62,6 @@
             android:name=".EntrantEditActivity"
             android:exported="true"
             android:theme="@style/Theme.Bubbletracksapp">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
             android:name=".OrganizerNotificationActivity"
@@ -101,11 +75,13 @@
         </activity>
         <activity android:name=".OrganizerActivity" />
         <activity android:name=".OrganizerFacilityActivity" />
+        <activity android:name=".OrganizerEditFacilityActivity" />
         <activity android:name=".OrganizerManageActivity" />
         <activity android:name=".EntrantViewActivity" />
         <activity android:name=".AppUserEventScreenGenerator" />
         <activity android:name=".OrganizerLocationsMap" />
         <activity android:name=".OrganizerEventHosting" />
+        <activity android:name=".BrowseEventsScreenGenerator" />
     </application>
 
 </manifest>

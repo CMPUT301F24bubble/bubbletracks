@@ -59,7 +59,7 @@ public class AdminEntrantListAdapter extends ArrayAdapter<Entrant> {
         ImageButton deleteEntrantButton = convertView.findViewById(R.id.delete_button);
         ImageButton replaceProfilePicture = convertView.findViewById(R.id.profile_picture); // for later
 
-        entrantNameText.setText(String.join(" ", entrant.getNameAsList()));
+        entrantNameText.setText("User: "+String.join(" ", entrant.getNameAsList()));
         entrantDeviceText.setText(entrant.getID());
 
         convertView.setOnClickListener(v -> showProfileDetailsDialog(entrant));
@@ -128,7 +128,7 @@ public class AdminEntrantListAdapter extends ArrayAdapter<Entrant> {
 
         String facilityId = entrant.getFacility();
 
-        if (facilityId != null) {
+        if (facilityId != null && !facilityId.isEmpty()) {
             DocumentReference facilityRef = db.collection("facilities").document(facilityId);
 
             facilityRef.get().addOnSuccessListener(documentSnapshot -> {

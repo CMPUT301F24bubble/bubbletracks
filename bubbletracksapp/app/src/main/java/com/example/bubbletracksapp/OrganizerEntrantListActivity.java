@@ -251,7 +251,6 @@ public class OrganizerEntrantListActivity extends AppCompatActivity
             return;
         }
 
-        //TODO: ADD NEW ARRAY TO ADD
         invitedList.add(chosenEntrant);
         newInvitedList.add(String.valueOf(chosenEntrant));
         UpdateListDisplay();

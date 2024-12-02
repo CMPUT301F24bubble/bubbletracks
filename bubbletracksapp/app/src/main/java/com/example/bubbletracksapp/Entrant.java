@@ -73,6 +73,7 @@ public class Entrant implements Parcelable {
         this.geolocation = geolocation;
         this.role = role;
         this.facility = facility;
+        this.profilePicture = profilePicture;
         this.eventsOrganized = eventsOrganized;
         this.eventsInvited = eventsInvited;
         this.eventsEnrolled = eventsEnrolled;
