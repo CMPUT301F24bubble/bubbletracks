@@ -28,6 +28,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.google.zxing.WriterException;
+import java.io.ByteArrayOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -35,29 +36,26 @@ import java.util.Locale;
 
 /**
  * this class is an activity that allows an organizer to create an event
- * incomplete - input validation is not completed
- *              the user needs to put in all the information for the event to work to work
  * @author Samyak
- * @version 1.0
+ * @version 2.0
  */
 public class OrganizerActivity extends AppCompatActivity {
 
+    // new event to be created
     private Event event = new Event();
-    private Entrant currentUser = new Entrant();
 
+    // date at the beginning of the activity to validate selected dates
     private Date curDate = new Date();
 
     // declare all views necessary
     private EditText nameText, descriptionText, maxCapacityText, priceText, waitListLimitText;
-    private ImageButton dateTimeButton, registrationOpenButton, registrationCloseButton;
+    private ImageButton dateTimeButton, registrationOpenButton, registrationCloseButton, backButton;
     private Button uploadPhotoButton, createButton;
     private TextView dateTimeText, registrationOpenText, registrationCloseText;
     private ImageView posterImage;
     private CheckBox requireGeolocationCheckBox;
-    private ImageButton backButton;
 
-
-    // declare calendar variables
+    // declare Date variables
     private Date dateTime, registrationClose;
     private Date registrationOpen = new Date();
 
@@ -67,10 +65,10 @@ public class OrganizerActivity extends AppCompatActivity {
     // declare uri variable
     private Uri posterUri;
 
-    private String facility;
+    private Boolean inCreation = false;
 
     /**
-     * sets the layout, assigns all the views declared and sets up all the on click listeners
+     * sets the layout, assigns all the views and sets up all the on click listeners
      * @param savedInstanceState stores the state of the activity
      */
     @Override
@@ -80,21 +78,10 @@ public class OrganizerActivity extends AppCompatActivity {
         // set the layout to the create event page
         setContentView(R.layout.create_event);
 
+        // get the id and location of the facility from previous activity
         Intent intent = getIntent();
-        facility = intent.getStringExtra("id");
-
-        FacilityDB facilityDB = new FacilityDB();
-        facilityDB.getFacility(facility).thenAccept(curFacility -> {
-            if(curFacility != null){
-                curFacility.addToEventList(event.getId());
-                facilityDB.updateFacility(curFacility);
-            } else {
-                Toast.makeText(OrganizerActivity.this, "Could not find your facility.", Toast.LENGTH_LONG).show();
-            }
-        }).exceptionally(e -> {
-            Toast.makeText(OrganizerActivity.this, "Could not load your profile: " + e.getMessage(), Toast.LENGTH_LONG).show();
-            return null;
-        });
+        event.setFacility(intent.getStringExtra("id"));
+        event.setGeolocation(intent.getStringExtra("location")); ;
 
         // find all the views using their ids
         nameText = findViewById(R.id.textName);
@@ -114,22 +101,19 @@ public class OrganizerActivity extends AppCompatActivity {
         createButton = findViewById(R.id.buttonCreate);
         backButton =  findViewById(R.id.back_button);
 
-        // handler to go back to homescreen
-        backButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(OrganizerActivity.this, MainActivity.class);
-                intent.putExtra("event", event);
-                intent.putExtra("user", currentUser);
-                startActivity(intent);
-            }
-        });
-
         // initialize the activity result launcher for the image picker
         uploadImageLauncher = registerForActivityResult(new ActivityResultContracts.GetContent(), uri -> {
             if (uri != null) {
                 posterImage.setImageURI(uri);
                 posterUri = uri;
+            }
+        });
+
+        // handler to go back to the home screen
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
             }
         });
 
@@ -179,7 +163,6 @@ public class OrganizerActivity extends AppCompatActivity {
      * opens dialogue to select the event's date and time and stores it in dateTime
      */
     protected void selectDateTime(){
-
         final Calendar calendar = Calendar.getInstance();
 
         // get the current date
@@ -189,7 +172,6 @@ public class OrganizerActivity extends AppCompatActivity {
 
         DatePickerDialog datePickerDialog = new DatePickerDialog(OrganizerActivity.this,
                 (view, selectedYear, selectedMonth, selectedDay) -> {
-
                     // show the selected date
                     calendar.set(Calendar.YEAR, selectedYear);
                     calendar.set(Calendar.MONTH, selectedMonth);
@@ -201,7 +183,6 @@ public class OrganizerActivity extends AppCompatActivity {
 
                     TimePickerDialog timePickerDialog = new TimePickerDialog(OrganizerActivity.this,
                             (timeView, selectedHour, selectedMinute) -> {
-
                                 // show the selected time
                                 calendar.set(Calendar.HOUR_OF_DAY, selectedHour);
                                 calendar.set(Calendar.MINUTE, selectedMinute);
@@ -213,24 +194,18 @@ public class OrganizerActivity extends AppCompatActivity {
                                 // format the selected date
                                 SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
                                 dateTimeText.setText(formatter.format(dateTime.getTime()));
-
                             // show current time
                             }, hour, minute, true);
-
                     timePickerDialog.show();
-
                 // show current date
                 }, year, month, day);
-
         datePickerDialog.show();
-
     }
 
     /**
      * opens dialogue to select the event's registration open date and stores it in registrationOpen
      */
     protected void selectRegistrationOpen(){
-
         final Calendar calendar = Calendar.getInstance();
 
         // get the current date
@@ -240,14 +215,15 @@ public class OrganizerActivity extends AppCompatActivity {
 
         DatePickerDialog datePickerDialog = new DatePickerDialog(OrganizerActivity.this,
                 (view, selectedYear, selectedMonth, selectedDay) -> {
-
                     // show the selected date and default time
-                    calendar.set(Calendar.YEAR, selectedYear);
-                    calendar.set(Calendar.MONTH, selectedMonth);
-                    calendar.set(Calendar.DAY_OF_MONTH, selectedDay);
-                    calendar.set(Calendar.HOUR_OF_DAY, 0);
-                    calendar.set(Calendar.MINUTE, 0);
-                    calendar.set(Calendar.SECOND, 0);
+                    if(selectedYear != year || selectedMonth != month || selectedDay != day){
+                        calendar.set(Calendar.YEAR, selectedYear);
+                        calendar.set(Calendar.MONTH, selectedMonth);
+                        calendar.set(Calendar.DAY_OF_MONTH, selectedDay);
+                        calendar.set(Calendar.HOUR_OF_DAY, 0);
+                        calendar.set(Calendar.MINUTE, 0);
+                        calendar.set(Calendar.SECOND, 0);
+                    }
 
                     // set the selected date
                     registrationOpen = calendar.getTime();
@@ -255,19 +231,15 @@ public class OrganizerActivity extends AppCompatActivity {
                     // store the selected date
                     SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
                     registrationOpenText.setText(formatter.format(registrationOpen.getTime()));
-
                 // show current date
                 }, year, month, day);
-
         datePickerDialog.show();
-
     }
 
     /**
      * opens dialogue to select the event's registration close date and stores it in registrationClose
      */
     protected void selectRegistrationClose(){
-
         final Calendar calendar = Calendar.getInstance();
 
         // get the current date
@@ -277,7 +249,6 @@ public class OrganizerActivity extends AppCompatActivity {
 
         DatePickerDialog datePickerDialog = new DatePickerDialog(OrganizerActivity.this,
                 (view, selectedYear, selectedMonth, selectedDay) -> {
-
                     // show the selected date and default time
                     calendar.set(Calendar.YEAR, selectedYear);
                     calendar.set(Calendar.MONTH, selectedMonth);
@@ -292,19 +263,15 @@ public class OrganizerActivity extends AppCompatActivity {
                     // store the selected date
                     SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
                     registrationCloseText.setText(formatter.format(registrationClose.getTime()));
-
                 // show current date
                 }, year, month, day);
-
         datePickerDialog.show();
-
     }
 
     /**
      * opens the action pick api to select an image
      */
     protected void uploadImage(){
-
         // launch activity result launcher
         Intent intent = new Intent(MediaStore.ACTION_PICK_IMAGES);
         uploadImageLauncher.launch("image/*");
@@ -319,129 +286,135 @@ public class OrganizerActivity extends AppCompatActivity {
      * (Firebase-related errors)
      */
     protected void createEvent(){
-        // input validation is not complete, all fields need to be filled otherwise there will be errors
 
-        // extract all the text views
+        if(inCreation){ return; }
+
+        inCreation = true;
+
+        // extract the necessary fields
         String name = nameText.getText().toString().trim();
         String dateTimeString = dateTimeText.getText().toString().trim();
         String registrationCloseString = registrationCloseText.getText().toString().trim();
         String maxCapacity = maxCapacityText.getText().toString().trim();
 
+        // extract the optional fields
         String description = descriptionText.getText().toString().trim();
         String price = priceText.getText().toString().trim();
         String waitListLimit = waitListLimitText.getText().toString().trim();
 
+        // check if necessary fields have been filled
         if (name.isEmpty() || maxCapacity.isEmpty() || dateTimeString.equals("Not selected")
         || registrationCloseString.equals("Not selected")) {
-        Toast.makeText(OrganizerActivity.this, "Name, Date & Time, Max Capacity and " +
-        "registration close date are required fields", Toast.LENGTH_LONG).show();
+            Toast.makeText(OrganizerActivity.this, "Name, Date & Time, Max Capacity and " +
+            "registration close date are required fields", Toast.LENGTH_LONG).show();
         } else {
-
-            // create a new event class and store all the fields
+            // populate the necessary fields for the new event
             event.setName(name);
-
-            if(curDate.after(dateTime) || curDate.after(registrationClose) || curDate.after(registrationOpen)){
-                Toast.makeText(OrganizerActivity.this, "Please enter valid date and " +
-                        "times, the event and registration dates can't be in the past", Toast.LENGTH_LONG).show();
-                return;
-            }
-
-            if(!(registrationOpen.before(registrationClose) && registrationClose.before(dateTime))){
-                Toast.makeText(OrganizerActivity.this, "Please enter valid date and " +
-                        "times, registration open date needs to be before registration close date " +
-                        "and registration close date needs to be before the event", Toast.LENGTH_LONG).show();
-                return;
-            }
-
             event.setDateTime(dateTime);
             event.setRegistrationClose(registrationClose);
 
-            event.setFacility(facility);
+            // populate the optional fields with default or selected values
+            event.setDescription(description);
+            event.setRegistrationOpen(registrationOpen);
+            event.setNeedsGeolocation(requireGeolocationCheckBox.isChecked());
 
+            // check if the selected date and times are not in the past
+            if(curDate.after(dateTime) || curDate.after(registrationClose) || curDate.after(registrationOpen)){
+                Toast.makeText(OrganizerActivity.this, "The event and registration " +
+                        "dates can't be in the past", Toast.LENGTH_LONG).show();
+                inCreation = false;
+                return;
+            }
+
+            // check if registration open date is before registration close date which is before event date
+            if(!(registrationOpen.before(registrationClose) && registrationClose.before(dateTime))){
+                Toast.makeText(OrganizerActivity.this, "Registration open date needs to " +
+                        "be before registration close date and registration close date needs to be " +
+                        "before the event", Toast.LENGTH_LONG).show();
+                inCreation = false;
+                return;
+            }
+
+            // check to see if the capacity is a number
             try {
                 event.setMaxCapacity(Integer.parseInt(maxCapacity));
             } catch (NumberFormatException e) {
                 Toast.makeText(OrganizerActivity.this, "Please enter a valid capacity", Toast.LENGTH_LONG).show();
+                inCreation = false;
                 return;
             }
 
+            // check to see if capacity is not negative
             if(Integer.parseInt(maxCapacity) < 0){
-                Toast.makeText(OrganizerActivity.this, "Please enter a valid capacity", Toast.LENGTH_LONG).show();
+                Toast.makeText(OrganizerActivity.this, "Capacity cannot be negative", Toast.LENGTH_LONG).show();
+                inCreation = false;
                 return;
             }
 
-            event.setDescription(description);
-            event.setRegistrationOpen(registrationOpen);
-
+            // if price is empty set it to default 0
             if(price.isEmpty()){
                 event.setPrice(0);
             } else {
+                // check if the price is a number
                 try {
                     event.setPrice(Integer.parseInt(price));
                 } catch (NumberFormatException e) {
                     Toast.makeText(OrganizerActivity.this, "Please enter a valid price", Toast.LENGTH_LONG).show();
+                    inCreation = false;
                     return;
                 }
 
+                // check if the price is positive
                 if(Integer.parseInt(price) < 0){
-                    Toast.makeText(OrganizerActivity.this, "Please enter a valid price", Toast.LENGTH_LONG).show();
+                    Toast.makeText(OrganizerActivity.this, "Price cannot be negative", Toast.LENGTH_LONG).show();
+                    inCreation = false;
                     return;
                 }
-
             }
 
+            // if waitlist limit is empty set it to the max possible value
             if(waitListLimit.isEmpty()){
                 event.setWaitListLimit(Integer.MAX_VALUE);
             } else {
+                // check if waitlist limit is a number
                 try {
                     event.setWaitListLimit(Integer.parseInt(waitListLimit));
                 } catch (NumberFormatException e) {
                     Toast.makeText(OrganizerActivity.this, "Please enter a valid waitlist limit", Toast.LENGTH_LONG).show();
+                    inCreation = false;
                     return;
                 }
 
+                // check if waitlist limit is positive
                 if(Integer.parseInt(price) < 0){
-                    Toast.makeText(OrganizerActivity.this, "Please enter a valid waitlist limit", Toast.LENGTH_LONG).show();
+                    Toast.makeText(OrganizerActivity.this, "Waitlist limit cannot be negative", Toast.LENGTH_LONG).show();
+                    inCreation = false;
                     return;
                 }
-
             }
 
-            event.setNeedsGeolocation(requireGeolocationCheckBox.isChecked());
-
-            event.setQRCode("https://www.bubbletracks.com/events/" + event.getId());
-
+            // if no poster is uploaded then just upload the event otherwise upload the image to storage first
             if(posterUri == null){
-
                 uploadEvent();
-
             } else {
-
                 // make a firebase storage instance and a filename
-                String filename = "posters/" + System.currentTimeMillis() + ".jpg";
-                StorageReference storageReference = FirebaseStorage.getInstance().getReference(filename);
+                String posterFilename = "posters/" + event.getId() + "poster.jpg";
+                StorageReference posterStorageReference = FirebaseStorage.getInstance().getReference(posterFilename);
 
-                // store the image in firebase storage
-                storageReference.putFile(posterUri)
+                // store the poster in firebase storage
+                posterStorageReference.putFile(posterUri)
                         .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-
                             @Override
                             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-
                                 // get the download url of the image
-                                storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-
+                                posterStorageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                                     @Override
                                     public void onSuccess(Uri uri) {
-
                                         // store the download string in the event class
                                         String downloadUrl = uri.toString();
                                         event.setImage(downloadUrl);
-
                                         uploadEvent();
-
                                     }
-
                                     // handle errors
                                 }).addOnFailureListener(new OnFailureListener() {
                                     @Override
@@ -450,7 +423,6 @@ public class OrganizerActivity extends AppCompatActivity {
                                     }
                                 });
                             }
-
                             // handle errors
                         }).addOnFailureListener(new OnFailureListener() {
                             @Override
@@ -458,9 +430,7 @@ public class OrganizerActivity extends AppCompatActivity {
                                 Toast.makeText(OrganizerActivity.this, "Upload failed: " + e.getMessage(), Toast.LENGTH_LONG).show();
                             }
                         });
-
             }
-
         }
     }
 
@@ -469,7 +439,6 @@ public class OrganizerActivity extends AppCompatActivity {
      * to store id of the created event
      */
     protected void updateEntrant(){
-
         // get the current user's id
         SharedPreferences localID = getSharedPreferences("LocalID", Context.MODE_PRIVATE);
         String ID = localID.getString("ID", "Not Found");
@@ -478,12 +447,9 @@ public class OrganizerActivity extends AppCompatActivity {
         // get the entrant from the database
         entrantDB.getEntrant(ID).thenAccept(user -> {
             if(user != null){
-                currentUser = user;
-
                 // update the user to have the event's id in its events organized list and store it
                 user.addToEventsOrganized(event.getId());
                 entrantDB.updateEntrant(user);
-
             } else {
                 Toast.makeText(OrganizerActivity.this, "Could not load profile.", Toast.LENGTH_LONG).show();
             }
@@ -493,15 +459,11 @@ public class OrganizerActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * generates and uploads the qr code, changes the layout, uploads the event to the DB
+     * and updates the facility and entrant
+     */
     protected void uploadEvent(){
-        // store the event
-        EventDB eventDB = new EventDB();
-        eventDB.addEvent(event);
-
-        // update the current user to add the created event in the organizer's
-        // organized events
-        updateEntrant();
-
         // change to a new layout to show the generated QR code
         setContentView(R.layout.qr_code);
         ImageView qrCode = findViewById(R.id.imageViewQRCode);
@@ -509,8 +471,55 @@ public class OrganizerActivity extends AppCompatActivity {
 
         QRGenerator qrGenerator = new QRGenerator();
         try{
-            Bitmap qrBitmap = qrGenerator.generateQRCode(event.getQRCode());
+            // generate the bitmap to show the qrCode
+            Bitmap qrBitmap = qrGenerator.generateQRCode(event.getId());
             qrCode.setImageBitmap(qrBitmap);
+
+            // convert to byte array to upload the qr code
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            qrBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+            byte[] qrByteArray = stream.toByteArray();
+
+            // set the filename and storage reference
+            String QRFilename = "QRCodes/" + event.getId() + "qrcode.png";
+            StorageReference QRcodeStorageReference = FirebaseStorage.getInstance().getReference(QRFilename);
+
+            // store the QR code in firebase storage
+            QRcodeStorageReference.putBytes(qrByteArray)
+                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            // get the download url of the image
+                            QRcodeStorageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                @Override
+                                public void onSuccess(Uri uri) {
+                                    // store the download link in the event class
+                                    String downloadUrl = uri.toString();
+                                    event.setQRCode(downloadUrl);
+
+                                    // store the event
+                                    EventDB eventDB = new EventDB();
+                                    eventDB.addEvent(event);
+
+                                    // update the facility and entrant to have the event in their events and events hosted lists
+                                    updateFacility();
+                                    updateEntrant();
+                                }
+                                // handle errors
+                            }).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Toast.makeText(getApplicationContext(), "Failed to get download URL: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        }
+                        // handle errors
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(OrganizerActivity.this, "Upload failed: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                        }
+                    });
         } catch (WriterException exception){
             Log.e("OrganizerActivity", "Qr code generation failed", exception);
         }
@@ -520,6 +529,24 @@ public class OrganizerActivity extends AppCompatActivity {
             public void onClick(View view) {
                 finish();
             }
+        });
+    }
+
+    /**
+     * updates the facility to have the id of the event in its events list
+     */
+    protected void updateFacility(){
+        FacilityDB facilityDB = new FacilityDB();
+        facilityDB.getFacility(event.getFacility()).thenAccept(curFacility -> {
+            if(curFacility != null){
+                curFacility.addToEventList(event.getId());
+                facilityDB.updateFacility(curFacility);
+            } else {
+                Toast.makeText(OrganizerActivity.this, "Could not find your facility.", Toast.LENGTH_LONG).show();
+            }
+        }).exceptionally(e -> {
+            Toast.makeText(OrganizerActivity.this, "Could not load your facility: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            return null;
         });
     }
 

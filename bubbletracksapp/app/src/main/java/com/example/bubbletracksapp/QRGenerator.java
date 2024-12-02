@@ -11,10 +11,17 @@ import com.google.zxing.qrcode.QRCodeWriter;
 /**
  * Hold ability to create QR code
  * Organizer use
- * @author
+ * @author Samyak
+ * @ version 1.0
  */
 public class QRGenerator {
 
+    /**
+     * generates a qr code given a string to encode
+     * @param url string to encode
+     * @return returns the bitmap of the qr code
+     * @throws WriterException
+     */
     public Bitmap generateQRCode(String url) throws WriterException {
         QRCodeWriter writer = new QRCodeWriter();
         BitMatrix bitMatrix = writer.encode(url, BarcodeFormat.QR_CODE, 512, 512);
