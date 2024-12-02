@@ -1,33 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools">
+    android:gravity="bottom|right"
+    android:orientation="vertical">
 
     <TextView
         android:id="@+id/activity_title"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:gravity="center"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center|top"
         android:padding="16dp"
         android:text="Homescreen"
         android:textColor="@color/home_blue"
         android:textSize="50dp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@id/content_holder"
-        app:layout_constraintEnd_toEndOf="parent" />
+        android:textStyle="bold" />
     <!-- Other content above buttons -->
     <!-- Your Events, Tickets, Your Facility, Admin Access -->
     <!-- Why aren't the buttons changing color? Insufficient color contrast ratio? -->
+
+    <!-- This is where each activity will go like "your Events" "Your Tickets" "admin Access" every screen will use this and just change the content -->
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/fragmentContainerView"
+        android:name="com.example.bubbletracksapp.EntrantFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1" />
+
+    <FrameLayout
+        android:id="@+id/content_holder"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="2">
+
+    </FrameLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/button_createManageFacility"
+            style="@style/HomeButtons"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rounded_corners_half"
+            android:backgroundTint="#236CA8"
+            android:drawableRight="@drawable/baseline_image_search_24"
+            android:drawablePadding="8dp"
+            android:gravity="center_horizontal|center_vertical"
+            android:minWidth="98dip"
+            android:minHeight="58dip"
+            android:paddingLeft="20dp"
+            android:paddingTop="10dp"
+            android:paddingEnd="10dp"
+            android:paddingBottom="10dp"
+            android:text="Create Facility" />
+    </LinearLayout>
+
     <HorizontalScrollView
         android:id="@+id/button_scroll_view"
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:fillViewport="true"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        android:fillViewport="true">
 
         <LinearLayout
             android:id="@+id/button_container"
@@ -36,84 +74,39 @@
             android:orientation="horizontal">
 
             <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/button_scan"
+                android:id="@+id/button_entrant"
                 style="@style/HomeButtons"
-                android:background="@color/home_blue"
-                android:drawableTop="@drawable/baseline_qr_code_scanner_24"
-                android:text="Event Scanner"
+                android:layout_width="wrap_content"
                 android:layout_height="60dp"
+                android:layout_weight="1"
+                android:background="@color/home_blue"
+                android:drawableTop="@drawable/baseline_groups_24"
+                android:text="Home"
                 android:textColorLink="#03A9F4" />
 
             <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/button_events"
+                android:id="@+id/button_organizer"
                 style="@style/HomeButtons"
+                android:layout_width="wrap_content"
+                android:layout_height="60dp"
+                android:layout_weight="1"
                 android:background="@color/home_blue"
-                android:drawableTop="@drawable/events_icon"
-                android:text="Your Events"
-                android:layout_height="60dp"
-                android:textColorLink="#03A9F4" />
-
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/button_tickets"
-                style="@style/HomeButtons"
-                android:layout_width="150dp"
-                android:layout_height="60dp"
-                android:backgroundTint="@color/neutral"
-                android:drawableTop="@drawable/ticketicon"
-                android:text="Tickets"
-                android:tint="@color/white" />
-
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/button_profile"
-                style="@style/HomeButtons"
-                android:layout_width="wrap_content"
-                android:layout_height="60dp"
-                android:layout_weight="1"
-                android:backgroundTint="@color/home_blue"
-                android:drawableTop="@drawable/baseline_person_24"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp"
-                android:text="Profile" />
-
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/button_createManageFacility"
-                style="@style/HomeButtons"
-                android:layout_width="wrap_content"
-                android:layout_height="60dp"
-                android:layout_weight="1"
-                android:backgroundTint="@color/home_blue"
-                android:drawableTop="@drawable/baseline_image_search_24"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp"
-                android:text="Create Facility" />
-
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/button_eventHost"
-                style="@style/HomeButtons"
-                android:layout_width="wrap_content"
-                android:layout_height="60dp"
-                android:layout_weight="1"
-                android:backgroundTint="@color/home_blue"
-                android:drawableTop="@drawable/baseline_image_search_24"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp"
-                android:text="Hosted Events" />
-
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/button_facility"
-                style="@style/HomeButtons"
-                android:layout_height="60dp"
-                android:backgroundTint="@color/neutral"
                 android:drawableTop="@drawable/facility_icon"
-                android:text="Your Facility" />
+                android:text="Organize"
+                android:textColorLink="#03A9F4"
+                android:visibility="gone" />
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/button_admin"
                 style="@style/HomeButtons"
+                android:layout_width="wrap_content"
                 android:layout_height="60dp"
-                android:backgroundTint="@color/neutral"
+                android:layout_weight="1"
+                android:background="@color/home_blue"
                 android:drawableTop="@drawable/baseline_key_24"
-                android:text="Admin Access" />
+                android:text="Admin Access" 
+                android:textColorLink="#03A9F4"
+                android:visibility="gone" />
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/button_admin_profiles"
@@ -139,19 +132,11 @@
                 android:drawableTop="@drawable/baseline_location_on_24"
                 android:text="Facility Access" />
 
+               
 
         </LinearLayout>
     </HorizontalScrollView>
-    <!-- This is where each activity will go like "your Events" "Your Tickets" "admin Access" every screen will use this and just change the content -->
-    <FrameLayout
-        android:id="@+id/content_holder"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/activity_title" />
 
     <!--Always changing this depending on the activity-->
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>
