@@ -101,7 +101,8 @@ public class EntrantEditActivity extends AppCompatActivity {
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
 
-        entrantNameInput = binding.entrantNameInput;
+        entrantFirstNameInput = binding.entrantNameInput;
+        entrantLastNameInput = binding.entrantNameInput2;
         entrantEmailInput = binding.entrantEmailInput;
         entrantPhoneInput = binding.entrantPhoneInput;
         entrantNotificationInput = binding.notificationToggle;
@@ -173,14 +174,22 @@ public class EntrantEditActivity extends AppCompatActivity {
                 String newPhone = entrantPhoneInput.getText().toString();
                 boolean notificationPermission = entrantNotificationInput.isChecked();
 
-
                 db.getEntrant(ID).thenAccept(user -> {
                     if(user != null){
                         currentUser = user;
 
                         currentUser.setName(newFirst, newLast);
                         currentUser.setPhone(newPhone);
-                        currentUser.setEmail(newEmail);
+
+                        // Extremely loose input validation; make sure email contains a "@" and "."
+                        if (!((newEmail.length() - newEmail.replace("@", "").length())==1)
+                        || !((newEmail.length() - newEmail.replace(".","").length())==1)){
+                            Toast.makeText(EntrantEditActivity.this, "Invalid email", Toast.LENGTH_LONG).show();
+                            currentUser.setEmail("");
+                        }
+                        else {
+                            currentUser.setEmail(newEmail);
+                        }
 
                         if (!notificationPermission){
                             currentUser.setNotification(false);

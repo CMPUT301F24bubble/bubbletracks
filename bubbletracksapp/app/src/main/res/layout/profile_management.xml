@@ -44,7 +44,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="20dp"
-                android:hint="First name" />
+                android:hint="First name"
+                android:inputType="text|textCapWords" />
 
             <EditText
                 android:id="@+id/entrantNameInput2"
@@ -71,6 +72,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:hint="Enter your phone number"
+            android:inputType="phone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/entrantEmailInput" />
