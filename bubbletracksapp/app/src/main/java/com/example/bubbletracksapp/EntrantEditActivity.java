@@ -275,6 +275,8 @@ public class EntrantEditActivity extends AppCompatActivity {
                                                             });
                                                 } else {
                                                     Picasso.get().load(currentUser.getProfilePicture()).into(profilePictureImage);
+                                                    db.updateEntrant(currentUser);
+                                                    Log.d("getCurrentLocation", newGeolocation.toString());
                                                 }
                                             }
                                             else
