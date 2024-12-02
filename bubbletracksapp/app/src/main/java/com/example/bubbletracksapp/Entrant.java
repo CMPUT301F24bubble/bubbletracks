@@ -657,8 +657,8 @@ public class Entrant implements Parcelable {
             return;
         } else {
             db.deleteProfilePic(deviceID, setDefaultPicture());
-        }
 
+        }
 
     }
 

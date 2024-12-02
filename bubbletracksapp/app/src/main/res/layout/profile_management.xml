@@ -68,7 +68,7 @@
                 />
 
             <ImageButton
-            android:id="@+id/garbageIcon"
+            android:id="@+id/delete_profile_picture"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_gravity="bottom|end"

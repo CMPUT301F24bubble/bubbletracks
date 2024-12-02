@@ -133,15 +133,6 @@ public class MainActivity extends AppCompatActivity {
             return null;
         });
 
-        Button eventsButton = binding.buttonEvents;
-        Button scanButton = binding.buttonScan;
-        Button ticketsButton = binding.buttonTickets;
-        Button profileButton = binding.buttonProfile;
-        Button userEventsButton = binding.buttonEvents;
-        Button eventHostButton = binding.buttonEventHost;
-        Button adminProfileAccessButton = binding.buttonAdminProfiles;
-        Button browseEventsButton=binding.buttonBrowseEvent;
-        Button adminFacilityAccessButton = binding.buttonFacilityProfiles;
         notificationDB = new NotificationDB();
         notificationDB.listenForNotifications(currentDeviceID, this);
 
@@ -154,8 +145,8 @@ public class MainActivity extends AppCompatActivity {
                         .setReorderingAllowed(true)
                         //.addToBackStack("") // Having this on the backstack can be annoying.
                         .commit();
-                }
-            });
+            }
+        });
 
         entrantButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -168,20 +159,9 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        Intent userEventsIntent = new Intent(MainActivity.this, AppUserEventScreenGenerator.class);
-        switchActivityButton(userEventsButton, userEventsIntent);
-        Intent adminProfileIntent = new Intent(MainActivity.this, AdminProfileViews.class);
-        switchActivityButton(adminProfileAccessButton, adminProfileIntent);
-
-        // TAKES YOU TO THE BROWSE EVENTS TAB WHEN ADMIN
-        Intent adminEventBrowseIntent = new Intent(MainActivity.this, BrowseEventsScreenGenerator.class);
-        switchActivityButton(browseEventsButton, adminEventBrowseIntent);
-        Intent adminFacilityIntent = new Intent(MainActivity.this, AdminFacilityViews.class);
-        switchActivityButton(adminFacilityAccessButton, adminFacilityIntent);
-
-        Intent eventHostIntent = new Intent(MainActivity.this, OrganizerEventHosting.class);
-        switchActivityButton(eventHostButton, eventHostIntent);
         adminButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.fragmentContainerView, AdminFragment.class, null)
                         .setReorderingAllowed(true)
@@ -303,8 +283,8 @@ public class MainActivity extends AppCompatActivity {
             notificationManager.notify(notificationID, invitedBuilder.build()); // TODO: Notification id is the user id
             notificationDB.markNotificationAsDelivered(newNotification.getId(), currentDeviceID);
         }catch (SecurityException e) {
-                // Log the exception or handle it if the notification couldn't be posted
-                Log.e("Notification", "Permission denied for posting notification: " + e.getMessage());
+            // Log the exception or handle it if the notification couldn't be posted
+            Log.e("Notification", "Permission denied for posting notification: " + e.getMessage());
         }
     }
 

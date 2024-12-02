@@ -62,6 +62,7 @@ public class EntrantEditActivity extends AppCompatActivity {
     private CheckBox entrantNotificationInput;
     private ImageView profilePictureImage;
     private ImageButton updatePictureButton;
+    private ImageButton deleteProfilePicButton;
 
     // Initialize views
     private TextView deviceIDNote;
@@ -118,6 +119,7 @@ public class EntrantEditActivity extends AppCompatActivity {
         entrantNotificationInput = binding.notificationToggle;
         profilePictureImage = binding.profileImage;
         updatePictureButton = binding.pictureUpdate;
+        deleteProfilePicButton = binding.deleteProfilePicture;
 
         // initialize the activity result launcher for the image picker
         uploadImageLauncher = registerForActivityResult(new ActivityResultContracts.GetContent(), uri -> {
@@ -180,6 +182,17 @@ public class EntrantEditActivity extends AppCompatActivity {
                 // launch activity result launcher
                 Intent intent = new Intent(MediaStore.ACTION_PICK_IMAGES);
                 uploadImageLauncher.launch("image/*");
+            }
+        });
+
+        deleteProfilePicButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view){
+                // CALLS DELETION FUNCTIONS:
+                currentUser.deleteProfilePic();
+
+                // CHANGES IMAGE THAT IS DISPLAYED
+                Picasso.get().load(currentUser.getProfilePicture()).into(profilePictureImage);
             }
         });
 
