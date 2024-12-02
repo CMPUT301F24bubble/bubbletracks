@@ -38,6 +38,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.Picasso;
 
 import android.Manifest; // For importing notification permissions
 import android.widget.Toast;
@@ -125,6 +126,10 @@ public class EntrantEditActivity extends AppCompatActivity {
         db.getEntrant(ID).thenAccept(user -> {
             if(user != null){
                 currentUser = user;
+                if(!currentUser.getProfilePicture().isEmpty()){
+                    profilePictureImage.setImageTintList(null);
+                    Picasso.get().load(currentUser.getProfilePicture()).into(profilePictureImage);
+                }
                 if (currentUser.getNameAsString().isBlank()) {
                     entrantNameInput.setText("Enter your name");
                 } else {
@@ -190,6 +195,7 @@ public class EntrantEditActivity extends AppCompatActivity {
                         currentUser.setName(newFirst, newLast);
                         currentUser.setPhone(newPhone);
                         currentUser.setEmail(newEmail);
+                        currentUser.setDefaultPicture();
 
                         if (!notificationPermission){
                             currentUser.setNotification(false);

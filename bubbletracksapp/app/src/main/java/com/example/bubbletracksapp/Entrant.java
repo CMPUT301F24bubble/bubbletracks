@@ -92,7 +92,7 @@ public class Entrant implements Parcelable {
         this.role = "";
         this.facility = "";
         this.notification = false;
-        this.profilePicture = "";
+        this.profilePicture = setDefaultPicture();
         this.geolocation = new LatLng(0,0);
         this.eventsOrganized = new ArrayList<>();
         this.eventsInvited = new ArrayList<>();
@@ -112,7 +112,7 @@ public class Entrant implements Parcelable {
         this.role = "";
         this.facility = "";
         this.notification = false;
-        this.profilePicture = "";
+        this.profilePicture = setDefaultPicture();
         this.geolocation = new LatLng(0,0);
         this.eventsOrganized = new ArrayList<>();
         this.eventsInvited = new ArrayList<>();
@@ -645,6 +645,14 @@ public class Entrant implements Parcelable {
                 entry("Z","https://firebasestorage.googleapis.com/v0/b/bubbletracks-bubble.firebasestorage.app/o/profile-pictures%2FZ.png?alt=media&token=9638cf7d-3c91-4822-af1f-76ce04332402"),
                 entry("other","https://firebasestorage.googleapis.com/v0/b/bubbletracks-bubble.firebasestorage.app/o/profile-pictures%2Fother.png?alt=media&token=72b8e1a2-c619-4c8c-b98b-656a899a9e36"));
         return alphabetMap;
+    }
+
+    /**
+     * checks if the profile picture of the entrant is the default picture
+     * @return boolean to indicate profile picture is default picture or not
+     */
+    public Boolean isDefaultPicture(){
+        return generateAlphabetMap().values().stream().anyMatch(profilePicture::equals);
     }
 
 }
