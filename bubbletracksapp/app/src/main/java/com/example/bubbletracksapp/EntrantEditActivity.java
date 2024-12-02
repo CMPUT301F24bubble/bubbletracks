@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -161,7 +162,7 @@ public class EntrantEditActivity extends AppCompatActivity {
         });
 
         // Handler to go back to homescreen
-        Button backButton = binding.profileBack;
+        ImageButton backButton = binding.profileBack;
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -283,7 +284,7 @@ public class EntrantEditActivity extends AppCompatActivity {
         });
 
         // handler for uploading profile picture
-        Button updatePictureButton = binding.pictureUpdate;
+        ImageButton updatePictureButton = binding.pictureUpdate;
         updatePictureButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
