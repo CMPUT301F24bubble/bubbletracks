@@ -29,20 +29,39 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/profileBack" />
 
-        <EditText
-            android:id="@+id/entrantNameInput"
+        <LinearLayout
+            android:id="@+id/linearLayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="TextView"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toTopOf="@+id/entrantEmailInput"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/profileImage" />
+            app:layout_constraintTop_toBottomOf="@+id/profileImage">
+
+            <EditText
+                android:id="@+id/entrantNameInput"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="20dp"
+                android:hint="First name" />
+
+            <EditText
+                android:id="@+id/entrantNameInput2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="Last name"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/profileImage" />
+        </LinearLayout>
 
         <EditText
             android:id="@+id/entrantEmailInput"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:hint="Enter your email"
+            app:layout_constraintBottom_toTopOf="@+id/entrantPhoneInput"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/entrantNameInput" />

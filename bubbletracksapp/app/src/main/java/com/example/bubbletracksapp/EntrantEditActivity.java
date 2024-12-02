@@ -49,7 +49,8 @@ public class EntrantEditActivity extends AppCompatActivity {
     private FusedLocationProviderClient fusedLocationProviderClient;
     private String ID;
     // Initialize fields
-    private EditText entrantNameInput;
+    private EditText entrantFirstNameInput;
+    private EditText entrantLastNameInput;
     private EditText entrantEmailInput;
     private EditText entrantPhoneInput;
     private CheckBox entrantNotificationInput;
@@ -100,10 +101,12 @@ public class EntrantEditActivity extends AppCompatActivity {
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
 
-        entrantNameInput = binding.entrantNameInput;
+        entrantFirstNameInput = binding.entrantNameInput;
+        entrantLastNameInput = binding.entrantNameInput2;
         entrantEmailInput = binding.entrantEmailInput;
         entrantPhoneInput = binding.entrantPhoneInput;
         entrantNotificationInput = binding.notificationToggle;
+
 
         deviceIDNote = binding.deviceIDNote;
         locationNote = binding.locationNote;
@@ -118,19 +121,17 @@ public class EntrantEditActivity extends AppCompatActivity {
         db.getEntrant(ID).thenAccept(user -> {
             if(user != null){
                 currentUser = user;
-                if (currentUser.getNameAsString().isBlank()) {
-                    entrantNameInput.setText("Enter your name");
-                } else {
-                entrantNameInput.setText(currentUser.getNameAsString()); }
+                if (!currentUser.getName()[0].isBlank()) {
+                    entrantFirstNameInput.setText(currentUser.getName()[0]); }
 
-                if (currentUser.getEmail().isBlank()) {
-                    entrantEmailInput.setText("Enter your email");
-                } else {
+                if(!currentUser.getName()[1].isBlank()) {
+                    entrantLastNameInput.setText(currentUser.getName()[1]);
+                }
+
+                if (!currentUser.getEmail().isBlank()) {
                     entrantEmailInput.setText(currentUser.getEmail()); }
 
-                if (currentUser.getPhone().isBlank()) {
-                    entrantPhoneInput.setText("Enter your phone number");
-                } else {
+                if (!currentUser.getPhone().isBlank()) {
                     entrantPhoneInput.setText(currentUser.getPhone()); }
 
                 entrantNotificationInput.setChecked(currentUser.getNotification());
@@ -168,8 +169,8 @@ public class EntrantEditActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                String[] newFullName = entrantNameInput.getText().toString().split(" ");
-                String newFirst = newFullName[0], newLast = newFullName[1];
+                String newFirst = entrantFirstNameInput.getText().toString();
+                String newLast = entrantLastNameInput.getText().toString();
                 String newEmail = entrantEmailInput.getText().toString();
                 String newPhone = entrantPhoneInput.getText().toString();
                 boolean notificationPermission = entrantNotificationInput.isChecked();
