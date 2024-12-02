@@ -263,14 +263,15 @@ public class EntrantEditActivity extends AppCompatActivity {
                         currentUser.setPhone(newPhone);
 
                         // Extremely loose input validation; make sure email contains a "@" and "."
-                        if (!newEmail.isBlank()){
+                        if (!newEmail.isBlank()) {
                             if (!((newEmail.length() - newEmail.replace("@", "").length()) == 1)
-                            || !((newEmail.length() - newEmail.replace(".", "").length()) == 1)) {
+                                    || !((newEmail.length() - newEmail.replace(".", "").length()) == 1)) {
                                 Toast.makeText(EntrantEditActivity.this, "Invalid email", Toast.LENGTH_LONG).show();
                                 currentUser.setEmail("");
+                            } else {
+                                Log.d("new email", newEmail);
+                                currentUser.setEmail(newEmail);
                             }
-                        } else {
-                            currentUser.setEmail(newEmail);
                         }
 
                         if(currentUser.isDefaultPicture()){
