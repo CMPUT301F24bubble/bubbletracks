@@ -651,7 +651,14 @@ public class Entrant implements Parcelable {
      */
     public void deleteProfilePic() {
         EntrantDB db = new EntrantDB();
-        db.deleteProfilePic(deviceID);
+
+        // DELETES PROFILE PICTURE
+        if (isDefaultPicture()){ // Does not do anything to the profile image if it is already the default image.
+            return;
+        } else {
+            db.deleteProfilePic(deviceID, setDefaultPicture());
+        }
+
 
     }
 

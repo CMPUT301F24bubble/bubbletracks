@@ -312,20 +312,9 @@ public class EntrantDB {
     }
 
 
-    public void deleteProfilePic(String ID) {
-
+    public void deleteProfilePic(String ID, String defaultImage) {
         entrantsRef.document(ID)
-
-                // CHECKS IF IMAGE IS DEFAULT IMAGE (if it is the default image do not change anything)
-                /*
-                if () {
-                    return;
-                } else {
-                    // CALLS DEFAULT IMAGE CREATOR FUNCTION
-                    // UPDATES DATABASE GIVEN IMAGE CHANGE
-                }
-                * */
-                .update("image", null)
+                .update("image", defaultImage)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     /**
                      * Logs that image has been changed if needed to be changed
