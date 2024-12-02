@@ -99,8 +99,10 @@ public class MainActivity extends AppCompatActivity {
                 // Check user role
                 if(currentUser.getRole().equals("admin")){
                     Log.d("User role:", "Woohoo, admin");
+                    if(!currentUser.getFacility().isEmpty()){
+                        organizerButton.setVisibility(View.VISIBLE);
+                    }
                     adminButton.setVisibility(View.VISIBLE);
-                    organizerButton.setVisibility(View.VISIBLE);
                 } else if (currentUser.getRole().equals("organizer")) {
                     Log.d("User role:", "Organizer");
                     organizerButton.setVisibility(View.VISIBLE);
