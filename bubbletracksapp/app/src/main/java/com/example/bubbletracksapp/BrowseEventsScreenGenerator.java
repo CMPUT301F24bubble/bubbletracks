@@ -8,6 +8,7 @@
 package com.example.bubbletracksapp;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -41,7 +42,7 @@ public class BrowseEventsScreenGenerator extends AppCompatActivity {
         setContentView(R.layout.admin_browse_events);
         // SETS UP RECYCLER VIEW
         eventsCatalogue = findViewById(R.id.event_db);
-        eventsCatalogue.setLayoutManager(new LinearLayoutManager(this));
+        ImageButton backButton = findViewById(R.id.back_button);eventsCatalogue.setLayoutManager(new LinearLayoutManager(this));
         adapter = new BrowseEventsAdminAdapter(this, new ArrayList<>()); // Attach an empty adapter initially
         eventsCatalogue.setAdapter(adapter);
 
@@ -49,6 +50,7 @@ public class BrowseEventsScreenGenerator extends AppCompatActivity {
         noEventsInDB = findViewById(R.id.no_events_in_db);
 
         displayEvents();
+        backButton.setOnClickListener(v -> finish());
     }
 
 
@@ -76,6 +78,7 @@ public class BrowseEventsScreenGenerator extends AppCompatActivity {
             }
         }));
     }
+
 }
 
 
