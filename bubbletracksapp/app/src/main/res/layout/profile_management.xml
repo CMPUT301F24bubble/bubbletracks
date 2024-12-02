@@ -41,12 +41,12 @@
             android:id="@+id/imageFrame"
             android:layout_width="100dp"
             android:layout_height="100dp"
-            android:layout_marginEnd="18dp"
             android:layout_marginTop="20dp"
+            android:layout_marginEnd="18dp"
+            app:layout_constraintBottom_toTopOf="@id/linearLayout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/profileBack"
-            app:layout_constraintBottom_toTopOf="@+id/entrantNameInput">
+            app:layout_constraintTop_toBottomOf="@id/profileBack">
 
             <ImageView
                 android:id="@+id/profileImage"
@@ -62,8 +62,8 @@
                 android:layout_gravity="top|end"
                 android:background="@android:color/transparent"
                 android:src="@drawable/baseline_add_circle_24"
-                app:tint="@color/button_dark_blue"
-                />
+                app:tint="@color/button_dark_blue" />
+
             <ImageButton
                 android:id="@+id/deleteProfilePicture"
                 android:layout_width="40dp"
@@ -75,48 +75,73 @@
                 app:tint="@color/button_dark_blue" />
 
         </FrameLayout>
-
-        <EditText
-            android:id="@+id/entrantNameInput"
+        <LinearLayout
+            android:id="@+id/linearLayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:hint="Enter Your name"
-            android:textColor="#555555"
-            android:background="#EEEEEE"
-            android:layout_marginTop="20dp"
-            android:layout_marginBottom="3dp"
-            android:paddingHorizontal="10dp"
-            android:paddingVertical="3dp"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toTopOf="@+id/entrantEmailInput"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/imageFrame" />
+            app:layout_constraintTop_toBottomOf="@+id/imageFrame" >
+
+            <EditText
+                android:id="@+id/entrantNameInput"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="20dp"
+                android:hint="First name"
+                android:inputType="text|textCapWords"
+                android:textColor="#555555"
+                android:background="#EEEEEE"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="3dp"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="3dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <EditText
+                android:id="@+id/entrantNameInput2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="Last name"
+                android:textColor="#555555"
+                android:background="#EEEEEE"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="3dp"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="3dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+        </LinearLayout>
 
         <EditText
             android:id="@+id/entrantEmailInput"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:hint="Enter your email"
-            android:textColor="#555555"
-            android:background="#EEEEEE"
             android:layout_marginTop="5dp"
-            android:layout_marginBottom="5dp"
+            android:background="#EEEEEE"
+            android:hint="Enter your email"
             android:paddingHorizontal="10dp"
             android:paddingVertical="3dp"
+            android:textColor="#555555"
+            app:layout_constraintBottom_toTopOf="@+id/entrantPhoneInput"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/entrantNameInput" />
+            app:layout_constraintTop_toBottomOf="@id/linearLayout" />
 
         <EditText
             android:id="@+id/entrantPhoneInput"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:hint="Enter your phone number"
             android:layout_marginTop="5dp"
-            android:layout_marginBottom="5dp"
+            android:background="#EEEEEE"
+            android:hint="Enter your phone number"
             android:paddingHorizontal="10dp"
             android:paddingVertical="3dp"
             android:textColor="#555555"
-            android:background="#EEEEEE"
+            app:layout_constraintBottom_toTopOf="@id/notificationToggle"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/entrantEmailInput" />
