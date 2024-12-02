@@ -63,7 +63,7 @@ public class AdminEntrantListAdapter extends ArrayAdapter<Entrant> {
         TextView entrantNameText = convertView.findViewById(R.id.user_name);
         TextView entrantDeviceText = convertView.findViewById(R.id.user_device);
         ImageButton deleteEntrantButton = convertView.findViewById(R.id.delete_button);
-        ImageButton deleteProfilePicture = convertView.findViewById(R.id.delete_profile_picture); // for later
+        ImageButton deleteProfilePicture = convertView.findViewById(R.id.picture_delete); // for later
         ImageView profilePictureImage = convertView.findViewById(R.id.profile_picture);
 
         if(!entrant.getProfilePicture().isEmpty()){
