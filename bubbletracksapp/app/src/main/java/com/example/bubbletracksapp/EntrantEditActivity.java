@@ -118,20 +118,11 @@ public class EntrantEditActivity extends AppCompatActivity {
         db.getEntrant(ID).thenAccept(user -> {
             if(user != null){
                 currentUser = user;
-                if (currentUser.getNameAsString().isBlank()) {
-                    entrantNameInput.setText("Enter your name");
-                } else {
-                entrantNameInput.setText(currentUser.getNameAsString()); }
+                if (!currentUser.getNameAsString().isBlank()) {entrantNameInput.setText(currentUser.getNameAsString()); }
 
-                if (currentUser.getEmail().isBlank()) {
-                    entrantEmailInput.setText("Enter your email");
-                } else {
-                    entrantEmailInput.setText(currentUser.getEmail()); }
+                if (!currentUser.getNameAsString().isBlank()) {entrantNameInput.setText(currentUser.getNameAsString()); }
 
-                if (currentUser.getPhone().isBlank()) {
-                    entrantPhoneInput.setText("Enter your phone number");
-                } else {
-                    entrantPhoneInput.setText(currentUser.getPhone()); }
+                if (!currentUser.getNameAsString().isBlank()) {entrantNameInput.setText(currentUser.getNameAsString()); }
 
                 entrantNotificationInput.setChecked(currentUser.getNotification());
 
