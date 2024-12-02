@@ -116,7 +116,7 @@ public class EntrantEditActivity extends AppCompatActivity {
         String tempLocation = "No last location found. Allow location and update your profile";
 
         // Displays the user's profile
-        deviceIDNote.setText(ID);
+        deviceIDNote.setText(String.format("Device ID: %s", ID));
         locationNote.setText(tempLocation);
         db.getEntrant(ID).thenAccept(user -> {
             if(user != null){
