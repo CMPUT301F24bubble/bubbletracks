@@ -178,64 +178,58 @@ public class EntrantEditActivity extends AppCompatActivity {
                     if(user != null){
                         currentUser = user;
 
-                        // A really unpleasant implementation of input validation
-                        // Doesn't update unless user has first name
-                        if (newFirst.isBlank()){
-                            Toast.makeText(EntrantEditActivity.this, "Not updated. Please enter a name.", Toast.LENGTH_LONG).show();
-                        } else {
+                        currentUser.setName(newFirst, newLast);
+                        currentUser.setPhone(newPhone);
 
-                            currentUser.setName(newFirst, newLast);
-                            currentUser.setPhone(newPhone);
-
-                            // Extremely loose input validation; make sure email contains a "@" and "."
+                        // Extremely loose input validation; make sure email contains a "@" and "."
+                        if (!newEmail.isBlank()){
                             if (!((newEmail.length() - newEmail.replace("@", "").length()) == 1)
-                                    || !((newEmail.length() - newEmail.replace(".", "").length()) == 1)) {
+                            || !((newEmail.length() - newEmail.replace(".", "").length()) == 1)) {
                                 Toast.makeText(EntrantEditActivity.this, "Invalid email", Toast.LENGTH_LONG).show();
                                 currentUser.setEmail("");
-                            } else {
-                                currentUser.setEmail(newEmail);
                             }
+                        } else {
+                            currentUser.setEmail(newEmail);
+                        }
 
-                            if (!notificationPermission) {
-                                currentUser.setNotification(false);
-                                Log.d("Notification check", "User opted out of notifications");
-                            } else {
-                                checkNotificationPermission(currentUser);
-                            }
+                        if (!notificationPermission) {
+                            currentUser.setNotification(false);
+                            Log.d("Notification check", "User opted out of notifications");
+                        } else {
+                            checkNotificationPermission(currentUser);
+                        }
 
-                            // Gets the coarse location of the person and updates it.
-                            // If it cant find it, it does not update the location.
-                            CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
-                            if (checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                                fusedLocationProviderClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, cancellationTokenSource.getToken())
-                                        .addOnSuccessListener(new OnSuccessListener<Location>() {
-                                            @Override
-                                            public void onSuccess(Location location) {
-                                                if (location != null) {
-                                                    // Update the user's location
-                                                    double lat = location.getLatitude();
-                                                    double lng = location.getLongitude();
-                                                    LatLng newGeolocation = new LatLng(lat, lng);
-                                                    currentUser.setGeolocation(newGeolocation);
+                        // Gets the coarse location of the person and updates it.
+                        // If it cant find it, it does not update the location.
+                        CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+                        if (checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                            fusedLocationProviderClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, cancellationTokenSource.getToken())
+                                    .addOnSuccessListener(new OnSuccessListener<Location>() {
+                                        @Override
+                                        public void onSuccess(Location location) {
+                                            if (location != null) {
+                                                // Update the user's location
+                                                double lat = location.getLatitude();
+                                                double lng = location.getLongitude();
+                                                LatLng newGeolocation = new LatLng(lat, lng);
+                                                currentUser.setGeolocation(newGeolocation);
 
-                                                    // Update the location node
-                                                    String stringLocation = String.format("Your last location: (%f,%f)", lat, lng);
-                                                    locationNote.setText(stringLocation);
+                                                // Update the location node
+                                                String stringLocation = String.format("Your last location: (%f,%f)", lat, lng);
+                                                locationNote.setText(stringLocation);
 
-                                                    db.updateEntrant(currentUser);
-                                                    Toast.makeText(EntrantEditActivity.this, "Profile updated!", Toast.LENGTH_LONG).show();
-                                                    Log.d("getCurrentLocation", newGeolocation.toString());
-                                                } else {
-                                                    db.updateEntrant(currentUser);
-                                                    Toast.makeText(EntrantEditActivity.this, "Profile updated!", Toast.LENGTH_LONG).show();
+                                                db.updateEntrant(currentUser);
+                                                Toast.makeText(EntrantEditActivity.this, "Profile updated!", Toast.LENGTH_LONG).show();
+                                                Log.d("getCurrentLocation", newGeolocation.toString());
+                                            } else {
+                                                db.updateEntrant(currentUser);
+                                                Toast.makeText(EntrantEditActivity.this, "Profile updated!", Toast.LENGTH_LONG).show();
 
-                                                    Log.w("EntrantEditActivity", "No location could be found. Location was not updated");
-                                                }
-                                                Log.d("New user name:", currentUser.getNameAsString());
+                                                Log.w("EntrantEditActivity", "No location could be found. Location was not updated");
                                             }
-                                        });
-
-                            }
+                                            Log.d("New user name:", currentUser.getNameAsString());
+                                        }
+                                    });
                         }
                     } else {
                         Log.d("User not found", "");
