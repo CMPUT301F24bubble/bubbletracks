@@ -17,37 +17,28 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-
+import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.NotificationManagerCompat;
-
-import com.example.bubbletracksapp.databinding.FragmentFirstBinding;
 import com.example.bubbletracksapp.databinding.ProfileManagementBinding;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.Priority;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.CancellationTokenSource;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
-
 import android.Manifest; // For importing notification permissions
 import android.widget.Toast;
-
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-
-import java.util.ArrayList;
+import java.util.Map;
 
 /**
  * This class allows an entrant to update their profile information.
@@ -58,11 +49,24 @@ import java.util.ArrayList;
  */
 public class EntrantEditActivity extends AppCompatActivity {
 
-    private ActivityResultLauncher<String> requestPermissionLauncher;
+    private ActivityResultLauncher<String[]> requestPermissionLauncher;
     private ProfileManagementBinding binding;
     private Entrant currentUser;
     private EntrantDB db = new EntrantDB();
     private FusedLocationProviderClient fusedLocationProviderClient;
+    private String ID;
+    // Initialize fields
+    private EditText entrantNameInput;
+    private EditText entrantEmailInput;
+    private EditText entrantPhoneInput;
+    private CheckBox entrantNotificationInput;
+    private ImageView profilePictureImage;
+    private ImageButton updatePictureButton;
+
+    // Initialize views
+    private TextView deviceIDNote;
+    private TextView locationNote;
+
     private ActivityResultLauncher<String> uploadImageLauncher;
     private Uri profilePictureUri;
 
@@ -85,66 +89,65 @@ public class EntrantEditActivity extends AppCompatActivity {
         Launcher to request permission from Entrant
          */
         requestPermissionLauncher = registerForActivityResult(
-                new ActivityResultContracts.RequestPermission(),
-                isGranted -> {
-                    if (isGranted) {
-                        // Permission granted
-                        Log.d("Notification check", "Notif permission granted");
-                    } else {
-                        // Permission denied
-                        Log.d("Notification check", "Notif permission denied");
+                new ActivityResultContracts.RequestMultiplePermissions(), new ActivityResultCallback<Map<String, Boolean>>() {
+                    @Override
+                    public void onActivityResult(Map<String, Boolean> o) {
+                        if (Boolean.TRUE.equals(o.get(Manifest.permission.POST_NOTIFICATIONS))) {
+                            // Permission granted
+                            Log.d("Notification check", "Notif permission granted");
+                        } else {
+                            // Permission denied
+                            Log.d("Notification check", "Notif permission denied");
+                        }
+                        if (Boolean.TRUE.equals(o.get(Manifest.permission.ACCESS_COARSE_LOCATION))) {
+                            // Permission granted
+                            Log.d("Geolocation check", "Geolocation permission granted");
+                        } else {
+                            // Permission denied
+                            Log.d("Geolocation check", "Geolocation permission denied");
+                        }
                     }
                 }
         );
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
 
-        EditText entrantNameInput = binding.entrantNameInput;
-        EditText entrantEmailInput = binding.entrantEmailInput;
-        EditText entrantPhoneInput = binding.entrantPhoneInput;
-        CheckBox entrantNotificationInput = binding.notificationToggle;
-        ImageView profilePictureImage = binding.profileImage;
-
-        TextView deviceIDNote = binding.deviceIDNote;
-        TextView locationNote = binding.locationNote;
+        entrantNameInput = binding.entrantNameInput;
+        entrantEmailInput = binding.entrantEmailInput;
+        entrantPhoneInput = binding.entrantPhoneInput;
+        entrantNotificationInput = binding.notificationToggle;
+        profilePictureImage = binding.profileImage;
+        updatePictureButton = binding.pictureUpdate;
 
         // initialize the activity result launcher for the image picker
         uploadImageLauncher = registerForActivityResult(new ActivityResultContracts.GetContent(), uri -> {
             if (uri != null) {
                 profilePictureImage.setImageURI(uri);
-                profilePictureImage.setImageTintList(null);
                 profilePictureUri = uri;
             }
         });
 
+        deviceIDNote = binding.deviceIDNote;
+        locationNote = binding.locationNote;
+
         SharedPreferences localID = getSharedPreferences("LocalID", Context.MODE_PRIVATE);
-        String ID = localID.getString("ID", "Device ID not found");
+        ID = localID.getString("ID", "Device ID not found");
         String tempLocation = "No last location found. Allow location and update your profile";
 
-        // Displays the user's profile
         deviceIDNote.setText(ID);
         locationNote.setText(tempLocation);
         db.getEntrant(ID).thenAccept(user -> {
             if(user != null){
                 currentUser = user;
+                // Displays the user's profile
                 if(!currentUser.getProfilePicture().isEmpty()){
-                    profilePictureImage.setImageTintList(null);
                     Picasso.get().load(currentUser.getProfilePicture()).into(profilePictureImage);
                 }
-                if (currentUser.getNameAsString().isBlank()) {
-                    entrantNameInput.setText("Enter your name");
-                } else {
-                entrantNameInput.setText(currentUser.getNameAsString()); }
+                if (!currentUser.getNameAsString().isBlank()) {entrantNameInput.setText(currentUser.getNameAsString()); }
 
-                if (currentUser.getEmail().isBlank()) {
-                    entrantEmailInput.setText("Enter your email");
-                } else {
-                    entrantEmailInput.setText(currentUser.getEmail()); }
+                if (!currentUser.getNameAsString().isBlank()) {entrantNameInput.setText(currentUser.getNameAsString()); }
 
-                if (currentUser.getPhone().isBlank()) {
-                    entrantPhoneInput.setText("Enter your phone number");
-                } else {
-                    entrantPhoneInput.setText(currentUser.getPhone()); }
+                if (!currentUser.getNameAsString().isBlank()) {entrantNameInput.setText(currentUser.getNameAsString()); }
 
                 entrantNotificationInput.setChecked(currentUser.getNotification());
 
@@ -166,7 +169,17 @@ public class EntrantEditActivity extends AppCompatActivity {
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                finish();
+                Intent intent = new Intent(EntrantEditActivity.this, MainActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        updatePictureButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // launch activity result launcher
+                Intent intent = new Intent(MediaStore.ACTION_PICK_IMAGES);
+                uploadImageLauncher.launch("image/*");
             }
         });
 
@@ -180,7 +193,6 @@ public class EntrantEditActivity extends AppCompatActivity {
              */
             @Override
             public void onClick(View view) {
-                checkNotificationPermission(currentUser);
 
                 String[] newFullName = entrantNameInput.getText().toString().split(" ");
                 String newFirst = newFullName[0], newLast = newFullName[1];
@@ -196,6 +208,7 @@ public class EntrantEditActivity extends AppCompatActivity {
                         currentUser.setName(newFirst, newLast);
                         currentUser.setPhone(newPhone);
                         currentUser.setEmail(newEmail);
+
                         currentUser.setDefaultPicture();
 
                         if (!notificationPermission){
@@ -204,74 +217,77 @@ public class EntrantEditActivity extends AppCompatActivity {
                         }
                         else {
                             checkNotificationPermission(currentUser);
-
                         }
-                        checkGeolocationPermission(currentUser);
 
                         // Gets the coarse location of the person and updates it.
                         // If it cant find it, it does not update the location.
                         CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
-                        fusedLocationProviderClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, cancellationTokenSource.getToken())
-                                .addOnSuccessListener(new OnSuccessListener<Location>() {
-                                    @Override
-                                    public void onSuccess(Location location) {
-                                        if (location != null) {
-                                            // Update the user's location
-                                            double lat = location.getLatitude();
-                                            double lng = location.getLongitude();
-                                            LatLng newGeolocation = new LatLng(lat, lng);
-                                            currentUser.setGeolocation(newGeolocation);
+                        if (checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                            fusedLocationProviderClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, cancellationTokenSource.getToken())
+                                    .addOnSuccessListener(new OnSuccessListener<Location>() {
+                                        @Override
+                                        public void onSuccess(Location location) {
+                                            if (location != null) {
+                                                // Update the user's location
+                                                double lat = location.getLatitude();
+                                                double lng = location.getLongitude();
+                                                LatLng newGeolocation = new LatLng(lat, lng);
+                                                currentUser.setGeolocation(newGeolocation);
 
-                                            // Update the location node
-                                            String stringLocation = String.format("Your last location: (%f,%f)", lat, lng);
-                                            locationNote.setText(stringLocation);
+                                                // Update the location node
+                                                String stringLocation = String.format("Your last location: (%f,%f)", lat, lng);
+                                                locationNote.setText(stringLocation);
 
-                                            if(profilePictureUri != null){
-                                                // get the file path
-                                                String filename = "profile-pictures/" + currentUser.getID() + "profilePicture.jpg";
-                                                StorageReference storageReference = FirebaseStorage.getInstance().getReference(filename);
+                                                if(profilePictureUri != null){
+                                                    // get the file path
+                                                    String filename = "profile-pictures/" + currentUser.getID() + "profilePicture.jpg";
+                                                    StorageReference storageReference = FirebaseStorage.getInstance().getReference(filename);
 
-                                                storageReference.putFile(profilePictureUri)
-                                                        // upload file
-                                                        .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                                                            @Override
-                                                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                                                                // get the download url of the image
-                                                                storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                                                                    @Override
-                                                                    public void onSuccess(Uri uri) {
-                                                                        // update the download string in the event class and update the event
-                                                                        String downloadUrl = uri.toString();
-                                                                        currentUser.setProfilePicture(downloadUrl);
-                                                                        db.updateEntrant(currentUser);
-                                                                        Log.d("getCurrentLocation", newGeolocation.toString());
-                                                                    }
-                                                                    // handle errors
-                                                                }).addOnFailureListener(new OnFailureListener() {
-                                                                    @Override
-                                                                    public void onFailure(@NonNull Exception e) {
-                                                                        Toast.makeText(EntrantEditActivity.this, "Failed to get download URL: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                                                                    }
-                                                                });
-                                                            }
-                                                            // handle errors
-                                                        }).addOnFailureListener(new OnFailureListener() {
-                                                            @Override
-                                                            public void onFailure(@NonNull Exception e) {
-                                                                Toast.makeText(EntrantEditActivity.this, "Upload failed: " + e.getMessage(), Toast.LENGTH_LONG).show();
-                                                            }
-                                                        });
+                                                    storageReference.putFile(profilePictureUri)
+                                                            // upload file
+                                                            .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                                                                @Override
+                                                                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                                                    // get the download url of the image
+                                                                    storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                                                        @Override
+                                                                        public void onSuccess(Uri uri) {
+                                                                            // update the download string in the event class and update the event
+                                                                            String downloadUrl = uri.toString();
+                                                                            currentUser.setProfilePicture(downloadUrl);
+                                                                            db.updateEntrant(currentUser);
+                                                                            Log.d("getCurrentLocation", newGeolocation.toString());
+                                                                        }
+                                                                        // handle errors
+                                                                    }).addOnFailureListener(new OnFailureListener() {
+                                                                        @Override
+                                                                        public void onFailure(@NonNull Exception e) {
+                                                                            Toast.makeText(EntrantEditActivity.this, "Failed to get download URL: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                                                        }
+                                                                    });
+                                                                }
+                                                                // handle errors
+                                                            }).addOnFailureListener(new OnFailureListener() {
+                                                                @Override
+                                                                public void onFailure(@NonNull Exception e) {
+                                                                    Toast.makeText(EntrantEditActivity.this, "Upload failed: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                                                                }
+                                                            });
+                                                } else {
+                                                    Picasso.get().load(currentUser.getProfilePicture()).into(profilePictureImage);
+                                                }
                                             }
-                                        }
-                                        else
-                                        {
-                                            db.updateEntrant(currentUser);
+                                            else
+                                            {
+                                                db.updateEntrant(currentUser);
 
-                                            Log.w("EntrantEditActivity", "No location could be found. Location was not updated");
+                                                Log.w("EntrantEditActivity", "No location could be found. Location was not updated");
+                                            }
+                                            Log.d("New user name:", currentUser.getNameAsString());
                                         }
-                                        Log.d("New user name:", currentUser.getNameAsString());
-                                    }
-                                });
+                                    });
+
+                        }
                     } else {
                         Log.d("User not found", "");
                     }
@@ -282,17 +298,7 @@ public class EntrantEditActivity extends AppCompatActivity {
                 });
             }
         });
-
-        // handler for uploading profile picture
-        ImageButton updatePictureButton = binding.pictureUpdate;
-        updatePictureButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // launch activity result launcher
-                Intent intent = new Intent(MediaStore.ACTION_PICK_IMAGES);
-                uploadImageLauncher.launch("image/*");
-            }
-        });
+        checkPermissions();
     }
 
     /**
@@ -306,22 +312,27 @@ public class EntrantEditActivity extends AppCompatActivity {
                 currentUser.setNotification(true);
                 Log.d("Notification check","Notification permission done");
             } else {
-                requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS);
+                currentUser.setNotification(false);
             }
         }
     }
 
     /**
-     * Launcher to ask user for geolocation permission
-     * @param currentUser entrant updating their profile
+     * Launcher to ask user for notification permission for posts and location
      */
-    private void checkGeolocationPermission(Entrant currentUser) {
+    private void checkPermissions() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            // Check if the geolocation permission is granted
-            if (checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                Log.d("Geolocation check","Geolocation permission done");
-            } else {
-                requestPermissionLauncher.launch(Manifest.permission.ACCESS_COARSE_LOCATION);
+            String[] permissions = {Manifest.permission.POST_NOTIFICATIONS, Manifest.permission.ACCESS_COARSE_LOCATION};
+            // Check if both the notification permissions are granted
+            if (checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
+                Log.d("Notification check","Notification permission done");
+            }
+            if (checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED &&
+                    checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                Log.d("Permissions check","Both permissions done");
+            }
+            else {
+                requestPermissionLauncher.launch(permissions);
             }
         }
     }
