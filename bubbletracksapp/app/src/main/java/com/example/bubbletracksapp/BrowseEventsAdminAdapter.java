@@ -57,7 +57,7 @@ public class BrowseEventsAdminAdapter extends RecyclerView.Adapter<BrowseEventsA
      * Class that initializes the components of the event_display.xml
      */
     class BrowseEventViewHolder extends RecyclerView.ViewHolder {
-        TextView eventTitle, eventDescription, eventDate;
+        TextView eventTitle, eventDescription, eventDate, eventID, eventOrganizerID;
         ImageView eventPic;
         ImageButton overflowImageButton;
         CardView eventParent;
@@ -67,6 +67,8 @@ public class BrowseEventsAdminAdapter extends RecyclerView.Adapter<BrowseEventsA
             eventTitle = itemView.findViewById(R.id.browseEventTitle);
             eventDate = itemView.findViewById(R.id.browseEventDate);
             eventDescription = itemView.findViewById(R.id.browseEventDescription);
+            eventID = itemView.findViewById(R.id.browseEventID);
+            eventOrganizerID = itemView.findViewById(R.id.browseEventOrganizer);
             eventPic = itemView.findViewById(R.id.browseEventPoster);
             eventParent = itemView.findViewById(R.id.browseEventXMLID);
             overflowImageButton = itemView.findViewById(R.id.browseOverflowMenu);
@@ -127,6 +129,9 @@ public class BrowseEventsAdminAdapter extends RecyclerView.Adapter<BrowseEventsA
             // SETS EVENT DESCRIPTION and handles null value
             holder.eventDescription.setText(event.getDescription() != null ? event.getDescription() : "No Description");
 
+
+            holder.eventID.setText("Event ID: "+event.getId());
+            holder.eventOrganizerID.setText("Event Facility ID: "+ event.getFacility());
             // SETS EVENT IMAGE
             if (event.getImage() != null) {
                 Log.d("ImageView", "ImageView is: " + holder.eventPic);
