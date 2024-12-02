@@ -310,4 +310,41 @@ public class EntrantDB {
         });
         return returnCode;
     }
+
+
+    public void deleteProfilePic(String ID) {
+
+        entrantsRef.document(ID)
+
+                // CHECKS IF IMAGE IS DEFAULT IMAGE (if it is the default image do not change anything)
+                /*
+                if () {
+                    return;
+                } else {
+                    // CALLS DEFAULT IMAGE CREATOR FUNCTION
+                    // UPDATES DATABASE GIVEN IMAGE CHANGE
+                }
+                * */
+                .update("image", null)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    /**
+                     * Logs that image has been changed if needed to be changed
+                     * @param aVoid void
+                     */
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d("deleteProfilePhoto", "Profile photo successfully changed if necessary!");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    /**
+                     * Logs that there's been an error
+                     * @param e exception
+                     */
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w("deleteProfilePhoto", "Error deleting profile photo", e);
+                    }
+                });
+    }
 }

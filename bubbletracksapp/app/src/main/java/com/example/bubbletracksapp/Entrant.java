@@ -611,6 +611,7 @@ public class Entrant implements Parcelable {
     }
 
     /**
+<<<<<<< Updated upstream
      * Creates a Map with the URL's related to each letter.
      * It is not the best implementation but it is easy and we don't expect to change the URL.
      * @return The map with the letters and URLs.
@@ -644,6 +645,13 @@ public class Entrant implements Parcelable {
                 entry("Z","https://firebasestorage.googleapis.com/v0/b/bubbletracks-bubble.firebasestorage.app/o/profile-pictures%2FZ.png?alt=media&token=9638cf7d-3c91-4822-af1f-76ce04332402"),
                 entry("other","https://firebasestorage.googleapis.com/v0/b/bubbletracks-bubble.firebasestorage.app/o/profile-pictures%2Fother.png?alt=media&token=72b8e1a2-c619-4c8c-b98b-656a899a9e36"));
         return alphabetMap;
+=======
+     * Deletes profile pic of entrant
+     */
+    public void deleteProfilePic() {
+        EntrantDB db = new EntrantDB();
+        db.deleteProfilePic(deviceID);
+>>>>>>> Stashed changes
     }
 
 }
