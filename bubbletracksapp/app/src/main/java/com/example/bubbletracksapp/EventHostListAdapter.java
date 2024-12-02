@@ -139,7 +139,7 @@ public class EventHostListAdapter extends ArrayAdapter<Event>{
              */
             @Override
             public void onClick(View view) {
-                activity.updatePoster(event);
+                activity.updatePoster(event, browseEventPoster);
             }
         });
 
