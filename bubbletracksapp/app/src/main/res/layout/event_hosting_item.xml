@@ -46,13 +46,6 @@
                                 android:scaleType="centerCrop"
                                 android:src="@drawable/sushi_class" />
 
-                            <ImageButton
-                                android:layout_width="30dp"
-                                android:layout_height="30dp"
-                                android:layout_gravity="top|end"
-                                android:background="@android:color/transparent"
-                                android:src="@drawable/baseline_remove_circle_24"
-                                app:tint="@color/button_dark_blue" />
                         </FrameLayout>
 
                         <!-- Date TextView Below Poster -->
@@ -132,7 +125,7 @@
 
                             <!-- Edit Button -->
                             <ImageButton
-                                android:id="@+id/notify_event_button"
+                                android:id="@+id/notification_button"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:backgroundTint="@color/white"

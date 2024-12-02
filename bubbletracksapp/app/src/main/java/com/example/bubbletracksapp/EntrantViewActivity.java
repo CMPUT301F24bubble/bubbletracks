@@ -47,6 +47,9 @@ public class EntrantViewActivity extends AppCompatActivity {
     private Button joinButton;
     private ImageButton backButton;
 
+    // declare dialog that will appear when joining/leaving a waitlist
+    private boolean showsDialog;
+
     /**
      * sets the layout, assigns all the views and sets up all the on click listeners
      * @param savedInstanceState stores the state of the activity
@@ -87,6 +90,9 @@ public class EntrantViewActivity extends AppCompatActivity {
         joinButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // Make sure that the dialog shows up only once
+                if (showsDialog) return;
+
                 // If the event needs a geolocation, make sure the entrant has a geolocation
                 if(!event.getNeedsGeolocation() || !Objects.equals(entrant.getGeolocation(), new LatLng(0, 0)))
                 {
@@ -139,7 +145,7 @@ public class EntrantViewActivity extends AppCompatActivity {
     protected void getEvent(){
         // get event from database
         eventDB.getEvent(id).thenAccept(event -> {
-            if(event != null){
+            if(event != null && !event.getQRCode().isEmpty()){
                 // set the event and check if the user is already in the waitlist and set the inWaitList variable
                 this.event = event;
                 ArrayList<String> waitList = event.getWaitList();
@@ -189,7 +195,7 @@ public class EntrantViewActivity extends AppCompatActivity {
 
         // if no poster is present then change the visibility of the imageview otherwise show the poster
         if(event.getImage() == null){
-            posterImage.setVisibility(View.GONE);
+            posterImage.setImageResource(R.drawable.default_event);
         } else {
             Picasso.get()
                     .load(event.getImage())
@@ -226,6 +232,7 @@ public class EntrantViewActivity extends AppCompatActivity {
      */
     protected void addEntrant(){
         AlertDialog joinDialog;
+        showsDialog = true;
         // check if entrant is in waitlist
         if (!inWaitlist) {
             String message = "";
@@ -285,6 +292,12 @@ public class EntrantViewActivity extends AppCompatActivity {
                             dialogInterface.dismiss();
                         }
                     })
+                    .setOnDismissListener(new DialogInterface.OnDismissListener() {
+                        @Override
+                        public void onDismiss(DialogInterface dialogInterface) {
+                            showsDialog = false;
+                        }
+                    })
                     .create();
         }
         // entrant is already in waitlist
@@ -313,6 +326,12 @@ public class EntrantViewActivity extends AppCompatActivity {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             dialogInterface.dismiss();
+                        }
+                    })
+                    .setOnDismissListener(new DialogInterface.OnDismissListener() {
+                        @Override
+                        public void onDismiss(DialogInterface dialogInterface) {
+                            showsDialog = false;
                         }
                     })
                     .create();

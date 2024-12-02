@@ -16,9 +16,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.bubbletracksapp.databinding.LotteryMainBinding;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Allows the organizer to sample N entrants from the waitlist.
@@ -40,6 +42,8 @@ public class OrganizerEditActivity extends AppCompatActivity {
 
     ListView waitlistListView;
     EntrantListAdapter waitlistAdapter;
+
+    NotificationDB db = new NotificationDB();
 
 
     private LotteryMainBinding binding;
@@ -172,6 +176,7 @@ public class OrganizerEditActivity extends AppCompatActivity {
         rejectedList.addAll(newWaitlist.subList(n, newWaitlist.size()));
         updateEventWithLists();
         addEntrantsInvitations();
+        sendNotifications();
         return true;
     }
 
@@ -204,6 +209,47 @@ public class OrganizerEditActivity extends AppCompatActivity {
         for (Entrant entrant: invitedList) {
             entrant.addToEventsInvited(event.getId());
             entrant.updateEntrantFirebase();
+        }
+    }
+
+    /**
+     * Send notifications to entrants that were invited and rejected from the waitlist
+     */
+    private void sendNotifications() {
+        if (event != null) {
+            ArrayList<String> invitedList = event.getInvitedList();
+            ArrayList<String> rejectedList = event.getRejectedList();
+            Date timestamp = new Date();
+
+            if (invitedList != null) {
+                Notifications notification = new Notifications(
+                        invitedList,
+                        "You Are Invited!",
+                        "Congratulations, you are invited to " + event.getName() + "!",
+                        "Accept your invitation to confirm your registration.",
+                        //"Thank you for confirming your attendance to " + event.getName() + "!"
+                        UUID.randomUUID().toString(),
+                        timestamp
+                );
+                db.addNotification(notification);
+            } else {
+                Toast.makeText(this, "Warning: There are no invited entrants in your event!", Toast.LENGTH_LONG).show();
+            }
+
+            if (rejectedList != null) {
+                Notifications notification = new Notifications(
+                        rejectedList,
+                        "Event Waitlist Update",
+                        "We're sorry, but you have not been selected to enroll in " + event.getName() + ".",
+                        "",
+                        //"Thank you for confirming your attendance to " + event.getName() + "!"
+                        UUID.randomUUID().toString(),
+                        timestamp
+                );
+                db.addNotification(notification);
+            } else {
+                Toast.makeText(this, "Warning: There are no rejected entrants in your event!", Toast.LENGTH_LONG).show();
+            }
         }
     }
 }

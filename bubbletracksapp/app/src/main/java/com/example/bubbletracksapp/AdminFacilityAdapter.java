@@ -67,7 +67,7 @@ public class AdminFacilityAdapter extends ArrayAdapter<Facility> {
                 Admin admin = new Admin(getContext());
                 new AlertDialog.Builder(getContext())
                         .setTitle("Delete Facility")
-                        .setMessage("Are you sure you want to delete this user?")
+                        .setMessage("Are you sure you want to delete this facility?")
                         .setPositiveButton("Yes", (dialog, which) -> {
                             DocumentReference facilityRef = FirebaseFirestore.getInstance()
                                     .collection("facilities")

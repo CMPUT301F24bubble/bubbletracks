@@ -6,7 +6,6 @@
     android:layout_height="match_parent">
 
     <LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -24,6 +23,7 @@
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:background="@drawable/round_event"
+                android:backgroundTint="@color/button_dark_blue"
                 android:src="@drawable/baseline_arrow_back_24"
                 android:layout_margin="8dp"/>
             <TextView
@@ -41,23 +41,32 @@
                 android:gravity= "center"/>
         </LinearLayout>
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="8dp"
+            android:text="Select the type of entrant you want to send notifications to. You may choose between sending a default notification or a custom one."
+            android:textAlignment="viewStart"
+            android:textColor="@color/black"
+            android:textSize="16sp" />
+
         <CheckBox
             android:id="@+id/checkbox_notify_selected"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Notify Selected Entrants" />
+            android:text="Notify Invited Entrants" />
 
         <CheckBox
-            android:id="@+id/checkbox_notify_non_selected"
+            android:id="@+id/checkbox_notify_waitlist"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Notify Non-Selected Entrants" />
+            android:text="Notify Entrants on the Waiting List " />
 
         <CheckBox
             android:id="@+id/checkbox_notify_confirmed_attendees"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Notify Attendees (Confirmed Selected Entrants)" />
+            android:text="Notify Selected Entrants" />
 
         <CheckBox
             android:id="@+id/checkbox_notify_cancelled"
@@ -65,26 +74,79 @@
             android:layout_height="wrap_content"
             android:text="Notify Cancelled Entrants" />
 
-<!-- Not sure if we want customizable messages but here it is for later -->
-<!--        <TextView-->
-<!--            android:id="@+id/message_preview"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:paddingTop="24dp"-->
-<!--            android:paddingBottom="8dp"-->
-<!--            android:text=""-->
-<!--            android:textSize="16sp"-->
-<!--            android:textColor="#555555"-->
-<!--            android:background="#EEEEEE"-->
-<!--            android:padding="8dp" />-->
-
-
         <Button
-            android:id="@+id/button_confirm"
+            android:id="@+id/default_notif_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:backgroundTint="#00FF00"
-            android:text="Notify Attendees" />
+            android:backgroundTint="@color/bubble_green"
+            android:text="Send a Default Notification" />
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Notification Title"
+            android:textSize="16sp"
+            android:textColor="@color/black"
+            android:paddingTop="8dp" />
+        <EditText
+            android:id="@+id/notif_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="24dp"
+            android:paddingBottom="8dp"
+            android:hint="Notification Title"
+            android:textSize="16sp"
+            android:textColor="#555555"
+            android:background="#EEEEEE"
+            android:padding="8dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Notification Details"
+            android:textSize="16sp"
+            android:textColor="@color/black"
+            android:paddingTop="8dp" />
+
+        <EditText
+            android:id="@+id/notif_small_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="24dp"
+            android:paddingBottom="8dp"
+            android:hint="Notification Description"
+            android:textSize="16sp"
+            android:textColor="#555555"
+            android:background="#EEEEEE"
+            android:padding="8dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Extra Notification Details"
+            android:textSize="16sp"
+            android:textColor="@color/black"
+            android:paddingTop="8dp" />
+        <EditText
+            android:id="@+id/notif_big_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="24dp"
+            android:paddingBottom="8dp"
+            android:hint="Extra Notification Details(Optional)"
+            android:textSize="16sp"
+            android:textColor="#555555"
+            android:background="#EEEEEE"
+            android:padding="8dp" />
+
+        <Button
+            android:id="@+id/custom_notif_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:backgroundTint="@color/bubble_green"
+            android:text="Send Custom Notification" />
     </LinearLayout>
 </ScrollView>

@@ -18,12 +18,17 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
@@ -127,7 +132,7 @@ public class BrowseEventsAdminAdapter extends RecyclerView.Adapter<BrowseEventsA
                 Log.d("ImageView", "ImageView is: " + holder.eventPic);
                 Picasso.get().load(event.getImage()).into(holder.eventPic);
             } else {
-
+                holder.eventPic.setImageResource(R.drawable.default_event);
             }
 
             // SETS EVENT DATE: should look like NOV 29 @ 13:30
@@ -160,11 +165,11 @@ public class BrowseEventsAdminAdapter extends RecyclerView.Adapter<BrowseEventsA
                         handleDeleteQRDataAction(event);
                             popupMenu.dismiss();
                             return true;
-                        } /*else if (id == R.id.action_delete_poster) {
-                            handleDeletePosterAction(event);
+                        } else if (id == R.id.action_delete_poster) {
+                            handleDeletePosterAction(event, holder.eventPic);
                             popupMenu.dismiss();
                             return true;
-                        } */ else {
+                        }  else {
                         popupMenu.dismiss();
                         return false;
                     }
@@ -217,6 +222,38 @@ public class BrowseEventsAdminAdapter extends RecyclerView.Adapter<BrowseEventsA
         // OPTIONAL: SENDS NOTIFICATION TO HOST THAT THEIR EVENT HAS BEEN CANCELED ex: Admin has successfully canceled "<Name of event>" on <Date of Event>.
     }
 
+    /**
+     * Handles the action of deleting an event poster.
+     *
+     * This method is triggered when the "Delete Event Poster" option in the overflow menu is selected.
+     * It will replace the image with the default event image.
+     * Updates the database.
+     * It will send a notification to the organizer that their event poster has been taken down.
+     *
+     * @param event The {@link Event} object representing the event to be canceled.
+     * @return returns if the poster was deleted successfully or not
+     */
+    private void handleDeletePosterAction(Event event, ImageView eventPic) {
+        // GOES INTO DATABASE
+        String posterFilename = "posters/" + event.getId() + "poster.jpg";
+        StorageReference posterStorageReference = FirebaseStorage.getInstance().getReference(posterFilename);
+
+        posterStorageReference.delete()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        Toast.makeText(context, "Poster deleted successfully", Toast.LENGTH_SHORT).show();
+                        event.setImage(null);
+                        new EventDB().updateEvent(event);
+                        eventPic.setImageResource(R.drawable.default_event);
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(context, "Error in deleting poster: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    }
+                });
+    }
 
 }
 
@@ -237,31 +274,3 @@ public class BrowseEventsAdminAdapter extends RecyclerView.Adapter<BrowseEventsA
      * It will send a notification to the organizer that their event has been deleted.
      * @param event The {@link DocumentReference} object representing the event to be deleted.
      */
-
-
-
-
-
-
-
-    /*
-    /**
-     * Handles the action of deleting an event poster.
-     *
-     * This method is triggered when the "Delete Event Poster" option in the overflow menu is selected.
-     * It will replace the image with the default event image.
-     * Updates the database.
-     * It will send a notification to the organizer that their event poster has been taken down.
-     *
-     * @param event The {@link Event} object representing the event to be canceled.
-     */
-
-/*private void handleDeletePosterAction(Event event) {
-    // GOES INTO DATABASE
-
-    // REPLACES IMAGE POSTER WITH DEFAULT IMAGE OF WEBSITE
-
-    // OPTIONAL: SENDS NOTIFICATION TO HOST THAT THEIR EVENT HAS BEEN DELETED ex: Admin has deleted the
-    // POSTER of "<Name of event>" on <Date of Event> for not following company guidlines. Please contact us at <email> in case you have any further questions.
-}*/
-
