@@ -315,6 +315,9 @@ public class EntrantEditActivity extends AppCompatActivity {
                                             Log.d("New user name:", currentUser.getNameAsString());
                                         }
                                     });
+
+                        } else {
+                            db.updateEntrant(currentUser);
                         }
                     } else {
                         Log.d("User not found", "");
