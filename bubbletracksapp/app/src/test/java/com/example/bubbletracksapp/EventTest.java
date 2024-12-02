@@ -24,8 +24,9 @@ public class EventTest {
         Date dateTime = new Date("December 17, 1995 03:24:00");
         String description = "The description";
         String geolocation = "10502 79 Ave NW, Edmonton";
+        String facility = "TheFacilityID";
         Date registrationOpen = new Date("December 17, 1995 03:24:00");
-        Date registrationClose = new Date("December 17, 1995 03:24:00");
+        Date registrationClose = new Date("December 18, 1995 03:24:00");
         int maxCapacity = 100;
         int price = 50;
         int WaitListLimit = 10;
@@ -47,7 +48,7 @@ public class EventTest {
         rejectedList.add("ID4");
         ArrayList<String> enrolledList = new ArrayList<>();
         enrolledList.add("ID1");
-        Event event = new Event(id, name, dateTime, description, geolocation, registrationOpen, 
+        Event event = new Event(id, name, dateTime, description, geolocation, facility, registrationOpen,
                 registrationClose, maxCapacity, price, WaitListLimit, needsGeolocation, image, 
                 QRCode, waitList, invitedList, cancelledList, rejectedList, enrolledList);
 
@@ -77,6 +78,7 @@ public class EventTest {
         Date dateTime = new Date("December 17, 1995 03:24:00");
         String description = "The description";
         String geolocation = "10502 79 Ave NW, Edmonton";
+        String facilityID = "TheFacilityID";
         Date registrationOpen = new Date("December 17, 1995 03:24:00");
         Date registrationClose = new Date("December 17, 1995 03:24:00");;
         int maxCapacity = 100;
@@ -108,6 +110,7 @@ public class EventTest {
         assertEquals(map.get("dateTime"), dateTime);
         assertEquals(map.get("description"), description);
         assertEquals(map.get("geolocation"), geolocation);
+        assertEquals(map.get("facility"), facilityID);
         assertEquals(map.get("registrationOpen"), registrationOpen);
         assertEquals(map.get("registrationClose"), registrationClose);
         assertEquals(map.get("maxCapacity"), maxCapacity);
@@ -200,6 +203,25 @@ public class EventTest {
         event.setDescription("The new description");
         assertEquals(event.getDescription(),"The new description");
      }
+
+    /**
+     * Check if the facility of the mockEvent is the same as the facility we set.
+     */
+    @Test
+    public void getFacilityTest() {
+        event = mockEvent();
+        assertEquals(event.getFacility(),"TheFacilityID");
+    }
+
+    /**
+     * Change the facility of the mockEvent and check if it changed.
+     */
+    @Test
+    public void setFacilityTest() {
+        event = mockEvent();
+        event.setFacility("NewFacilityID");
+        assertEquals(event.getFacility(),"NewFacilityID");
+    }
 
     /**
      * Check if the geolocation of the mockEvent is the same as the geolocation we set.
@@ -583,21 +605,9 @@ public class EventTest {
     @Test
     public void getCancelledListTest() {
         event = mockEvent();
-        ArrayList<String> waitList = new ArrayList<>();
-        waitList.add("ID1");
-        waitList.add("ID2");
-        waitList.add("ID3");
-        waitList.add("ID4");
-        ArrayList<String> invitedList = new ArrayList<>();
-        invitedList.add("ID1");
-        invitedList.add("ID3");
         ArrayList<String> cancelledList = new ArrayList<>();
         cancelledList.add("ID3");
-        ArrayList<String> rejectedList = new ArrayList<>();
-        rejectedList.add("ID2");
-        rejectedList.add("ID4");
-        ArrayList<String> enrolledList = new ArrayList<>();
-        enrolledList.add("ID1");
+        assertEquals(event.getCancelledList(), cancelledList);
     }
 
     /**
@@ -606,7 +616,14 @@ public class EventTest {
      */
     @Test
     public void setCancelledListTest() {
-     }
+        event = mockEvent();
+        ArrayList<String> cancelledListID = new ArrayList<>();
+        cancelledListID.add("newID1");
+        cancelledListID.add("newID3");
+
+        event.setCancelledList(cancelledListID);
+        assertEquals(event.getCancelledList(), cancelledListID);
+    }
 
     /**
      * Set the CancelledList with entrants with the same ID.
@@ -615,6 +632,15 @@ public class EventTest {
     @Test
     public void setCancelledListWithEventsTest() {
         event = mockEvent();
+        ArrayList<Entrant> cancelledList = new ArrayList<>();
+        cancelledList.add(mockEntrant("newID1"));
+        cancelledList.add(mockEntrant("newID3"));
+        ArrayList<String> cancelledListID = new ArrayList<>();
+        cancelledListID.add("newID1");
+        cancelledListID.add("newID3");
+
+        event.setCancelledListWithEvents(cancelledList);
+        assertEquals(event.getCancelledList(), cancelledListID);
     }
 
     /**
@@ -657,22 +683,11 @@ public class EventTest {
     @Test
     public void getRejectedListTest() {
         event = mockEvent();
-        ArrayList<String> waitList = new ArrayList<>();
-        waitList.add("ID1");
-        waitList.add("ID2");
-        waitList.add("ID3");
-        waitList.add("ID4");
-        ArrayList<String> invitedList = new ArrayList<>();
-        invitedList.add("ID1");
-        invitedList.add("ID3");
-        ArrayList<String> cancelledList = new ArrayList<>();
-        cancelledList.add("ID3");
         ArrayList<String> rejectedList = new ArrayList<>();
         rejectedList.add("ID2");
         rejectedList.add("ID4");
-        ArrayList<String> enrolledList = new ArrayList<>();
-        enrolledList.add("ID1");
 
+        assertEquals(event.getRejectedList(), rejectedList);
     }
 
     /**
@@ -682,6 +697,13 @@ public class EventTest {
     @Test
     public void setRejectedListTest() {
         event = mockEvent();
+        ArrayList<String> rejectedList = new ArrayList<>();
+        rejectedList.add("newID2");
+        rejectedList.add("newID4");
+
+        event.setRejectedList(rejectedList);
+
+        assertEquals(event.getRejectedList(), rejectedList);
     }
 
     /**
@@ -691,6 +713,17 @@ public class EventTest {
     @Test
     public void setRejectedListWithEventsTest() {
         event = mockEvent();
+        ArrayList<Entrant> rejectedList = new ArrayList<>();
+        rejectedList.add(mockEntrant("newID2"));
+        rejectedList.add(mockEntrant("newID4"));
+        ArrayList<String> rejectedListID = new ArrayList<>();
+        rejectedListID.add("newID2");
+        rejectedListID.add("newID4");
+
+        event.setRejectedListWithEvents(rejectedList);
+
+        assertEquals(event.getRejectedList(), rejectedList);
+
     }
 
     /**
@@ -733,21 +766,9 @@ public class EventTest {
     @Test
     public void getEnrolledListTest() {
         event = mockEvent();
-        ArrayList<String> waitList = new ArrayList<>();
-        waitList.add("ID1");
-        waitList.add("ID2");
-        waitList.add("ID3");
-        waitList.add("ID4");
-        ArrayList<String> invitedList = new ArrayList<>();
-        invitedList.add("ID1");
-        invitedList.add("ID3");
-        ArrayList<String> cancelledList = new ArrayList<>();
-        cancelledList.add("ID3");
-        ArrayList<String> rejectedList = new ArrayList<>();
-        rejectedList.add("ID2");
-        rejectedList.add("ID4");
         ArrayList<String> enrolledList = new ArrayList<>();
         enrolledList.add("ID1");
+        assertEquals(event.getEnrolledList(),enrolledList);
 
     }
 
@@ -758,6 +779,12 @@ public class EventTest {
     @Test
     public void setEnrolledListTest() {
         event = mockEvent();
+        ArrayList<String> enrolledList = new ArrayList<>();
+        enrolledList.add("newID1");
+
+        event.setEnrolledList(enrolledList);
+        assertEquals(event.getEnrolledList(),enrolledList);
+
     }
 
     /**
@@ -767,6 +794,13 @@ public class EventTest {
     @Test
     public void setEnrolledListWithEventsTest() {
         event = mockEvent();
+        ArrayList<Entrant> enrolledList = new ArrayList<>();
+        enrolledList.add(mockEntrant("newID1"));
+        ArrayList<String> enrolledListID = new ArrayList<>();
+        enrolledListID.add("newID1");
+
+        event.setEnrolledListWithEvents(enrolledList);
+        assertEquals(event.getEnrolledList(),enrolledListID);
     }
 
     /**
@@ -776,6 +810,8 @@ public class EventTest {
     @Test
     public void addToEnrolledListTest() {
         event = mockEvent();
+        event.addToEnrolledList("newID");
+        assertTrue(event.getEnrolledList().contains("newID"));
     }
 
     /**
