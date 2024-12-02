@@ -1,4 +1,11 @@
+/**
+ *
+ * @author Sarah, Chester
+ * @version 1.0
+ */
+
 package com.example.bubbletracksapp;
+
 
 import android.content.Context;
 import android.util.Log;
@@ -12,7 +19,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.squareup.picasso.Picasso;
@@ -83,7 +89,7 @@ public class AppEventAdapter extends RecyclerView.Adapter<AppEventAdapter.EventV
     @Override
     public EventViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(context);
-        View view = layoutInflater.inflate(R.layout.item_event, parent, false);
+        View view = layoutInflater.inflate(R.layout.horizontal_item_event, parent, false);
         return new EventViewHolder(view);
     }
 
@@ -143,7 +149,6 @@ public class AppEventAdapter extends RecyclerView.Adapter<AppEventAdapter.EventV
             regStatus = "WAITLISTED";
         }
         holder.eventRegStatus.setText(regStatus != null ? regStatus : "unknown");
-
 
         // SETS EVENT IMAGE
         Picasso.get().load(event.getImage()).into(holder.eventPic);

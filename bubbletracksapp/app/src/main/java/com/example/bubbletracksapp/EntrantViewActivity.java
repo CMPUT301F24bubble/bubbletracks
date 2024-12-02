@@ -145,7 +145,7 @@ public class EntrantViewActivity extends AppCompatActivity {
     protected void getEvent(){
         // get event from database
         eventDB.getEvent(id).thenAccept(event -> {
-            if(event != null){
+            if(event != null && !event.getQRCode().isEmpty()){
                 // set the event and check if the user is already in the waitlist and set the inWaitList variable
                 this.event = event;
                 ArrayList<String> waitList = event.getWaitList();
