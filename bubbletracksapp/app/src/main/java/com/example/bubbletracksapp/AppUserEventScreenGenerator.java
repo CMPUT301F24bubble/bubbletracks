@@ -7,6 +7,7 @@
 package com.example.bubbletracksapp;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
@@ -18,8 +19,10 @@ import android.view.animation.AccelerateInterpolator;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -33,7 +36,9 @@ import androidx.recyclerview.widget.SnapHelper;
 import com.github.rubensousa.gravitysnaphelper.GravitySnapHelper;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * This is a class that displays a user's waitlist/invited list/registered list
@@ -50,9 +55,15 @@ public class AppUserEventScreenGenerator extends AppCompatActivity {
     private EntrantDB entrantDB = new EntrantDB();
     private EventDB eventDB = new EventDB();
     private List<String> otherOption = Arrays.asList("Waitlist", "Registered");
+    private TextView locationView, timeView;
+    private ImageButton backButton;
+    EntrantDB entrantDB = new EntrantDB();
+    EventDB eventDB = new EventDB();
     private Spinner statusSpinner;
     private Entrant user;
     private List<Event> eventList;
+    private Entrant currentUser;
+    List<Event> eventList = new ArrayList<>();
 
     /**
      * Initializes main components of the screen: drop down menu, the event display,
@@ -79,18 +90,28 @@ public class AppUserEventScreenGenerator extends AppCompatActivity {
         ArrayAdapter<CharSequence> spinnerAdapter = ArrayAdapter.createFromResource(this,
                 R.array.list_options, android.R.layout.simple_spinner_item);
 
-        // SETS UP ADAPTER
+        // SETS UP SPINNER ADAPTER
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         // SETS UP STATUS SPINNER
         statusSpinner.setAdapter(spinnerAdapter);
         statusSpinner.setSelection(0);
 
+        // SETS UP TEXT VIEWS
+        timeView = findViewById(R.id.eventDateTime);
+        locationView = findViewById(R.id.eventLocation);
+        setDefaultActivityText();
+
         // SETS UP RECYCLER VIEW
         eventsplace = findViewById(R.id.waitlist);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         eventsplace.setLayoutManager(linearLayoutManager);
         eventsplace.setHasFixedSize(true);
+
+        // CREATE AND SET EVENT ADAPTER with the event list and the determined registration status
+        eventAdapter = new AppEventAdapter(AppUserEventScreenGenerator.this,
+                eventList, currentUser);
+        eventsplace.setAdapter(eventAdapter);
 
         // Initialize a flag outside the listener to control the loop
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -124,11 +145,14 @@ public class AppUserEventScreenGenerator extends AppCompatActivity {
             @Override
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
-
                 View view = snapHelper.findSnapView(linearLayoutManager);
                 if (view != null) {
                     int pos = linearLayoutManager.getPosition(view);
                     RecyclerView.ViewHolder viewHolder = eventsplace.findViewHolderForAdapterPosition(pos);
+
+                    // SET THE TEXT VIEWS BELOW THE EVENT
+                    setTextViews(eventList.get(pos));
+
                     if (viewHolder != null) {
                         LinearLayout eventParent = viewHolder.itemView.findViewById(R.id.eventParent);
 
@@ -149,7 +173,8 @@ public class AppUserEventScreenGenerator extends AppCompatActivity {
 
         entrantDB.getEntrant(ID).thenAccept(theUser -> {
             if(theUser != null) {
-                user = theUser;
+                currentUser = theUser;
+                eventAdapter.setUser(currentUser);
 
                 // SETS UP ON CLICK LISTENER FOR SPINNER
                 statusSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -164,9 +189,9 @@ public class AppUserEventScreenGenerator extends AppCompatActivity {
                         // Perform different actions based on selection
                         if (selectedOption.equals("Waitlist")) {
                             // Displays Waitlisted Event
-                            displayList("Waitlist and Invited", user);
+                            displayList("Waitlist");
                         } else if (selectedOption.equals("Registered")) {
-                            displayList("Registered", user);
+                            displayList("Registered");
                         }
                     }
 
@@ -175,6 +200,20 @@ public class AppUserEventScreenGenerator extends AppCompatActivity {
 
                     }
                 });
+
+                // INITIALIZE BUTTON TO GO BACK TO HOME SCREEN
+                backButton = findViewById(R.id.back_button);
+
+                // IMPLEMENTED BUTTON TO GO BACK TO HOME SCREEN
+                backButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent intent = new Intent(AppUserEventScreenGenerator.this, MainActivity.class);
+                        intent.putExtra("user", currentUser);
+                        startActivity(intent);
+                    }
+                });
+
             }
         }).exceptionally(e -> {
             Toast.makeText(AppUserEventScreenGenerator.this, "Failed to load profile: " + e.getMessage(), Toast.LENGTH_LONG).show(); //also a fail
@@ -183,37 +222,77 @@ public class AppUserEventScreenGenerator extends AppCompatActivity {
 
     }
 
-    // Method to display the selected list
+
     /**
-     * Displays list
-     *
-     * @param listType
-     * @param user1
-     *
+     * Displays list, whether it is the waitlist or enrolled list
+     * @param type the type of list to be displayed
      */
-    private void displayList(String listType, Entrant user1) {
-        if (user1 == null) {
+    private void displayList(String type) {
+        if (currentUser == null) {
             // Log an error or handle the case when user is not yet available
             Log.e("AppUserEventScreen", "User object is null. Cannot display list.");
             return; // Exit the method early
         } else {
-        String regStatus = "unknown"; // Default status if no matching user is found
-            eventDB.getEventList(user1.getEventsWaitlist()).thenAccept(events -> {
-                if(events != null) {
-                    eventList = events;
-                }
-                else
-                {
-                    eventList = new ArrayList<>();
-                }
-                // Initialize the adapter with the event list and the determined registration status
-                eventAdapter = new AppEventAdapter(this, eventList, user1, null);
-                eventsplace.setAdapter(eventAdapter);
-
-            });
+            if(Objects.equals(type, "Waitlist"))
+            {
+                setEventList(currentUser.getEventsWaitlist());
+            }
+            else if (Objects.equals(type, "Registered")) {
+                setEventList(currentUser.getEventsEnrolled());
+            }
         }
     }
 
+    /**
+     * Set the events of the adapter, depending if the user is looking at the events
+     * they are waiting to join or the events they enrolled.
+     * @param eventIDs The IDs of the events that will be set
+     */
+    private void setEventList(ArrayList<String> eventIDs) {
+        eventDB.getEventList(eventIDs).thenAccept(events -> {
+            if(events != null) {
+                eventList.clear();
+                eventList.addAll(events);
+                eventAdapter.notifyDataSetChanged();
+                // Set the date for the first event shown
+                setTextViews(eventList.get(0));
+            }
+            else
+            {
+                eventList.clear();
+                eventAdapter.notifyDataSetChanged();
+                // If there are no events, set the default events
+                setDefaultActivityText();
+            }
+        });
+    }
 
+    /**
+     * Set the the text below the event being displayed. The location and time.
+     * @param event The event that is being displayed
+     */
+    private void setTextViews(Event event) {
+        // GET EVENT LOCATION
+        String location = event.getGeolocation();
+
+        //GET EVENT TIME
+        Date eventDate = event.getDateTime();
+        String eventTime = String.format("%s %s %s at %s", event.getMonth(eventDate),
+                event.getDay(eventDate), event.getYear(eventDate), event.getTime(eventDate));
+
+        // SET DISPLAY TEXT
+        timeView.setText(eventTime);
+        locationView.setText(location);
+    }
+
+
+    /**
+     * Empty the text views of time and location.
+     * It is used when no event is being displayed
+     */
+    private void setDefaultActivityText() {
+        timeView.setText(" ");
+        locationView.setText(" ");
+    }
 
 }

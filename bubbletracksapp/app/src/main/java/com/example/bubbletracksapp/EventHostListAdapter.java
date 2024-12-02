@@ -80,6 +80,8 @@ public class EventHostListAdapter extends ArrayAdapter<Event>{
         AppCompatImageButton seePeopleButton = view.findViewById(R.id.see_people_button);
         AppCompatImageButton editEventButton = view.findViewById(R.id.edit_event_button);
         AppCompatImageButton deleteEventButton = view.findViewById(R.id.delete_button);
+        AppCompatImageButton notificationButton = view.findViewById(R.id.notification_button);
+
 
         eventMonthText.setText(event.getMonth(event.getDateTime()));
         eventDateText.setText(event.getDay(event.getDateTime()));
@@ -145,6 +147,17 @@ public class EventHostListAdapter extends ArrayAdapter<Event>{
                         .show();
             }
         });
+
+
+        notificationButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                viewNotifications(event);
+            }
+        });
+
+
+
         return view;
     }
 
@@ -171,4 +184,19 @@ public class EventHostListAdapter extends ArrayAdapter<Event>{
     public void editEvent(Event event) {
 
     }
+
+    /**
+     * Allow to view the notifications to send
+     * @param event event that event host holds
+     */
+    public void viewNotifications(Event event) {
+        Context context = EventHostListAdapter.this.getContext();
+
+        Intent intent = new Intent(EventHostListAdapter.this.getContext(), OrganizerNotificationActivity.class);
+        intent.putExtra("event", event);
+
+        context.startActivity(intent);
+
+    }
+
 }
