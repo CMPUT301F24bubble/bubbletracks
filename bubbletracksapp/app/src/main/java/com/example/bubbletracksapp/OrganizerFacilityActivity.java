@@ -141,6 +141,11 @@ public class OrganizerFacilityActivity extends AppCompatActivity {
         // get the entrant from the database
         entrantDB.getEntrant(ID).thenAccept(user -> {
             if(user != null){
+                // update user's role if not already organizer/admin
+                if(user.getRole().isEmpty()) {
+                    user.setRole("organizer");
+                }
+
                 // update facility's organizer to current entrant
                 facility.setOrganizer(user.getID());
                 user.setFacility(facility.getId());
