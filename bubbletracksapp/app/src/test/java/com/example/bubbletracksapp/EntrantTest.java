@@ -25,6 +25,8 @@ public class EntrantTest {
         Boolean notification = false;
         LatLng geolocation = new LatLng(0,0);
         String role = "";
+        String facility = "TheFacilityID";
+        String profilePicture = "TheFacilityID";
         ArrayList<String> eventsOrganized = new ArrayList<>();
         eventsOrganized.add("Event1");
         eventsOrganized.add("Event2");
@@ -38,10 +40,9 @@ public class EntrantTest {
         eventsWaitlist.add("Event6");
         eventsWaitlist.add("Event7");
 
-//        Entrant newEntrant = new Entrant(name, email, phone, deviceID, notification, geolocation, role,
-//                eventsOrganized, eventsInvited, eventsEnrolled, eventsWaitlist);
-//        return newEntrant;
-        return null;
+
+        Entrant newEntrant = new Entrant(name, email, phone, deviceID, notification, role, facility, geolocation, profilePicture, eventsOrganized, eventsInvited, eventsEnrolled, eventsWaitlist);
+            return newEntrant;
     }
 
 
@@ -161,7 +162,7 @@ public class EntrantTest {
     @Test
     public void getPhoneTest() {
         entrant = mockEntrant();
-        assertEquals(entrant.getEmail(), "8253302549");
+        assertEquals(entrant.getPhone(), "8253302549");
     }
 
     /**
@@ -171,7 +172,7 @@ public class EntrantTest {
     public void setPhoneTest() {
         entrant = mockEntrant();
         entrant.setPhone("24537432");
-        assertEquals(entrant.getEmail(), "24537432");
+        assertEquals(entrant.getPhone(), "24537432");
     }
 
     /**
@@ -260,6 +261,7 @@ public class EntrantTest {
         ArrayList<String> eventsInvited = new ArrayList<>();
         eventsInvited.add("newEvent4");
         eventsInvited.add("newEvent5");
+        entrant.setEventsInvited(eventsInvited);
         assertEquals(entrant.getEventsInvited(), eventsInvited);
 
     }
@@ -411,4 +413,37 @@ public class EntrantTest {
         entrant.setGeolocation(sydneyLocation);
         Assert.assertEquals(entrant.getGeolocation(), new LatLng(-33.852,151.211));
     }
+
+    /**
+     * Retrieve check role is the one we gave it in the mock
+     */
+    @Test
+    public void getRoleTest() {
+        entrant = mockEntrant();
+        assertEquals(entrant.getRole(),"");
+    }
+
+    /**
+     * Set the role
+     * Retrieve check role is the one we gave it
+     */
+    @Test
+    public void setRoleTest() {
+        entrant = mockEntrant();
+        entrant.setRole("Admin");
+        assertEquals(entrant.getRole(),"Admin");
+    }
+
+    /**
+     * Set default picture
+     * Check that the link is the same as the one for the letter T
+     */
+    @Test
+    public void setDefaultPicture() {
+        entrant = mockEntrant();
+        // Has first name as "T"
+        entrant.setDefaultPicture();
+        assertEquals(entrant.getProfilePicture(), "https://firebasestorage.googleapis.com/v0/b/bubbletracks-bubble.firebasestorage.app/o/profile-pictures%2FT.png?alt=media&token=bb42bcb3-56b9-41de-b420-8bc057ab546d");
+    }
+
 }
