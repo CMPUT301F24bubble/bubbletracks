@@ -57,13 +57,11 @@ public class AppUserEventScreenGenerator extends AppCompatActivity {
     private List<String> otherOption = Arrays.asList("Waitlist", "Registered");
     private TextView locationView, timeView;
     private ImageButton backButton;
-    EntrantDB entrantDB = new EntrantDB();
-    EventDB eventDB = new EventDB();
     private Spinner statusSpinner;
     private Entrant user;
     private List<Event> eventList;
     private Entrant currentUser;
-    List<Event> eventList = new ArrayList<>();
+
 
     /**
      * Initializes main components of the screen: drop down menu, the event display,
