@@ -298,6 +298,8 @@ public class EntrantEditActivity extends AppCompatActivity {
                                         }
                                     });
 
+                        } else {
+                            db.updateEntrant(currentUser);
                         }
                     } else {
                         Log.d("User not found", "");
