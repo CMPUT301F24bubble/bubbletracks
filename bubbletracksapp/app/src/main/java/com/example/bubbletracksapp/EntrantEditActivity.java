@@ -255,6 +255,10 @@ public class EntrantEditActivity extends AppCompatActivity {
                         currentUser.setPhone(newPhone);
                         currentUser.setEmail(newEmail);
 
+                        if(currentUser.isDefaultPicture()){
+                            Picasso.get().load(currentUser.setDefaultPicture()).into(profilePictureImage);
+                        }
+
                         if (!notificationPermission){
                             currentUser.setNotification(false);
                             Log.d("Notification check", "User opted out of notifications");
