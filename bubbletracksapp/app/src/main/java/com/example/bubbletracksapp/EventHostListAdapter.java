@@ -3,17 +3,21 @@ package com.example.bubbletracksapp;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatImageButton;
-import com.google.firebase.firestore.DocumentReference;
+
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.squareup.picasso.Picasso;
+
 import java.util.ArrayList;
 
 /**
@@ -70,24 +74,41 @@ public class EventHostListAdapter extends ArrayAdapter<Event>{
         }
         Event event = getItem(position);
 
-        TextView eventMonthText = view.findViewById(R.id.event_month);
-        TextView eventDateText = view.findViewById(R.id.event_date);
-        TextView eventTimeText = view.findViewById(R.id.event_time);
-        TextView eventLocationText = view.findViewById(R.id.event_location);
-        TextView eventTitleText = view.findViewById(R.id.event_title);
-        Button updatePosterButton = view.findViewById(R.id.update_poster_button);
+        ImageView browseEventPoster = view.findViewById(R.id.browseEventPoster);
+        TextView browseEventDate = view.findViewById(R.id.event_title);
+        TextView event_title = view.findViewById(R.id.event_title);
+        TextView browseEventDescription = view.findViewById(R.id.browseEventDescription);
+        TextView RegOpen = view.findViewById(R.id.RegOpen);
+        TextView RegCLose= view.findViewById(R.id.RegClose);
 
         AppCompatImageButton seePeopleButton = view.findViewById(R.id.see_people_button);
-        AppCompatImageButton editEventButton = view.findViewById(R.id.edit_event_button);
+        AppCompatImageButton updatePosterButton = view.findViewById(R.id.update_poster_button);
         AppCompatImageButton deleteEventButton = view.findViewById(R.id.delete_button);
         AppCompatImageButton notificationButton = view.findViewById(R.id.notification_button);
 
 
-        eventMonthText.setText(event.getMonth(event.getDateTime()));
-        eventDateText.setText(event.getDay(event.getDateTime()));
-        eventTimeText.setText(event.getTime(event.getDateTime()));
-        eventLocationText.setText(event.getGeolocation());
-        eventTitleText.setText(event.getName());
+        if (event.getImage() != null) {
+            Picasso.get()
+                    .load(event.getImage())
+                    .error(R.drawable.sushi_class) // Fallback in case of error
+                    .into(browseEventPoster);
+        } else {
+            browseEventPoster.setImageResource(R.drawable.sushi_class); // Default image if null
+        }
+
+        String month = event.getMonth(event.getDateTime());
+        String day = event.getDay(event.getDateTime());
+        String time = event.getTime(event.getDateTime());
+        if (month != null && day != null && time != null) {
+            browseEventDate.setText(month + " " + day + " " + "@" + " " + time);
+        } else {
+            browseEventDate.setText("Unknown");
+        }
+        event_title.setText(event.getName());
+        browseEventDescription.setText(event.getDescription());
+        RegOpen.setText("Registration open: "+event.getRegistrationOpen());
+        RegCLose.setText("Registration close "+event.getRegistrationClose());
+
 
         seePeopleButton.setOnClickListener(new View.OnClickListener() {
             /**
@@ -100,7 +121,7 @@ public class EventHostListAdapter extends ArrayAdapter<Event>{
             }
         });
 
-        editEventButton.setOnClickListener(new View.OnClickListener() {
+        updatePosterButton.setOnClickListener(new View.OnClickListener() {
             /**
              * Action to edit the event details
              * @param view The view that was clicked.

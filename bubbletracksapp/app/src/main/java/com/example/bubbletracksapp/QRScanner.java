@@ -2,11 +2,21 @@ package com.example.bubbletracksapp;
 // https://reintech.io/blog/implementing-android-app-qr-code-scanner
 // https://www.youtube.com/watch?v=mdpxaLwzPHg
 // https://github.com/journeyapps/zxing-android-embedded/blob/master/sample/src/main/java/example/zxing/CustomScannerActivity.java
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 import com.journeyapps.barcodescanner.BarcodeCallback;
 import com.journeyapps.barcodescanner.BarcodeResult;
 import com.journeyapps.barcodescanner.DecoratedBarcodeView;
@@ -52,14 +62,17 @@ public class QRScanner extends AppCompatActivity {
             }
         });}
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        barcodeScannerView.resume(); // Resume scanner
-    }
-    @Override
-    protected void onPause() {
-        super.onPause();
-        barcodeScannerView.pause(); // Pause scanner
-    }
-}
+        @Override
+        protected void onResume() {
+            super.onResume();
+            barcodeScannerView.resume(); // Resume scanner
+        }
+        @Override
+        protected void onPause() {
+            super.onPause();
+            barcodeScannerView.pause(); // Pause scanner
+        }
+        }
+
+
+
